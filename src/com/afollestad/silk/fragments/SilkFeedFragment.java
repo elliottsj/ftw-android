@@ -7,6 +7,8 @@ import com.afollestad.silk.Utils;
 
 /**
  * A {@link com.afollestad.silk.fragments.SilkListFragment} that pulls data from the network, and automatically puts the retrieved data in its list.
+ *
+ * @author Aidan Follestad (afollestad)
  */
 public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
 

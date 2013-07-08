@@ -6,6 +6,10 @@ import com.afollestad.silk.cache.SilkCacheManager;
 
 /**
  * A {@link SilkFeedFragment} that automatically caches loaded feeds locally and loads them again later.
+ * <p/>
+ * The class of type T must implement Serializable, otherwise errors will be thrown while attempting to cache.
+ *
+ * @author Aidan Follestad (afollestad)
  */
 public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
 

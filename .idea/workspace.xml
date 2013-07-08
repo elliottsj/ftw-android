@@ -24,7 +24,17 @@
     </option>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c9b18607-0efc-4d1c-95fd-4b796c117190" name="Default" comment="" />
+    <list default="true" id="c9b18607-0efc-4d1c-95fd-4b796c117190" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkCachedFeedFragment.java" afterPath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkCachedFeedFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFeedFragment.java" afterPath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFeedFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFragment.java" afterPath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkListFragment.java" afterPath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkListFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkPagerFragment.java" afterPath="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkPagerFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/afollestad/silk/Utils.java" afterPath="$PROJECT_DIR$/src/com/afollestad/silk/Utils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="Silk.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="$PROJECT_DIR$/res/layout/main.xml" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373310715744" ignored="false" />
@@ -39,7 +49,7 @@
     <file path="/SavvyFragment.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373312580527" ignored="false" />
     <file path="/fragment.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314477899" ignored="false" />
     <file path="/SavvyPagerFragment.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373312776649" ignored="false" />
-    <file path="/Dummy.txt" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373312638361" ignored="false" />
+    <file path="/Dummy.txt" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314876946" ignored="false" />
     <file path="/colors.xml" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373312695994" ignored="false" />
     <file path="/fragment_pager.xml" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373312700526" ignored="false" />
     <file path="/SavvyListFragment.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373313351435" ignored="false" />
@@ -49,9 +59,10 @@
     <file path="/SilkFeedFragment.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314555404" ignored="false" />
     <file path="/strings.xml" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373313989804" ignored="false" />
     <file path="/FeedCacheManager.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314091374" ignored="false" />
-    <file path="/SilkCacheManager.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314280118" ignored="false" />
+    <file path="/SilkCacheManager.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314961431" ignored="false" />
     <file path="/SilkPagerFragment.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314332361" ignored="false" />
-    <file path="/SilkCachedFeedFragment.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314666115" ignored="false" />
+    <file path="/SilkCachedFeedFragment.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373314991734" ignored="false" />
+    <file path="/Utils.java" changelist="c9b18607-0efc-4d1c-95fd-4b796c117190" time="1373315014948" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,6 +129,14 @@
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitLogSettings">
+    <option name="myDateState">
+      <MyDateState />
+    </option>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
@@ -125,18 +144,18 @@
         <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SavvyPagerFragment.java" />
         <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SavvyListFragment.java" />
         <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SavvyFeedListFragment.java" />
-        <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFragment.java" />
         <option value="$PROJECT_DIR$/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/src/com/afollestad/silk/Utils.java" />
         <option value="$PROJECT_DIR$/src/com/afollestad/silk/cache/FeedCacheManager.java" />
         <option value="$PROJECT_DIR$/src/com/afollestad/silk/views/SilkEditText.java" />
         <option value="$PROJECT_DIR$/src/com/afollestad/silk/views/SilkTextView.java" />
         <option value="$PROJECT_DIR$/res/layout/fragment_list.xml" />
         <option value="$PROJECT_DIR$/src/com/afollestad/silk/cache/SilkCacheManager.java" />
-        <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkPagerFragment.java" />
-        <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkListFragment.java" />
-        <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFeedFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/afollestad/silk/Utils.java" />
         <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkCachedFeedFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFeedFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkListFragment.java" />
+        <option value="$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkPagerFragment.java" />
       </list>
     </option>
   </component>
@@ -146,7 +165,7 @@
     <option name="width" value="1368" />
     <option name="height" value="745" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
     <OptionsSetting value="true" id="Checkout" />
@@ -205,18 +224,8 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Silk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Silk" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
+              <option name="myItemId" value="silk" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -230,11 +239,37 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="layout" />
+              <option name="myItemId" value="silk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fragments" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Silk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Silk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="silk" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cache" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -258,6 +293,14 @@
     <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <PyConsoleSettings />
+    </option>
+    <option name="myDjangoConsoleState">
+      <PyConsoleSettings />
+    </option>
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -387,6 +430,23 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="all">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="c9b18607-0efc-4d1c-95fd-4b796c117190" name="Default" comment="" />
@@ -396,7 +456,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="24" width="1368" height="745" extended-state="7" />
+    <frame x="-1" y="24" width="1368" height="745" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -490,32 +550,9 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/SilkAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/res/values/dimens.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="32" selection-start="68" selection-end="83" vertical-scroll-proportion="0.05199307">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="67" selection-start="1810" selection-end="1810" vertical-scroll-proportion="0.49220103">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="11" selection-start="1636" selection-end="1636" vertical-scroll-proportion="0.5840555">
           <folding />
         </state>
       </provider>
@@ -536,24 +573,6 @@
       </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="41" selection-start="643" selection-end="643" vertical-scroll-proportion="0.2542373">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/cache/SilkCacheManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1314#2073#0" expanded="true" />
-            <element signature="e#2062#2063#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkPagerFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="33" selection-start="437" selection-end="437" vertical-scroll-proportion="0.090121314">
           <folding />
         </state>
       </provider>
@@ -586,24 +605,63 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkListFragment.java">
+    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkPagerFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="115" column="66" selection-start="3753" selection-end="3753" vertical-scroll-proportion="0.33333334">
+        <state line="11" column="39" selection-start="378" selection-end="378" vertical-scroll-proportion="0.080935255">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkCachedFeedFragment.java">
+    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkListFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="18" column="39" selection-start="729" selection-end="729" vertical-scroll-proportion="0.2925532">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="39" selection-start="343" selection-end="343" vertical-scroll-proportion="0.20797227">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkFeedFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="50" selection-start="632" selection-end="632" vertical-scroll-proportion="0.33510637">
+        <state line="10" column="39" selection-start="353" selection-end="353" vertical-scroll-proportion="0.095744684">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/fragments/SilkCachedFeedFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="39" selection-start="415" selection-end="415" vertical-scroll-proportion="0.1559792">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/cache/SilkCacheManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="20" selection-start="237" selection-end="237" vertical-scroll-proportion="0.026595745">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="17" selection-start="173" selection-end="173" vertical-scroll-proportion="0.1559792">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/afollestad/silk/SilkAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="16" selection-start="438" selection-end="438" vertical-scroll-proportion="0.1559792">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

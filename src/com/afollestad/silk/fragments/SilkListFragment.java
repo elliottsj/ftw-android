@@ -16,6 +16,7 @@ import com.afollestad.silk.SilkAdapter;
  * The fragment uses a {@link com.afollestad.silk.SilkAdapter} to display items of type T.
  *
  * @param <T> The type of items held in the fragment's list.
+ * @author Aidan Follestad (afollestad)
  */
 public abstract class SilkListFragment<T> extends SilkFragment {
 

@@ -8,6 +8,8 @@ import com.afollestad.silk.R;
 
 /**
  * A {@link com.afollestad.silk.fragments.SilkFragment} that displays a {@link android.support.v4.view.ViewPager}.
+ *
+ * @author Aidan Follestad (afollestad)
  */
 public abstract class SilkPagerFragment extends SilkFragment {
 

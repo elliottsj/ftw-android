@@ -7,6 +7,8 @@ import android.view.*;
 /**
  * The base of all other fragments in the library; contains methods that help maintain consistency among all fragments,
  * also provides various convenience methods.
+ *
+ * @author Aidan Follestad (afollestad)
  */
 public abstract class SilkFragment extends Fragment {
 
