@@ -24,7 +24,7 @@ public final class SilkCacheManager<T> {
         cacheFile = new File(context.getCacheDir(), cacheName + ".cache");
     }
 
-    private File cacheFile;
+    private final File cacheFile;
 
     private void log(String message) {
         Log.d("FeedCacheManager", message);
@@ -48,8 +48,8 @@ public final class SilkCacheManager<T> {
                 try {
                     FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
                     ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-                    for (int i = 0; i < items.size(); i++) {
-                        objectOutputStream.writeObject(items.get(i));
+                    for (T item : items) {
+                        objectOutputStream.writeObject(item);
                     }
                     objectOutputStream.close();
                     log("Wrote " + items.size() + " items to " + cacheFile.getName());

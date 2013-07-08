@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -67,8 +68,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
      * @param toAdd
      */
     public final void add(T[] toAdd) {
-        for (T item : toAdd)
-            this.items.add(item);
+        Collections.addAll(this.items, toAdd);
         notifyDataSetChanged();
     }
 
