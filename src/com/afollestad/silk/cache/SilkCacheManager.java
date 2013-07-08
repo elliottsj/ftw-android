@@ -35,9 +35,10 @@ public final class SilkCacheManager<T> {
      */
     public void write(final SilkAdapter<T> adapter) {
         if (adapter == null || adapter.getCount() == 0) {
-            if (cacheFile.exists())
+            if (cacheFile.exists()) {
+                log("Adapter for " + cacheFile.getName() + " is empty, deleting file...");
                 cacheFile.delete();
-            log("Adapter for " + cacheFile.getName() + " is empty, deleting file...");
+            }
             return;
         }
         final List<T> items = adapter.getItems();

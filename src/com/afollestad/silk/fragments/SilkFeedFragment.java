@@ -68,6 +68,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            setLoadComplete();
                             if (!Utils.isOnline(getActivity())) {
                                 onError(getString(R.string.offline_error));
                             } else {
@@ -75,6 +76,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
                             }
                         }
                     });
+                    return;
                 }
                 runOnUiThread(new Runnable() {
                     @Override
