@@ -12,12 +12,17 @@ import com.afollestad.silk.Utils;
  */
 public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
 
+    protected boolean mCacheEnabled = false;
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setLoading(true);
-        // Immediately load the fragment's feed
-        performRefresh();
+        // If caching is enabled, the SilkCachedFeedFragment will handle this instead
+        if (!mCacheEnabled) {
+            setLoading(true);
+            // Immediately load the fragment's feed
+            performRefresh();
+        }
     }
 
     /**
