@@ -20,7 +20,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
         // If caching is enabled, the SilkCachedFeedFragment will handle this instead
         if (!mCacheEnabled) {
             // Immediately load the fragment's feed
-            performRefresh();
+            performRefresh(true);
         }
     }
 
@@ -38,7 +38,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
     /**
      * Causes sub-fragments to pull from the network, and adds the results to the list.
      */
-    public final void performRefresh() {
+    public final void performRefresh(boolean progress) {
         if (isLoading()) {
             return;
         } else if (!Utils.isOnline(getActivity())) {
@@ -46,9 +46,9 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
             setLoadComplete();
             return;
         }
-        getAdapter().clear(false);
 
-        setLoading(getAdapter().getCount() == 0);
+        getAdapter().clear(false);
+        setLoading(progress);
         new Thread(new Runnable() {
             @Override
             public void run() {

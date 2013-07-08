@@ -128,7 +128,7 @@ public abstract class SilkListFragment<T> extends SilkFragment {
      * Notifies the fragment that it is done loading data. This causes the progress view to become invisible, and the list
      * or empty text become visible again.
      */
-    public final void setLoadComplete() {
+    public void setLoadComplete() {
         mLoading = false;
         setListShown(true);
     }
