@@ -19,7 +19,6 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
         super.onViewCreated(view, savedInstanceState);
         // If caching is enabled, the SilkCachedFeedFragment will handle this instead
         if (!mCacheEnabled) {
-            setLoading(true);
             // Immediately load the fragment's feed
             performRefresh();
         }
@@ -49,7 +48,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
         }
         getAdapter().clear(false);
 
-        setLoading(false);
+        setLoading(getAdapter().getCount() == 0);
         new Thread(new Runnable() {
             @Override
             public void run() {
