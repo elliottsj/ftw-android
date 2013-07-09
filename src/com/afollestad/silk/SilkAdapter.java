@@ -55,11 +55,21 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     /**
-     * Adds a single item to the adapter and notifies the attached ListView.
+     * Adds a single item to the adapter and notifies the attached ListView.y
      */
     public final void add(T toAdd) {
+        add(toAdd, true);
+    }
+
+    /**
+     * Adds a single item to the adapter and notifies the attached ListView.
+     *
+     * @param notify Whether or not to notify the attached ListView.
+     */
+    public final void add(T toAdd, boolean notify) {
         this.items.add(toAdd);
-        notifyDataSetChanged();
+        if (notify)
+            notifyDataSetChanged();
     }
 
     /**

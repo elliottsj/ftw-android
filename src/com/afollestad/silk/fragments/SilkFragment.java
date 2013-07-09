@@ -47,6 +47,13 @@ public abstract class SilkFragment extends Fragment {
         onVisibilityChange(visible);
     }
 
+    /**
+     * Gets whether or not the fragment is attached and visible to the user.
+     */
+    public final boolean isAttached() {
+        return mAttached;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

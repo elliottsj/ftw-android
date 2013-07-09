@@ -27,10 +27,11 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
         // Read from the cache and refresh from the internet when the fragment's view is created
-        boolean progress = true;
-        if (cache != null)
-            progress = (cache.read(getAdapter()) == 0);
-        performRefresh(progress);
+        if (cache != null) {
+            cache.read(getAdapter(), this);
+        } else {
+            performRefresh(true);
+        }
     }
 
     @Override

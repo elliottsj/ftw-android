@@ -3,6 +3,7 @@ package com.afollestad.silk.cache;
 import android.content.Context;
 import android.util.Log;
 import com.afollestad.silk.SilkAdapter;
+import com.afollestad.silk.fragments.SilkCachedFeedFragment;
 
 import java.io.*;
 import java.util.List;
@@ -66,32 +67,45 @@ public final class SilkCacheManager<T> {
     /**
      * Reads from the manager's cache file into a SilkAdapter.
      */
-    public int read(final SilkAdapter<T> adapter) {
+    public void read(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment) {
         if (!cacheFile.exists()) {
             log("No cache for " + cacheFile.getName());
-            return 0;
+            return;
         }
+        fragment.setLoading(true);
         adapter.clear(false);
-        try {
-            FileInputStream fileInputStream = new FileInputStream(cacheFile);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            while (true) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
                 try {
-                    T item = (T) objectInputStream.readObject();
-                    if (item != null)
-                        adapter.add(item);
-                } catch (EOFException eof) {
-                    break;
+                    FileInputStream fileInputStream = new FileInputStream(cacheFile);
+                    ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                    while (true) {
+                        try {
+                            T item = (T) objectInputStream.readObject();
+                            if (item != null) adapter.add(item, false);
+                        } catch (EOFException eof) {
+                            break;
+                        }
+                    }
+                    objectInputStream.close();
+                    log("Read " + adapter.getCount() + " items from " + cacheFile.getName());
+                } catch (Exception e) {
+                    log("Cache read error: " + e.getMessage());
+                    e.printStackTrace();
                 }
+
+                fragment.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        fragment.setLoadComplete();
+                        if (adapter.getCount() == 0)
+                            fragment.performRefresh(true);
+                    }
+                });
             }
-            objectInputStream.close();
-            log("Read " + adapter.getCount() + " items from " + cacheFile.getName());
-            return adapter.getCount();
-        } catch (Exception e) {
-            log("Cache read error: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return 0;
+        }).start();
     }
 }
 
