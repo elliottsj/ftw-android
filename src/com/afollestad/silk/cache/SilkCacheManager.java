@@ -70,6 +70,7 @@ public final class SilkCacheManager<T> {
     public void read(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment) {
         if (!cacheFile.exists()) {
             log("No cache for " + cacheFile.getName());
+            fragment.performRefresh(true);
             return;
         }
         fragment.setLoading(true);
