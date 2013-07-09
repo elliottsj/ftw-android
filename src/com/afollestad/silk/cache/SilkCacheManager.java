@@ -74,7 +74,7 @@ public final class SilkCacheManager<T> {
         }
         fragment.setLoading(true);
         adapter.clear(false);
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -105,7 +105,9 @@ public final class SilkCacheManager<T> {
                     }
                 });
             }
-        }).start();
+        });
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
     }
 }
 
