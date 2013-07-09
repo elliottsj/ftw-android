@@ -15,7 +15,7 @@ public abstract class SilkPagerFragment extends SilkFragment {
 
     private ViewPager mViewPager;
 
-    public abstract FragmentPagerAdapter getPagerAdapter();
+    public abstract android.support.v13.app.FragmentPagerAdapter getPagerAdapter();
 
     @Override
     public final int getLayout() {
