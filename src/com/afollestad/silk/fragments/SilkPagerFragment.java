@@ -31,6 +31,13 @@ public abstract class SilkPagerFragment extends SilkFragment {
     }
 
     /**
+     * Gets the fragment's view pager.
+     */
+    public final ViewPager getPager() {
+        return mViewPager;
+    }
+
+    /**
      * Sets the currently visible page in the ViewPager.
      */
     public final void setCurrentPage(int page) {
