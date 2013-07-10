@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import com.afollestad.silk.R;
 
 /**
@@ -19,8 +20,13 @@ public abstract class SilkTabbedPagerFragment extends SilkPagerFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ActionBar ab = getActivity().getActionBar();
+        ActionBar ab = getActivity().getActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Create a tab listener that will move the view pager when a tab is selected
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
@@ -38,8 +44,11 @@ public abstract class SilkTabbedPagerFragment extends SilkPagerFragment {
         };
 
         // Copy the view pager adapter's page titles over to action bar tabs
+        final ActionBar ab = getActivity().getActionBar();
         FragmentPagerAdapter adapter = getPagerAdapter();
         for (int i = 0; i < adapter.getCount(); i++) {
+            if (getActivity() == null)
+                return;
             ab.addTab(ab.newTab().setText(adapter.getPageTitle(i)).setTabListener(tabListener));
         }
 
