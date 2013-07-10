@@ -45,6 +45,7 @@ public abstract class SilkTabbedPagerFragment extends SilkPagerFragment {
 
         // Copy the view pager adapter's page titles over to action bar tabs
         final ActionBar ab = getActivity().getActionBar();
+        ab.removeAllTabs();  // Clears previously added tabs
         FragmentPagerAdapter adapter = getPagerAdapter();
         for (int i = 0; i < adapter.getCount(); i++) {
             if (getActivity() == null)
