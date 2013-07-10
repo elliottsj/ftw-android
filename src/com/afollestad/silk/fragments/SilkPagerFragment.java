@@ -18,7 +18,7 @@ public abstract class SilkPagerFragment extends SilkFragment {
     public abstract FragmentPagerAdapter getPagerAdapter();
 
     @Override
-    public final int getLayout() {
+    public int getLayout() {
         return R.layout.fragment_pager;
     }
 

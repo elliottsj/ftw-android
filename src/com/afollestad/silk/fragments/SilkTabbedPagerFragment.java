@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import com.afollestad.silk.R;
 
 /**
  * A {@link SilkPagerFragment} that sets the containing activity's action bar navigation mode to tabs,
@@ -59,5 +60,10 @@ public abstract class SilkTabbedPagerFragment extends SilkPagerFragment {
             public void onPageScrollStateChanged(int i) {
             }
         });
+    }
+
+    @Override
+    public final int getLayout() {
+        return R.layout.fragment_pager_notitlestrip;
     }
 }
