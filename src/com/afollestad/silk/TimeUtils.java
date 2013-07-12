@@ -53,8 +53,38 @@ public class TimeUtils {
         }
     }
 
+    public static String getFriendlyDate(long time) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(time);
+        return getFriendlyDate(cal);
+    }
 
-    public static String getFriendlyTime(Calendar time) {
+    public static String getFriendlyDate(Calendar time) {
+        Calendar now = Calendar.getInstance();
+        String day = Integer.toString(time.get(Calendar.DAY_OF_MONTH));
+        if (day.length() == 1) {
+            // Add a zero before the day if it's below 10 (1 character in length)
+            day = ("0" + day);
+        }
+        if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
+            // Same year
+            if (now.get(Calendar.MONTH) == time.get(Calendar.MONTH)) {
+                // Same year, same month
+                return convertMonth(time.get(Calendar.MONTH)) + " " + day;
+            } else {
+                // Different month, same year
+                return convertMonth(time.get(Calendar.MONTH)) + " " + day;
+            }
+        } else {
+            // Different year
+            String year = Integer.toString(time.get(Calendar.YEAR));
+            if (now.get(Calendar.YEAR) < time.get(Calendar.YEAR))
+                year = year.substring(1, 3);
+            return convertMonth(time.get(Calendar.MONTH)) + " " + day + ", " + year;
+        }
+    }
+
+    public static String getFriendlyTimeShort(Calendar time) {
         Calendar now = Calendar.getInstance();
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
             // Same year
