@@ -84,6 +84,14 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     /**
+     * Removes an item from the list by its index.
+     */
+    public final void remove(int index) {
+        this.items.remove(index);
+        notifyDataSetChanged();
+    }
+
+    /**
      * Clears all items from the adapter and notifies the attached ListView.
      */
     public final void clear() {
