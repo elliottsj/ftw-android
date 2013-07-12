@@ -75,14 +75,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         Calendar now = Calendar.getInstance();
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
         prefs.edit().putLong(getCacheTitle(), now.getTimeInMillis()).commit();
-        setLastUpdateVisibile(false);
-    }
-
-    @Override
-    public void performRefresh(boolean progress) {
-        // The last updated frame is hidden when refresh starts, by default.
-        setLastUpdateVisibile(false);
-        super.performRefresh(progress);
+        invalidateLastUpdateLabel();
     }
 
     @Override
