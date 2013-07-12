@@ -93,8 +93,8 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     @Override
     public void setLoadComplete() {
         super.setLoadComplete();
+        setLastUpdateVisibile(getAdapter().getCount() == 0);
         mLastUpdateAction.setEnabled(true);
-        setLastUpdateVisibile(false);
         setLastUpdatedTime();
     }
 
