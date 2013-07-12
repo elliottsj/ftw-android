@@ -95,7 +95,13 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     public void onCacheEmpty() {
         super.onCacheEmpty();
         // Overriding the default behavior of refreshing immediately to show the last updated label
-
+        if (getLastUpdateTime() != null) {
+            // This isn't the first time the fragment has refreshed, just show the last update label
+            setLastUpdateVisibile(true);
+        } else {
+            // The fragment has never been refreshed, invoke the default behavior in this case
+            super.onCacheEmpty();
+        }
     }
 
     /**
