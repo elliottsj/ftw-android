@@ -74,15 +74,26 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         super.performRefresh(progress);
     }
 
-    @Override
-    public void setLoadComplete() {
-        super.setLoadComplete();
-        mLastUpdateAction.setEnabled(true);
-        // Save the update time in shared preferences and hide the last updated frame
+    /**
+     * Sets the last update time for the fragment to right now and updates the label.
+     */
+    public final void setLastUpdateTime() {
         Calendar now = Calendar.getInstance();
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
         prefs.edit().putLong(getCacheTitle(), now.getTimeInMillis()).commit();
         invalidateLastUpdateLabel();
+    }
+
+    @Override
+    public void setLoadComplete() {
+        super.setLoadComplete();
+        mLastUpdateAction.setEnabled(true);
+    }
+
+    @Override
+    public void setLoadFromCacheComplete() {
+        super.setLoadFromCacheComplete();
+        setLastUpdateTime();
     }
 
     @Override

@@ -110,7 +110,7 @@ public final class SilkCacheManager<T> {
                     @Override
                     public void run() {
                         adapter.notifyDataSetChanged();
-                        fragment.setLoadComplete();
+                        fragment.setLoadFromCacheComplete();
                         if (adapter.getCount() == 0)
                             fragment.onCacheEmpty();
                     }
