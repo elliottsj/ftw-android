@@ -77,7 +77,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     /**
      * Sets the last update time for the fragment to right now and updates the label.
      */
-    public final void setLastUpdateTime() {
+    public final void setLastUpdatedTime() {
         Calendar now = Calendar.getInstance();
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
         prefs.edit().putLong(getCacheTitle(), now.getTimeInMillis()).commit();
@@ -93,7 +93,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     @Override
     public void setLoadFromCacheComplete() {
         super.setLoadFromCacheComplete();
-        setLastUpdateTime();
+        setLastUpdatedTime();
     }
 
     @Override

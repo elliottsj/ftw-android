@@ -24,7 +24,7 @@ public final class SilkCacheManager<T> {
      */
     public SilkCacheManager(Activity context, String cacheName) {
         this.context = context;
-        cacheFile = new File(context.getCacheDir(), cacheName + ".cache");
+        cacheFile = new File(context.getExternalCacheDir(), cacheName + ".cache");
     }
 
     private final Activity context;
@@ -77,7 +77,6 @@ public final class SilkCacheManager<T> {
             return;
         }
         fragment.setLoading(true);
-        adapter.clear();
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -96,6 +95,7 @@ public final class SilkCacheManager<T> {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            adapter.clear();
                             for (T item : toAdd) adapter.add(item);
                         }
                     });
@@ -109,7 +109,6 @@ public final class SilkCacheManager<T> {
                 fragment.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        adapter.notifyDataSetChanged();
                         fragment.setLoadFromCacheComplete();
                         if (adapter.getCount() == 0)
                             fragment.onCacheEmpty();
