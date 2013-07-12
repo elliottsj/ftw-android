@@ -38,7 +38,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
     /**
      * Causes sub-fragments to pull from the network, and adds the results to the list.
      */
-    public final void performRefresh(boolean progress) {
+    public void performRefresh(boolean progress) {
         if (isLoading()) {
             return;
         } else if (!Utils.isOnline(getActivity())) {
