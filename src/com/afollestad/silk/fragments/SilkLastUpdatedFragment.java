@@ -59,6 +59,10 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         return (nowHours - lastHours) >= 1;
     }
 
+    /**
+     * Invalidates the last updated frame. Decides whether or not the last updated frame should be visible based on
+     * the return value of {#getShouldShowLastUpdated}, and updates the label if it's shown.
+     */
     public final boolean invalidateLastUpdated() {
         boolean shouldShow = getShouldShowLastUpdated();
         setLastUpdatedVisibile(shouldShow);
