@@ -126,7 +126,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
 
     @Override
     public void onCacheEmpty() {
-        // Overriding the default behavior of refreshing immediately to show the last updated label
+        // Overriding the default behavior of refreshing immediately to show the last updated label if necessary
         if (!invalidateLastUpdated()) super.onCacheEmpty();
     }
 
