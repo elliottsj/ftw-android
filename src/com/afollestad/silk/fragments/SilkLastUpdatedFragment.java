@@ -69,6 +69,12 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     }
 
     @Override
+    public void performRefresh(boolean progress) {
+        mLastUpdateAction.setEnabled(false);
+        super.performRefresh(progress);
+    }
+
+    @Override
     public void setLoadComplete() {
         super.setLoadComplete();
         mLastUpdateAction.setEnabled(true);
@@ -96,7 +102,6 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
      * Called when the user presses the button in the last updated frame; invokes performRefresh() by default.
      */
     public void onUserRefresh() {
-        mLastUpdateAction.setEnabled(false);
         performRefresh(true);
     }
 }
