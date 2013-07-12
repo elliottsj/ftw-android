@@ -47,7 +47,6 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
             return;
         }
 
-        getAdapter().clear(false);
         setLoading(progress);
         new Thread(new Runnable() {
             @Override

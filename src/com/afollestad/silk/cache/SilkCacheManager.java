@@ -1,11 +1,12 @@
 package com.afollestad.silk.cache;
 
-import android.content.Context;
+import android.app.Activity;
 import android.util.Log;
 import com.afollestad.silk.SilkAdapter;
 import com.afollestad.silk.fragments.SilkCachedFeedFragment;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,13 +19,15 @@ public final class SilkCacheManager<T> {
     /**
      * Initializes a new SilkCacheManager.
      *
-     * @param context   The context used for retrieving the cache directory.
+     * @param context   The context used for retrieving the cache directory and running methods on the UI thread.
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      */
-    public SilkCacheManager(Context context, String cacheName) {
+    public SilkCacheManager(Activity context, String cacheName) {
+        this.context = context;
         cacheFile = new File(context.getCacheDir(), cacheName + ".cache");
     }
 
+    private final Activity context;
     private final File cacheFile;
 
     private void log(String message) {
@@ -74,21 +77,28 @@ public final class SilkCacheManager<T> {
             return;
         }
         fragment.setLoading(true);
-        adapter.clear(false);
+        adapter.clear();
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     FileInputStream fileInputStream = new FileInputStream(cacheFile);
                     ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                    final List<T> toAdd = new ArrayList<T>();
                     while (true) {
                         try {
-                            T item = (T) objectInputStream.readObject();
-                            if (item != null) adapter.add(item, false);
+                            final T item = (T) objectInputStream.readObject();
+                            if (item != null) toAdd.add(item);
                         } catch (EOFException eof) {
                             break;
                         }
                     }
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (T item : toAdd) adapter.add(item);
+                        }
+                    });
                     objectInputStream.close();
                     log("Read " + adapter.getCount() + " items from " + cacheFile.getName());
                 } catch (Exception e) {
