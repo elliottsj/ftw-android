@@ -109,9 +109,9 @@ public final class SilkCacheManager<T> {
                 fragment.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        fragment.setLoadFromCacheComplete();
                         if (adapter.getCount() == 0)
                             fragment.onCacheEmpty();
+                        fragment.setLoadFromCacheComplete();
                     }
                 });
             }

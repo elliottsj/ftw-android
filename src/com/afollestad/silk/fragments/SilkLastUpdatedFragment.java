@@ -27,8 +27,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
      */
     public final void setLastUpdateVisibile(boolean visible) {
         View v = getView();
-        if (v == null)
-            return;
+        if (v == null) return;
         v.findViewById(R.id.lastUpdatedFrame).setVisibility(visible ? View.VISIBLE : View.GONE);
         v.findViewById(R.id.divider).setVisibility(visible ? View.VISIBLE : View.GONE);
     }
