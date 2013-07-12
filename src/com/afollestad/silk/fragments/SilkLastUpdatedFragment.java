@@ -25,7 +25,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     /**
      * Sets whether or not the last updated frame is visible.
      */
-    public final void setLastUpdateVisibile(boolean visible) {
+    public final void setLastUpdatedVisibile(boolean visible) {
         View v = getView();
         if (v == null) return;
         v.findViewById(R.id.lastUpdatedFrame).setVisibility(visible ? View.VISIBLE : View.GONE);
@@ -35,7 +35,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     /**
      * Gets the last time the fragment was updated (did a full refresh from the web).
      */
-    public final Calendar getLastUpdateTime() {
+    public final Calendar getLastUpdatedTime() {
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
         if (prefs.contains(getCacheTitle())) {
             Calendar cal = Calendar.getInstance();
@@ -45,12 +45,28 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         return null;
     }
 
-    private void invalidateLastUpdateLabel() {
-        Calendar lastUpdate = getLastUpdateTime();
-        if (lastUpdate != null) {
-            mLastUpdateLabel.setText(getString(R.string.last_updated).replace("{date}", TimeUtils.getFriendlyTimeLong(lastUpdate)));
-            setLastUpdateVisibile(true);
-        } else setLastUpdateVisibile(false);
+    /**
+     * Gets whether or not right now is a good time to show the last updated frame. Can be overridden to change behavior.
+     */
+    public boolean getShouldShowLastUpdated() {
+        Calendar last = getLastUpdatedTime();
+        if (last == null) return false;
+        else if (getAdapter().getCount() == 0) return true;
+        Calendar now = Calendar.getInstance();
+        double lastHours = last.getTimeInMillis() / (1000 * 60 * 60);
+        double nowHours = now.getTimeInMillis() / (1000 * 60 * 60);
+        // An hour or more difference in last refresh time will return true
+        return (nowHours - lastHours) >= 1;
+    }
+
+    public final boolean invalidateLastUpdated() {
+        boolean shouldShow = getShouldShowLastUpdated();
+        setLastUpdatedVisibile(shouldShow);
+        if (shouldShow) {
+            mLastUpdateLabel.setText(getString(R.string.last_updated).replace("{date}",
+                    TimeUtils.getFriendlyTimeLong(getLastUpdatedTime())));
+        }
+        return shouldShow;
     }
 
 
@@ -64,7 +80,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         mLastUpdateLabel = (TextView) view.findViewById(R.id.ptrLastUpdateLabel);
         mLastUpdateAction = (ImageButton) view.findViewById(R.id.ptrLastUpdateAction);
         super.onViewCreated(view, savedInstanceState);
-        invalidateLastUpdateLabel();
+        invalidateLastUpdated();
         mLastUpdateAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,34 +102,28 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         Calendar now = Calendar.getInstance();
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
         prefs.edit().putLong(getCacheTitle(), now.getTimeInMillis()).commit();
-        invalidateLastUpdateLabel();
+        invalidateLastUpdated();
     }
 
     @Override
     public void setLoadComplete() {
         super.setLoadComplete();
-        setLastUpdateVisibile(getAdapter().getCount() == 0);
         mLastUpdateAction.setEnabled(true);
         setLastUpdatedTime();
+        invalidateLastUpdated();
     }
 
     @Override
     public void setLoadFromCacheComplete() {
         // Prevent the setLoadComplete() code from this class from being called after a cache load
         super.setLoadComplete();
-        setLastUpdateVisibile(true);
+        invalidateLastUpdated();
     }
 
     @Override
     public void onCacheEmpty() {
         // Overriding the default behavior of refreshing immediately to show the last updated label
-        if (getLastUpdateTime() != null) {
-            // This isn't the first time the fragment has refreshed, just show the last update label
-            setLastUpdateVisibile(true);
-        } else {
-            // The fragment has never been refreshed, invoke the default behavior in this case
-            super.onCacheEmpty();
-        }
+        if (!invalidateLastUpdated()) super.onCacheEmpty();
     }
 
     /**
