@@ -17,9 +17,9 @@ much easier and more consistent to create list adapters, and it handles things l
 
 #### SilkFragment
 
-The base Fragment class extended by other library fragments. Contains various convenience methods that make setting up
-fragments easier and more consistent, it also allows you to keep track of when the Fragment is actually visible to a user,
-even when it's in a ViewPager (and onResume() is called when the Fragment is outside of the user's view).
+The base `Fragment` class extended by other library fragments. Contains various convenience methods that make setting up
+fragments easier and more consistent, it also allows you to keep track of when the `Fragment` is actually visible to a user,
+even when it's in a `ViewPager` (and onResume() is called when the Fragment is outside of the user's view).
 
 #### SilkListFragment
 
