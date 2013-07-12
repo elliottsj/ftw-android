@@ -60,7 +60,7 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
      * Notifies the fragment that it is done loading data from the cache. This causes the progress view to become invisible, and the list
      * or empty text become visible again.
      * <p/>
-     * This is equivelent to {#setLoadComplete} by default, but can be overridden.
+     * This is equivalent to {#setLoadComplete} by default, but can be overridden.
      */
     public void setLoadFromCacheComplete() {
         setLoadComplete();
