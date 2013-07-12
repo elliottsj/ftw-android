@@ -2,6 +2,7 @@ package com.afollestad.silk.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -75,6 +76,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
 
     @Override
     public void performRefresh(boolean progress) {
+        Log.d("SilkLastUpdatedFragment", getCacheTitle() + ": performRefresh()");
         mLastUpdateAction.setEnabled(false);
         super.performRefresh(progress);
     }
@@ -83,6 +85,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
      * Sets the last update time for the fragment to right now and updates the label.
      */
     public final void setLastUpdatedTime() {
+        Log.d("SilkLastUpdatedFragment", getCacheTitle() + ": setLastUpdatedTime()");
         Calendar now = Calendar.getInstance();
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
         prefs.edit().putLong(getCacheTitle(), now.getTimeInMillis()).commit();
@@ -91,6 +94,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
 
     @Override
     public void setLoadComplete() {
+        Log.d("SilkLastUpdatedFragment", getCacheTitle() + ": setLoadComplete()");
         super.setLoadComplete();
         setLastUpdateVisibile(getAdapter().getCount() == 0);
         mLastUpdateAction.setEnabled(true);
@@ -99,12 +103,14 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
 
     @Override
     public void setLoadFromCacheComplete() {
+        Log.d("SilkLastUpdatedFragment", getCacheTitle() + ": setLoadFromCacheComplete()");
         // Prevent the setLoadComplete() code from this class from being called after a cache load
         super.setLoadComplete();
     }
 
     @Override
     public void onCacheEmpty() {
+        Log.d("SilkLastUpdatedFragment", getCacheTitle() + ": onCacheEmpty()");
         // Overriding the default behavior of refreshing immediately to show the last updated label
         if (getLastUpdateTime() != null) {
             // This isn't the first time the fragment has refreshed, just show the last update label
@@ -119,6 +125,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
      * Called when the user presses the button in the last updated frame; invokes performRefresh() by default.
      */
     public void onUserRefresh() {
+        Log.d("SilkLastUpdatedFragment", getCacheTitle() + ": onUserRefresh()");
         performRefresh(true);
     }
 }
