@@ -106,6 +106,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         Log.d("SilkLastUpdatedFragment", getCacheTitle() + ": setLoadFromCacheComplete()");
         // Prevent the setLoadComplete() code from this class from being called after a cache load
         super.setLoadComplete();
+        setLastUpdateVisibile(getAdapter().getCount() == 0);
     }
 
     @Override
