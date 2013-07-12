@@ -49,10 +49,10 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
     public abstract String getCacheTitle();
 
     /**
-     * Fired from the {@link SilkCacheManager} when the cache was found to be empty during view creation.
+     * Fired from the {@link SilkCacheManager} when the cache was found to be empty during view creation. By default,
+     * causes a refresh, but this can be overridden.
      */
     public void onCacheEmpty() {
-        // By default, this will cause the fragment to refresh itself from the web.
         performRefresh(true);
     }
 

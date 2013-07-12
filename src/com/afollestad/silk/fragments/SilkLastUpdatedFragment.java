@@ -22,6 +22,9 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     private ImageButton mLastUpdateAction;
 
 
+    /**
+     * Sets whether or not the last updated frame is visible.
+     */
     public final void setLastUpdateVisibile(boolean visible) {
         View v = getView();
         if (v == null)
@@ -30,6 +33,9 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         v.findViewById(R.id.divider).setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
+    /**
+     * Gets the last time the fragment was updated (did a full refresh from the web).
+     */
     public final Calendar getLastUpdateTime() {
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
         if (prefs.contains(getCacheTitle())) {
@@ -40,7 +46,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         return null;
     }
 
-    public void invalidateLastUpdateLabel() {
+    private void invalidateLastUpdateLabel() {
         Calendar lastUpdate = getLastUpdateTime();
         if (lastUpdate != null) {
             mLastUpdateLabel.setText(getString(R.string.last_updated).replace("{date}", TimeUtils.getFriendlyTimeLong(lastUpdate)));
