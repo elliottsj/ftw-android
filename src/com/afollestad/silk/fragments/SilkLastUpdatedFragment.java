@@ -100,14 +100,12 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
 
     @Override
     public void setLoadFromCacheComplete() {
+        // Prevent the setLoadComplete() code from this class from being called after a cache load
         super.setLoadComplete();
-        // Displays the last updated label when the fragment is populated from the cache, not a web refresh
-        setLastUpdateVisibile(true);
     }
 
     @Override
     public void onCacheEmpty() {
-        super.onCacheEmpty();
         // Overriding the default behavior of refreshing immediately to show the last updated label
         if (getLastUpdateTime() != null) {
             // This isn't the first time the fragment has refreshed, just show the last update label
