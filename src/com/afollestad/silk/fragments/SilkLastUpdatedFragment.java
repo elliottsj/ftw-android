@@ -41,16 +41,10 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     }
 
     public void invalidateLastUpdateLabel() {
-        // If the last update time was 4 hours or more, shown the last updated frame
         Calendar lastUpdate = getLastUpdateTime();
         if (lastUpdate != null) {
-            Calendar now = Calendar.getInstance();
-            long nowHours = now.getTimeInMillis() / (60 * 60 * 1000);
-            long thenHours = lastUpdate.getTimeInMillis() / (60 * 60 * 1000);
-            if ((nowHours - thenHours) >= 4) {
-                setLastUpdateVisibile(true);
-                mLastUpdateLabel.setText(getString(R.string.last_updated).replace("{date}", TimeUtils.getFriendlyTimeLong(lastUpdate)));
-            } else setLastUpdateVisibile(false);
+            mLastUpdateLabel.setText(getString(R.string.last_updated).replace("{date}", TimeUtils.getFriendlyTimeLong(lastUpdate)));
+            setLastUpdateVisibile(true);
         } else setLastUpdateVisibile(false);
     }
 
