@@ -34,7 +34,7 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
         if (prefs.contains(getCacheTitle())) {
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(prefs.getLong("feed_last_update", 0));
+            cal.setTimeInMillis(prefs.getLong(getCacheTitle(), 0));
             return cal;
         }
         return null;
