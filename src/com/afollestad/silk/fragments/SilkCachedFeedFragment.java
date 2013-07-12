@@ -26,7 +26,7 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
-        // Read from the cache and refresh from the internet when the fragment's view is created
+        // Read from the cache or refresh from the internet when the fragment's view is created
         if (cache != null) {
             cache.read(getAdapter(), this);
         } else {
@@ -47,4 +47,12 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
      * from any other cached feed fragment,
      */
     public abstract String getCacheTitle();
+
+    /**
+     * Fired from the {@link SilkCacheManager} when the cache was found to be empty during view creation.
+     */
+    public void onCacheEmpty() {
+        // By default, this will cause the fragment to refresh itself from the web.
+        performRefresh(true);
+    }
 }

@@ -112,7 +112,7 @@ public final class SilkCacheManager<T> {
                         adapter.notifyDataSetChanged();
                         fragment.setLoadComplete();
                         if (adapter.getCount() == 0)
-                            fragment.performRefresh(true);
+                            fragment.onCacheEmpty();
                     }
                 });
             }
