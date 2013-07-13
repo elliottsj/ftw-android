@@ -43,4 +43,4 @@ and allowing the user to invoke a refresh.
 
 #### SilkPagerFragment
 
-A `SilkFragment` that contains a `ViewPager` and makes interaction it easy.
+A `SilkFragment` that contains a `ViewPager` and makes interaction with it easy.
