@@ -1,6 +1,7 @@
 package com.afollestad.silk.cache;
 
 import android.app.Activity;
+import android.os.Environment;
 import android.util.Log;
 import com.afollestad.silk.SilkAdapter;
 import com.afollestad.silk.fragments.SilkCachedFeedFragment;
@@ -24,8 +25,11 @@ public final class SilkCacheManager<T> {
      */
     public SilkCacheManager(Activity context, String cacheName) {
         this.context = context;
-        cacheFile = new File(context.getExternalCacheDir(), cacheName + ".cache");
+        cacheFile = new File(CACHE_DIRECTORY, cacheName + ".cache");
+        if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
     }
+
+    public final File CACHE_DIRECTORY = new File(Environment.getExternalStorageDirectory(), "Silk Cache");
 
     private final Activity context;
     private final File cacheFile;
