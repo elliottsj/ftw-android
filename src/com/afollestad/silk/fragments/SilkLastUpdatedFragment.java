@@ -110,17 +110,17 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     }
 
     @Override
-    public void setLoadComplete() {
-        super.setLoadComplete();
+    public void setLoadComplete(boolean error) {
+        super.setLoadComplete(error);
         mLastUpdateAction.setEnabled(true);
-        setLastUpdatedTime();
+        if (!error) setLastUpdatedTime();
         invalidateLastUpdated();
     }
 
     @Override
-    public void setLoadFromCacheComplete() {
+    public void setLoadFromCacheComplete(boolean error) {
         // Prevent the setLoadComplete() code from this class from being called after a cache load
-        super.setLoadComplete();
+        super.setLoadComplete(error);
         invalidateLastUpdated();
     }
 

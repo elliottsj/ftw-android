@@ -127,8 +127,11 @@ public abstract class SilkListFragment<T> extends SilkFragment {
     /**
      * Notifies the fragment that it is done loading data. This causes the progress view to become invisible, and the list
      * or empty text become visible again.
+     *
+     * @param error Whether or not an error occurred while loading. This value is not used in the default implementation
+     *              but can be used by overriding classes.
      */
-    public void setLoadComplete() {
+    public void setLoadComplete(boolean error) {
         mLoading = false;
         setListShown(true);
     }

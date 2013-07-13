@@ -105,19 +105,26 @@ public final class SilkCacheManager<T> {
                     });
                     objectInputStream.close();
                     log("Read " + adapter.getCount() + " items from " + cacheFile.getName());
+                    fragment.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (adapter.getCount() == 0)
+                                fragment.onCacheEmpty();
+                            fragment.setLoadFromCacheComplete(false);
+                        }
+                    });
                 } catch (Exception e) {
                     log("Cache read error: " + e.getMessage());
                     e.printStackTrace();
+                    fragment.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (adapter.getCount() == 0)
+                                fragment.onCacheEmpty();
+                            fragment.setLoadFromCacheComplete(true);
+                        }
+                    });
                 }
-
-                fragment.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adapter.getCount() == 0)
-                            fragment.onCacheEmpty();
-                        fragment.setLoadFromCacheComplete();
-                    }
-                });
             }
         });
         t.setPriority(Thread.MAX_PRIORITY);

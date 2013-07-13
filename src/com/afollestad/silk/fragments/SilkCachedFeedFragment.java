@@ -61,9 +61,11 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
      * or empty text become visible again.
      * <p/>
      * This is equivalent to {#setLoadComplete} by default, but can be overridden.
+     * <p/>
+     * * @param error Whether or not an error occurred while loading. This value can be used by overriding classes.
      */
-    public void setLoadFromCacheComplete() {
-        setLoadComplete();
+    public void setLoadFromCacheComplete(boolean error) {
+        setLoadComplete(error);
     }
 
 }

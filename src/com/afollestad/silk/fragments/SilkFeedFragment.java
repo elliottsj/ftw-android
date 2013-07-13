@@ -43,7 +43,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
             return;
         } else if (!Utils.isOnline(getActivity())) {
             onError(getString(R.string.offline_error));
-            setLoadComplete();
+            setLoadComplete(true);
             return;
         }
 
@@ -66,7 +66,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            setLoadComplete();
+                            setLoadComplete(true);
                             if (!Utils.isOnline(getActivity())) {
                                 onError(getString(R.string.offline_error));
                             } else {
@@ -79,7 +79,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setLoadComplete();
+                        setLoadComplete(false);
                     }
                 });
             }
