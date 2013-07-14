@@ -2,4 +2,5 @@
 <resources>
     <string name="offline_error">You are currently offline.</string>
     <string name="last_updated">Last updated: {date}</string>
+    <string name="reload">Reload</string>
 </resources>

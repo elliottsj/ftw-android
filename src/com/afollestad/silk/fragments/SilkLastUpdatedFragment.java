@@ -3,8 +3,9 @@ package com.afollestad.silk.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.afollestad.silk.R;
 import com.afollestad.silk.TimeUtils;
 
@@ -19,7 +20,7 @@ import java.util.Calendar;
 public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<T> {
 
     private TextView mLastUpdateLabel;
-    private ImageButton mLastUpdateAction;
+    private ImageView mLastUpdateAction;
 
 
     /**
@@ -82,13 +83,20 @@ public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mLastUpdateLabel = (TextView) view.findViewById(R.id.ptrLastUpdateLabel);
-        mLastUpdateAction = (ImageButton) view.findViewById(R.id.ptrLastUpdateAction);
+        mLastUpdateAction = (ImageView) view.findViewById(R.id.ptrLastUpdateAction);
         super.onViewCreated(view, savedInstanceState);
         invalidateLastUpdated();
         mLastUpdateAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onUserRefresh();
+            }
+        });
+        mLastUpdateAction.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(getActivity(), R.string.reload, Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
     }

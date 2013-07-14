@@ -2,25 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent"
               android:layout_height="fill_parent" android:orientation="vertical">
 
-    <LinearLayout android:id="@+id/lastUpdatedFrame" android:orientation="horizontal"
-                  android:layout_width="fill_parent" android:layout_height="@dimen/last_updated_frame"
-                  android:paddingLeft="17dp" android:paddingRight="10dp"
-                  android:visibility="gone" android:gravity="center_vertical">
+    <RelativeLayout android:id="@+id/lastUpdatedFrame"
+                    android:layout_width="fill_parent" android:layout_height="@dimen/last_updated_frame"
+                    android:paddingLeft="17dp" android:paddingRight="5dp" android:visibility="gone">
 
         <com.afollestad.silk.views.SilkTextView android:id="@+id/ptrLastUpdateLabel" android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
                                                 android:textSize="@dimen/last_updated_text"
-                                                android:layout_gravity="left"/>
+                                                android:layout_centerVertical="true"
+                                                android:layout_alignParentLeft="true"
+                                                android:layout_toLeftOf="@+id/verticalDivider"/>
 
-        <View android:layout_width="1dp" android:layout_height="wrap_content"
-              android:background="?android:dividerVertical" android:layout_gravity="right"/>
+        <View android:id="@+id/verticalDivider" android:layout_width="1dp" android:layout_height="wrap_content"
+              android:background="?android:dividerVertical" android:layout_centerVertical="true"
+              android:layout_toLeftOf="@+id/ptrLastUpdateAction" android:layout_marginLeft="5dp"
+              android:layout_marginTop="6dp" android:layout_marginBottom="6dp"/>
 
-        <ImageButton android:id="@+id/ptrLastUpdateAction" android:layout_width="@dimen/refresh_button"
-                     android:layout_height="@dimen/refresh_button" android:padding="@dimen/refresh_button_padding"
+        <ImageView android:id="@+id/ptrLastUpdateAction" android:layout_width="@dimen/last_updated_frame"
+                     android:layout_height="@dimen/last_updated_frame" android:padding="@dimen/refresh_button_padding"
                      android:src="@drawable/refresh_dark" android:background="?android:attr/selectableItemBackground"
-                     android:layout_gravity="right" android:layout_marginLeft="5dp" android:scaleType="fitCenter"/>
+                     android:layout_marginLeft="5dp" android:scaleType="fitXY" android:layout_alignParentRight="true"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <View android:id="@+id/divider" android:layout_width="fill_parent" android:layout_height="1dp"
           android:background="?android:attr/listDivider" android:visibility="gone"/>
