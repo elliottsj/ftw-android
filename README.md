@@ -13,6 +13,11 @@ Classes
 A class that you can extend to create customizable list adapters without extending `BaseAdapter`. This class makes it
 much easier and more consistent to create list adapters, and it handles things like recycling views on its own.
 
+#### SilkDatePicker
+
+A small, more compact version of the stock DatePicker. Made up of 3 horizontally-orientated spinners that represent the month,
+day, and year.
+
 ## Fragments
 
 #### SilkFragment
