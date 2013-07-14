@@ -12,13 +12,10 @@ public class TimeUtils {
     public static String getFriendlyTimeLong(Calendar time) {
         Calendar now = Calendar.getInstance();
         String am_pm = "AM";
-        if (time.get(Calendar.AM_PM) == Calendar.PM)
-            am_pm = "PM";
-        String day = Integer.toString(time.get(Calendar.DAY_OF_MONTH));
-        if (day.length() == 1) {
-            // Add a zero before the day if it's below 10 (1 character in length)
-            day = ("0" + day);
-        }
+        if (time.get(Calendar.AM_PM) == Calendar.PM) am_pm = "PM";
+        String day = "";
+        if (time.get(Calendar.DAY_OF_MONTH) < 10) day = "0";
+        day += time.get(Calendar.DAY_OF_MONTH);
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
             // Same year
             if (now.get(Calendar.MONTH) == time.get(Calendar.MONTH)) {
@@ -59,11 +56,9 @@ public class TimeUtils {
 
     public static String getFriendlyDate(Calendar time) {
         Calendar now = Calendar.getInstance();
-        String day = Integer.toString(time.get(Calendar.DAY_OF_MONTH));
-        if (day.length() == 1) {
-            // Add a zero before the day if it's below 10 (1 character in length)
-            day = ("0" + day);
-        }
+        String day = "";
+        if (time.get(Calendar.DAY_OF_MONTH) < 10) day = "0";
+        day += time.get(Calendar.DAY_OF_MONTH);
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
             // Same year
             if (now.get(Calendar.MONTH) == time.get(Calendar.MONTH)) {
