@@ -132,7 +132,7 @@ public class SilkDatePicker extends LinearLayout {
     private void fillDays() {
         int daysInMonth = mCal.getActualMaximum(Calendar.DAY_OF_MONTH);
         mDay.clear();
-        for (int i = 1; i < daysInMonth; i++) mDay.add(i + "");
+        for (int i = 1; i <= daysInMonth; i++) mDay.add(i + "");
         mDay.notifyDataSetChanged();
     }
 
