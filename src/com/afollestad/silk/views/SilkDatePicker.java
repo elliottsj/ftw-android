@@ -113,7 +113,7 @@ public class SilkDatePicker extends LinearLayout {
         yearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mCal.set(Calendar.YEAR, mCurrentYear + position);
+                mCal.set(Calendar.YEAR, getMinYear() + position);
             }
 
             @Override
