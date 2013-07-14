@@ -47,8 +47,6 @@ public class TimeUtils {
         } else {
             // Different year
             String year = Integer.toString(time.get(Calendar.YEAR));
-            if (now.get(Calendar.YEAR) < time.get(Calendar.YEAR))
-                year = year.substring(1, 3);
             return convertMonth(time.get(Calendar.MONTH)) + " " + day + ", " + year;
         }
     }
@@ -78,8 +76,6 @@ public class TimeUtils {
         } else {
             // Different year
             String year = Integer.toString(time.get(Calendar.YEAR));
-            if (now.get(Calendar.YEAR) < time.get(Calendar.YEAR))
-                year = year.substring(1, 3);
             return convertMonth(time.get(Calendar.MONTH)) + " " + day + ", " + year;
         }
     }
