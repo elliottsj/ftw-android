@@ -9,6 +9,18 @@ import java.util.Calendar;
  */
 public class TimeUtils {
 
+    /**
+     * Gets a human-readable long time string (includes both the time and date, excluded certain parts if possible).
+     */
+    public static String getFriendlyTimeLong(long time) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(time);
+        return getFriendlyDate(cal);
+    }
+
+    /**
+     * Gets a human-readable long time string (includes both the time and date, excluded certain parts if possible).
+     */
     public static String getFriendlyTimeLong(Calendar time) {
         Calendar now = Calendar.getInstance();
         String am_pm = "AM";
@@ -48,12 +60,21 @@ public class TimeUtils {
         }
     }
 
+    /**
+     * Gets a human-readable date string (month, day, and year).
+     *
+     * @param time
+     * @return
+     */
     public static String getFriendlyDate(long time) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(time);
         return getFriendlyDate(cal);
     }
 
+    /**
+     * Gets a human-readable date string (month, day, and year).
+     */
     public static String getFriendlyDate(Calendar time) {
         Calendar now = Calendar.getInstance();
         String day = "";
@@ -75,6 +96,20 @@ public class TimeUtils {
         }
     }
 
+    /**
+     * Gets a human readable short time string, that indicates how long it's been since a specified time.
+     * The format is similar to what most Twitter clients do (e.g. 1s, 1m, 1h, 1d, 1w, 1m, 1y).
+     */
+    public static String getFriendlyTimeShort(long time) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(time);
+        return getFriendlyTimeShort(cal);
+    }
+
+    /**
+     * Gets a human readable short time string, that indicates how long it's been since a specified time.
+     * The format is similar to what most Twitter clients do (e.g. 1s, 1m, 1h, 1d, 1w, 1m, 1y).
+     */
     public static String getFriendlyTimeShort(Calendar time) {
         Calendar now = Calendar.getInstance();
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {

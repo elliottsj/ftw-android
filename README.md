@@ -13,10 +13,23 @@ Classes
 A class that you can extend to create customizable list adapters without extending `BaseAdapter`. This class makes it
 much easier and more consistent to create list adapters, and it handles things like recycling views on its own.
 
+## Views
+
 #### SilkDatePicker
 
-A small, more compact version of the stock DatePicker. Made up of 3 horizontally-orientated spinners that represent the month,
+A small, more compact version of the stock `DatePicker`. Made up of 3 horizontally-orientated spinners that represent the month,
 day, and year.
+
+## Utilities
+
+#### SilkCacheManager
+
+This class is used by the `SilkCachedFeedFragment` to cache items in the fragment's adapter. Allows you to easily
+
+#### TimeUtils
+
+Provides convenience methods for converting Calendar/milliseconds into human readable strings. This is useful for almost any
+app that needs to display a time to the user, but is especially useful for Twitter clients (see `TimeUtils.getFriendlyTimeShort()`).
 
 ## Fragments
 
