@@ -192,8 +192,12 @@ public final class SilkCacheManager<T> {
 
     /**
      * Reads from the manager's cache file into a {@link SilkAdapter}, and notifies a {@link SilkCachedFeedFragment} when it's loading and done loading.
+     *
+     * @param adapter      The adapter that items will be added to.
+     * @param fragment     The fragment that will receive loading notifications.
+     * @param clearIfEmpty Whether or not the adapter will be cleared if the cache is empty.
      */
-    public void readAsync(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment) {
+    public void readAsync(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment, final boolean clearIfEmpty) {
         if (adapter == null || fragment == null)
             throw new IllegalArgumentException("The adapter and fragment parameters cannot be null.");
         else if (fragment.isLoading())
@@ -216,6 +220,7 @@ public final class SilkCacheManager<T> {
 
             @Override
             public void onCacheEmpty() {
+                if (clearIfEmpty) adapter.clear();
                 fragment.onCacheEmpty();
                 fragment.setLoadFromCacheComplete(false);
             }

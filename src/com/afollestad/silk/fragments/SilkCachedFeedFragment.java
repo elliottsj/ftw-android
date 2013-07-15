@@ -26,7 +26,7 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
-        if (cache != null) cache.readAsync(getAdapter(), this);
+        if (cache != null) cache.readAsync(getAdapter(), this, true);
         else performRefresh(true);
     }
 
@@ -67,6 +67,6 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
     @Override
     public void onVisibilityChange(boolean visible) {
         if (visible && cache != null)
-            cache.readAsync(getAdapter(), this);
+            cache.readAsync(getAdapter(), this, true);
     }
 }
