@@ -75,18 +75,22 @@ public final class SilkCacheManager<T> {
     /**
      * Removes items from the cache based on the passed filter.
      */
-    public void remove(RemoveFilter filter) throws Exception {
+    public void remove(RemoveFilter<T> filter) throws Exception {
         if (filter == null) throw new IllegalArgumentException("Remove filter cannot be null.");
         List<T> cache = readEntireCache();
         if (cache.size() == 0) return;
+        int removed = 0;
         for (int i = 0; i < cache.size(); i++) {
-            if (filter.shouldRemove(cache.get(i)))
+            if (filter.shouldRemove(cache.get(i))) {
+                removed++;
                 cache.remove(i);
+            }
         }
         FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
         for (T item : cache) objectOutputStream.writeObject(item);
         objectOutputStream.close();
+        log("Removed " + removed + " items from " + cacheFile.getName());
     }
 
     /**
