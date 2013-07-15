@@ -15,21 +15,21 @@ public class SilkCondensedTextView extends TextView {
 
     public SilkCondensedTextView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public SilkCondensedTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public SilkCondensedTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
-    private void init() {
-        Typeface tf = Typeface.createFromAsset(getContext().getAssets(), "Roboto-Condensed.ttf");
-        setTypeface(tf);
+    private void init(Context context) {
+        // Typeface tf = Typeface.createFromAsset(context.getAssets(), "Roboto-Condensed.ttf");
+        // setTypeface(tf);
     }
 }

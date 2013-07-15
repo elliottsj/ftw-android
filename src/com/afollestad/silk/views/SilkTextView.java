@@ -15,21 +15,21 @@ public class SilkTextView extends TextView {
 
     public SilkTextView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public SilkTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public SilkTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
-    private void init() {
-        Typeface tf = Typeface.createFromAsset(getContext().getAssets(), "Roboto-Light.ttf");
+    private void init(Context context) {
+        Typeface tf = Typeface.createFromAsset(context.getAssets(), "Roboto-Light.ttf");
         setTypeface(tf);
     }
 }
