@@ -128,7 +128,9 @@ public final class SilkCacheManager<T> {
      * Reads from the manager's cache file into a SilkAdapter.
      */
     public void read(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment) {
-        if (!cacheFile.exists()) {
+        if (fragment.isLoading())
+            return;
+        else if (!cacheFile.exists()) {
             log("No cache for " + cacheFile.getName());
             fragment.onCacheEmpty();
             return;
