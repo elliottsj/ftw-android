@@ -174,10 +174,15 @@ public final class SilkCacheManager<T> {
                             else callback.onRead(results);
                         }
                     });
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                     log("Cache read error: " + e.getMessage());
-                    callback.onError(e.getMessage());
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onError(e.getMessage());
+                        }
+                    });
                 }
             }
         });
