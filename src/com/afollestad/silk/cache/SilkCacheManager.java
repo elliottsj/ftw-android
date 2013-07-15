@@ -132,18 +132,20 @@ public final class SilkCacheManager<T> {
      * Reads from the cache file on the calling thread and returns the results.
      */
     public List<T> read() throws Exception {
-        FileInputStream fileInputStream = new FileInputStream(cacheFile);
-        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         final List<T> results = new ArrayList<T>();
-        while (true) {
-            try {
-                final T item = (T) objectInputStream.readObject();
-                if (item != null) results.add(item);
-            } catch (EOFException eof) {
-                break;
+        if (cacheFile.exists()) {
+            FileInputStream fileInputStream = new FileInputStream(cacheFile);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            while (true) {
+                try {
+                    final T item = (T) objectInputStream.readObject();
+                    if (item != null) results.add(item);
+                } catch (EOFException eof) {
+                    break;
+                }
             }
+            objectInputStream.close();
         }
-        objectInputStream.close();
         log("Read " + results.size() + " items from " + cacheFile.getName());
         return results;
     }
