@@ -25,6 +25,19 @@ much easier and more consistent to create list adapters, and it handles things l
 A small, more compact version of the stock `DatePicker`. Made up of 3 horizontally-orientated spinners that represent the month,
 day, and year.
 
+###### SilkTextView
+
+A `TextView` that automatically sets its typeface to Roboto Light (the leaked update from Android 4.3 specifically). It loads
+from the assets folder so it will work on any version of Android.
+
+###### SilkCondensedTextView
+
+Same as the `SilkTextView` but uses Roboto Condensed instead of light.
+
+###### SilkEditText
+
+Same as the `SilkTextView` but it's an `EditText`.
+
 ### Utilities
 
 ###### SilkCacheManager
