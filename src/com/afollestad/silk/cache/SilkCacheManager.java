@@ -17,6 +17,10 @@ import java.util.List;
  */
 public final class SilkCacheManager<T> {
 
+    public interface RemoveFilter<T> {
+        public boolean shouldRemove(T item);
+    }
+
     /**
      * Initializes a new SilkCacheManager.
      *
@@ -38,6 +42,53 @@ public final class SilkCacheManager<T> {
         Log.d("FeedCacheManager", message);
     }
 
+    private List<T> readEntireCache() throws Exception {
+        FileInputStream fileInputStream = new FileInputStream(cacheFile);
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        final List<T> toAdd = new ArrayList<T>();
+        while (true) {
+            try {
+                final T item = (T) objectInputStream.readObject();
+                if (item != null) toAdd.add(item);
+            } catch (EOFException eof) {
+                break;
+            }
+        }
+        objectInputStream.close();
+        return toAdd;
+    }
+
+    /**
+     * Writes a single object to the cache.
+     */
+    public void add(T toAdd) throws Exception {
+        boolean shouldAppend = cacheFile.exists();
+        FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
+        ObjectOutputStream objectOutputStream;
+        if (shouldAppend) objectOutputStream = new AppendableObjectOutputStream(fileOutputStream);
+        else objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(toAdd);
+        objectOutputStream.close();
+        log("Wrote 1 item to " + cacheFile.getName());
+    }
+
+    /**
+     * Removes items from the cache based on the passed filter.
+     */
+    public void remove(RemoveFilter filter) throws Exception {
+        if (filter == null) throw new IllegalArgumentException("Remove filter cannot be null.");
+        List<T> cache = readEntireCache();
+        if (cache.size() == 0) return;
+        for (int i = 0; i < cache.size(); i++) {
+            if (filter.shouldRemove(cache.get(i)))
+                cache.remove(i);
+        }
+        FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        for (T item : cache) objectOutputStream.writeObject(item);
+        objectOutputStream.close();
+    }
+
     /**
      * Caches the contents of a SilkAdapter the manager's cache file.
      */
@@ -56,9 +107,7 @@ public final class SilkCacheManager<T> {
                 try {
                     FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
                     ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-                    for (T item : items) {
-                        objectOutputStream.writeObject(item);
-                    }
+                    for (T item : items) objectOutputStream.writeObject(item);
                     objectOutputStream.close();
                     log("Wrote " + items.size() + " items to " + cacheFile.getName());
                 } catch (Exception e) {
@@ -85,17 +134,7 @@ public final class SilkCacheManager<T> {
             @Override
             public void run() {
                 try {
-                    FileInputStream fileInputStream = new FileInputStream(cacheFile);
-                    ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-                    final List<T> toAdd = new ArrayList<T>();
-                    while (true) {
-                        try {
-                            final T item = (T) objectInputStream.readObject();
-                            if (item != null) toAdd.add(item);
-                        } catch (EOFException eof) {
-                            break;
-                        }
-                    }
+                    final List<T> toAdd = readEntireCache();
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -103,7 +142,6 @@ public final class SilkCacheManager<T> {
                             for (T item : toAdd) adapter.add(item);
                         }
                     });
-                    objectInputStream.close();
                     log("Read " + adapter.getCount() + " items from " + cacheFile.getName());
                     fragment.runOnUiThread(new Runnable() {
                         @Override
@@ -131,4 +169,3 @@ public final class SilkCacheManager<T> {
         t.start();
     }
 }
-

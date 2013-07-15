@@ -66,8 +66,17 @@ public abstract class SilkFragment extends Fragment {
         super.onResume();
         if (getUserVisibleHint())
             notifyVisibility(true);
+        else if (mAttached)
+            notifyVisibility(true);
         if (getTitle() != null)
             getActivity().setTitle(getTitle());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mAttached)
+            notifyVisibility(false);
     }
 
     @Override
