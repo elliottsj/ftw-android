@@ -133,7 +133,7 @@ public final class SilkCacheManager<T> {
             fragment.onCacheEmpty();
             return;
         }
-        fragment.setLoading(true);
+        fragment.setLoading(false);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
