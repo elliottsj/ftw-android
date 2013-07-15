@@ -204,8 +204,9 @@ public final class SilkCacheManager<T> {
         readAsync(new ReadCallback<T>() {
             @Override
             public void onRead(List<T> results) {
-                adapter.clear();
-                for (T item : results) adapter.add(item);
+                for (T item : results) {
+                    if (!adapter.contains(item)) adapter.add(item);
+                }
                 fragment.setLoadFromCacheComplete(false);
             }
 

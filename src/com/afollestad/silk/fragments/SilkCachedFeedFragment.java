@@ -30,14 +30,6 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
         else performRefresh(true);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        // Write to the feed cache when the fragment is paused
-        if (cache != null)
-            cache.writeAsync(getAdapter());
-    }
-
     /**
      * Gets the name of the fragment's cache, used by a {@link SilkCacheManager} instance and should be unique
      * from any other cached feed fragment,
@@ -66,7 +58,11 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
 
     @Override
     public void onVisibilityChange(boolean visible) {
-        if (visible && cache != null)
-            cache.readAsync(getAdapter(), this, true);
+        if (cache != null) {
+            if (visible)
+                cache.readAsync(getAdapter(), this, true);
+            else
+                cache.writeAsync(getAdapter());
+        }
     }
 }

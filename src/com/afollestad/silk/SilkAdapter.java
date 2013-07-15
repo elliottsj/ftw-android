@@ -84,6 +84,11 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     /**
+     * Checks whether or not the adapter contains an item yet.
+     */
+    public abstract boolean contains(T item);
+
+    /**
      * Removes an item from the list by its index.
      */
     public final void remove(int index) {
