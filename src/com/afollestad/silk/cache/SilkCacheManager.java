@@ -39,7 +39,7 @@ public final class SilkCacheManager<T> {
     private final File cacheFile;
 
     private void log(String message) {
-        Log.d("FeedCacheManager", message);
+        Log.d("SilkCacheManager", message);
     }
 
     private List<T> readEntireCache() throws Exception {
