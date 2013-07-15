@@ -70,6 +70,7 @@ public final class SilkCacheManager<T> {
                 log("Adapter for " + cacheFile.getName() + " is empty, deleting file...");
                 cacheFile.delete();
             }
+            return;
         }
         FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
