@@ -24,7 +24,9 @@ day, and year.
 
 #### SilkCacheManager
 
-This class is used by the `SilkCachedFeedFragment` to cache items in the fragment's adapter. Allows you to easily
+This class is used by the `SilkCachedFeedFragment` to cache items in the fragment's adapter. Allows you to easily manage your own
+cache files using both synchronous and asynchronous methods; any class that implements `Serializable` can be written to and read
+from a cache (but remember to mark any fields of non-serializable types as `transient`).
 
 #### TimeUtils
 
