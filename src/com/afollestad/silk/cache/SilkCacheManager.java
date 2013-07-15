@@ -56,14 +56,9 @@ public final class SilkCacheManager<T> {
      * Writes a single object to the cache, without overwriting previous entries.
      */
     public void add(T toAdd) throws Exception {
-        boolean shouldAppend = cacheFile.exists();
-        FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
-        ObjectOutputStream objectOutputStream;
-        if (shouldAppend) objectOutputStream = new AppendableObjectOutputStream(fileOutputStream);
-        else objectOutputStream = new ObjectOutputStream(fileOutputStream);
-        objectOutputStream.writeObject(toAdd);
-        objectOutputStream.close();
-        log("Wrote 1 item to " + cacheFile.getName());
+        List<T> cache = read();
+        cache.add(toAdd);
+        write(cache);
     }
 
     /**
