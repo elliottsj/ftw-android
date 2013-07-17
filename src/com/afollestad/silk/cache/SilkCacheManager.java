@@ -1,7 +1,8 @@
 package com.afollestad.silk.cache;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import com.afollestad.silk.SilkAdapter;
 import com.afollestad.silk.fragments.SilkCachedFeedFragment;
@@ -41,15 +42,15 @@ public final class SilkCacheManager<T> {
      * @param context   The context used for retrieving the cache directory and running methods on the UI thread.
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      */
-    public SilkCacheManager(Activity context, String cacheName) {
-        this.context = context;
+    public SilkCacheManager(Context context, String cacheName) {
+        mHandler = new Handler();
         cacheFile = new File(CACHE_DIRECTORY, cacheName + ".cache");
         if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
     }
 
     public final File CACHE_DIRECTORY = new File(Environment.getExternalStorageDirectory(), "Silk Cache");
 
-    private final Activity context;
+    private final Handler mHandler;
     private final File cacheFile;
 
     private void log(String message) {
@@ -59,7 +60,7 @@ public final class SilkCacheManager<T> {
     /**
      * Writes a single object to the cache, without overwriting previous entries.
      *
-     * @param toAdd the item to add to the cache.
+     * @param toAdd  the item to add to the cache.
      * @param filter The optional filter that overwrites the item being added if it's already in the cache.
      */
     public void add(T toAdd, AddFilter<T> filter) throws Exception {
@@ -179,7 +180,7 @@ public final class SilkCacheManager<T> {
             public void run() {
                 try {
                     final List<T> results = read();
-                    context.runOnUiThread(new Runnable() {
+                    mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (results.size() == 0) callback.onCacheEmpty();
@@ -189,7 +190,7 @@ public final class SilkCacheManager<T> {
                 } catch (final Exception e) {
                     e.printStackTrace();
                     log("Cache read error: " + e.getMessage());
-                    context.runOnUiThread(new Runnable() {
+                    mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             callback.onError(e.getMessage());
