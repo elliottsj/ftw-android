@@ -18,6 +18,10 @@ import java.util.List;
  */
 public final class SilkCacheManager<T> {
 
+    public interface AddFilter<T> {
+        public boolean isSame(T one, T two);
+    }
+
     public interface RemoveFilter<T> {
         public boolean shouldRemove(T item);
     }
@@ -54,10 +58,20 @@ public final class SilkCacheManager<T> {
 
     /**
      * Writes a single object to the cache, without overwriting previous entries.
+     *
+     * @param toAdd the item to add to the cache.
+     * @param filter The optional filter that overwrites the item being added if it's already in the cache.
      */
-    public void add(T toAdd) throws Exception {
+    public void add(T toAdd, AddFilter<T> filter) throws Exception {
         List<T> cache = read();
-        cache.add(toAdd);
+        if (filter != null) {
+            for (int i = 0; i < cache.size(); i++) {
+                if (filter.isSame(toAdd, cache.get(i))) {
+                    cache.set(i, toAdd);
+                    break;
+                }
+            }
+        } else cache.add(toAdd);
         write(cache);
     }
 
