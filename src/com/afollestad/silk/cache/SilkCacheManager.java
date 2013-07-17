@@ -46,6 +46,18 @@ public final class SilkCacheManager<T> {
         if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
     }
 
+    /**
+     * Initializes a new SilkCacheManager.
+     *
+     * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
+     * @param handler   If the manager isn't being created on the UI thread, a handler that was.
+     */
+    public SilkCacheManager(String cacheName, Handler handler) {
+        mHandler = handler;
+        cacheFile = new File(CACHE_DIRECTORY, cacheName + ".cache");
+        if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
+    }
+
     public final File CACHE_DIRECTORY = new File(Environment.getExternalStorageDirectory(), "Silk Cache");
 
     private final Handler mHandler;
