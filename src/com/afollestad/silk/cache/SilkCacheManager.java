@@ -64,12 +64,15 @@ public final class SilkCacheManager<T> {
     public void add(T toAdd, AddFilter<T> filter) throws Exception {
         List<T> cache = read();
         if (filter != null) {
+            boolean found = false;
             for (int i = 0; i < cache.size(); i++) {
                 if (filter.isSame(toAdd, cache.get(i))) {
+                    found = true;
                     cache.set(i, toAdd);
                     break;
                 }
             }
+            if (!found) cache.add(toAdd);
         } else cache.add(toAdd);
         write(cache);
     }
