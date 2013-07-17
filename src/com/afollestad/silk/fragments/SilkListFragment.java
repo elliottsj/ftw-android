@@ -26,6 +26,13 @@ public abstract class SilkListFragment<T> extends SilkFragment {
     private SilkAdapter<T> mAdapter;
     private boolean mLoading;
 
+    /**
+     * Gets the ListView contained in the Fragment's layout.
+     */
+    public final ListView getListView() {
+        return mListView;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
