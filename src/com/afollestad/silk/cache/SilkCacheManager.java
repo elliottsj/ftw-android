@@ -1,6 +1,5 @@
 package com.afollestad.silk.cache;
 
-import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
@@ -39,10 +38,9 @@ public final class SilkCacheManager<T> {
     /**
      * Initializes a new SilkCacheManager.
      *
-     * @param context   The context used for retrieving the cache directory and running methods on the UI thread.
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      */
-    public SilkCacheManager(Context context, String cacheName) {
+    public SilkCacheManager(String cacheName) {
         mHandler = new Handler();
         cacheFile = new File(CACHE_DIRECTORY, cacheName + ".cache");
         if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
