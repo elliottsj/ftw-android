@@ -19,7 +19,7 @@ public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getCacheTitle() != null)
-            cache = new SilkCacheManager<T>(getActivity(), getCacheTitle());
+            cache = new SilkCacheManager<T>(getCacheTitle());
     }
 
     @Override
