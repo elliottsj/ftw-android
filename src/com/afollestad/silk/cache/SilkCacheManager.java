@@ -221,9 +221,8 @@ public final class SilkCacheManager<T extends Serializable> {
         readAsync(new ReadCallback<T>() {
             @Override
             public void onRead(List<T> results) {
-                for (T item : results) {
-                    if (!adapter.contains(item)) adapter.add(item);
-                }
+                adapter.clear();
+                for (T item : results) adapter.add(item);
                 fragment.setLoadFromCacheComplete(false);
             }
 
