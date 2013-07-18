@@ -244,6 +244,8 @@ public final class SilkCacheManager<T extends Serializable> {
 
     /**
      * Removes items from the cache file based on the passed filter.
+     *
+     * @param filter The remove filter used to decide what objects are removed from the cache.
      */
     public void remove(RemoveFilter<T> filter) throws Exception {
         if (filter == null) throw new IllegalArgumentException("Remove filter cannot be null.");
