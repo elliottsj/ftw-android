@@ -64,8 +64,6 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
 
     /**
      * Adds an array of items to the adapter and notifies the attached ListView.
-     *
-     * @param toAdd
      */
     public final void add(T[] toAdd) {
         Collections.addAll(this.items, toAdd);
@@ -74,8 +72,6 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
 
     /**
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
-     *
-     * @param toSet
      */
     public final void set(T[] toSet) {
         this.items.clear();
