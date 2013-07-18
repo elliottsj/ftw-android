@@ -8,7 +8,6 @@ import com.afollestad.silk.fragments.SilkCachedFeedFragment;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,14 +17,38 @@ import java.util.List;
  */
 public final class SilkCacheManager<T extends SilkComparable> {
 
-    public interface ReadCallback<T> {
+    public interface AddCallback {
+        public void onAdded(T item);
 
+        public void onError(Exception e);
+    }
+
+    public interface UpdateCallback {
+        public void onUpdated(T item, boolean added);
+
+        public void onError(Exception e);
+    }
+
+    public interface WriteCallback {
+        public void onWrite(List<T> items);
+
+        public void onError(Exception e);
+    }
+
+    public interface ReadCallback {
         public void onRead(List<T> results);
 
-        public void onError(String msg);
+        public void onError(Exception e);
 
         public void onCacheEmpty();
     }
+
+    public interface RemoveCallback {
+        public void onRemoved(int index, long itemId);
+
+        public void onError(Exception e);
+    }
+
 
     /**
      * Initializes a new SilkCacheManager.
@@ -75,7 +98,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      *
      * @param toUpdate The item to update, or add.
      */
-    public void update(T toUpdate) throws Exception {
+    public boolean update(T toUpdate) throws Exception {
         List<T> cache = read();
         boolean found = false;
         for (int i = 0; i < cache.size(); i++) {
@@ -87,6 +110,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
         }
         if (found) write(cache);
         else add(toUpdate);
+        return found;
     }
 
     private void write(List<T> items, boolean append) throws Exception {
@@ -105,17 +129,10 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
-     * Writes a list of items to the cache from the calling thread, overwriting all current entries in the cache.
+     * Writes an list of items to the cache from the calling thread, overwriting all current entries in the cache.
      */
     public void write(List<T> items) throws Exception {
         write(items, false);
-    }
-
-    /**
-     * Writes an array of items to the cache from the calling thread, overwriting all current entries in the cache.
-     */
-    public void write(T[] items) throws Exception {
-        write(Arrays.asList(items), false);
     }
 
     /**
@@ -124,40 +141,6 @@ public final class SilkCacheManager<T extends SilkComparable> {
     public void write(SilkAdapter<T> adapter) throws Exception {
         if (adapter == null) throw new IllegalArgumentException("The adapter cannot be null.");
         write(adapter.getItems(), false);
-    }
-
-    /**
-     * Writes a list of items to the cache from a separate thread, overwriting all current entries in the cache.
-     */
-    public void writeAsync(final List<T> items) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    write(items, false);
-                } catch (Exception e) {
-                    log("Cache write error: " + e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        });
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
-    }
-
-    /**
-     * Writes an array of items to the cache from a separate thread, overwriting all current entries in the cache.
-     */
-    public void writeAsync(T[] items) {
-        writeAsync(Arrays.asList(items));
-    }
-
-    /**
-     * Writes the contents of a {@link SilkAdapter} to the cache file from a separate thread, overwriting all current entries in the cache.
-     */
-    public void writeAsync(SilkAdapter<T> adapter) {
-        if (adapter == null) throw new IllegalArgumentException("The adapter cannot be null.");
-        writeAsync(adapter.getItems());
     }
 
     /**
@@ -183,9 +166,108 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
+     * Removes an item from the cache.
+     */
+    public int remove(long itemId) throws Exception {
+        List<T> cache = read();
+        if (cache.size() == 0) return -1;
+        int index = -1;
+        for (int i = 0; i < cache.size(); i++) {
+            if (cache.get(i).getId() == itemId) {
+                cache.remove(i);
+                index = i;
+                break;
+            }
+        }
+        write(cache, false);
+        log("Removed item at index " + index + " from " + cacheFile.getName());
+        return index;
+    }
+
+    /**
+     * Writes a single object to the cache from a separate thread, posting results to a callback.
+     */
+    public void addAsync(final T toAdd, final AddCallback callback) throws Exception {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    add(toAdd);
+                    if (callback != null) callback.onAdded(toAdd);
+                } catch (Exception e) {
+                    log("Cache write error: " + e.getMessage());
+                    if (callback != null) callback.onError(e);
+                }
+            }
+        });
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+    }
+
+    /**
+     * Updates an item in the cache. If it's not found, it's added. This is done on a separate thread and results are
+     * posted to a callback.
+     */
+    public void updateAsync(final T toUpdate, final UpdateCallback callback) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    boolean isAdded = update(toUpdate);
+                    if (callback != null) callback.onUpdated(toUpdate, isAdded);
+                } catch (Exception e) {
+                    log("Cache write error: " + e.getMessage());
+                    if (callback != null) callback.onError(e);
+                }
+            }
+        });
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+    }
+
+    /**
+     * Writes a list of items to the cache from a separate thread, overwriting all current entries in the cache.
+     */
+    public void writeAsync(final List<T> items, final WriteCallback callback) {
+        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    write(items, false);
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onWrite(items);
+                        }
+                    });
+                } catch (final Exception e) {
+                    log("Cache write error: " + e.getMessage());
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onError(e);
+                        }
+                    });
+                }
+            }
+        });
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+    }
+
+    /**
+     * Writes the contents of a {@link SilkAdapter} to the cache file from a separate thread, overwriting all current entries in the cache.
+     */
+    public void writeAsync(SilkAdapter<T> adapter, WriteCallback callback) {
+        if (adapter == null) throw new IllegalArgumentException("The adapter cannot be null.");
+        writeAsync(adapter.getItems(), callback);
+    }
+
+    /**
      * Reads from the cache file on a separate thread and posts results to a callback.
      */
-    public void readAsync(final ReadCallback<T> callback) {
+    public void readAsync(final ReadCallback callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         if (!cacheFile.exists()) {
             log("No cache for " + cacheFile.getName());
@@ -210,7 +292,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onError(e.getMessage());
+                            callback.onError(e);
                         }
                     });
                 }
@@ -233,7 +315,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
         else if (fragment.isLoading())
             return;
         fragment.setLoading(false);
-        readAsync(new ReadCallback<T>() {
+        readAsync(new ReadCallback() {
             @Override
             public void onRead(List<T> results) {
                 adapter.clear();
@@ -242,7 +324,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
             }
 
             @Override
-            public void onError(String msg) {
+            public void onError(Exception e) {
                 if (adapter.getCount() == 0)
                     fragment.onCacheEmpty();
                 fragment.setLoadFromCacheComplete(true);
@@ -258,27 +340,33 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
-     * Removes an item from the cache.
+     * Removes an item from the cache, results are posted to a callback.
      */
-    public void remove(long itemId) throws Exception {
-        List<T> cache = read();
-        if (cache.size() == 0) return;
-        int removed = 0;
-        for (int i = 0; i < cache.size(); i++) {
-            if (cache.get(i).getId() == itemId) {
-                cache.remove(i);
-                removed++;
-                break;
+    public void removeAsync(final long itemId, final RemoveCallback callback) {
+        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final int removeIndex = remove(itemId);
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onRemoved(removeIndex, itemId);
+                        }
+                    });
+                } catch (final Exception e) {
+                    log("Cache write error: " + e.getMessage());
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onError(e);
+                        }
+                    });
+                }
             }
-        }
-        write(cache, false);
-        log("Removed " + removed + " items from " + cacheFile.getName());
-    }
-
-    /**
-     * Removes an item from the cache.
-     */
-    public void remove(T item) throws Exception {
-        remove(item.getId());
+        });
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
     }
 }
