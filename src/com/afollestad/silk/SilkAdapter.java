@@ -65,7 +65,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     /**
      * Adds an array of items to the adapter and notifies the attached ListView.
      */
-    public final void add(T[] toAdd) {
+    public void add(T[] toAdd) {
         Collections.addAll(this.items, toAdd);
         notifyDataSetChanged();
     }
@@ -73,7 +73,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     /**
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
-    public final void set(T[] toSet) {
+    public void set(T[] toSet) {
         this.items.clear();
         this.items.addAll(Arrays.asList(toSet));
         notifyDataSetChanged();
@@ -87,7 +87,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     /**
      * Removes an item from the list by its index.
      */
-    public final void remove(int index) {
+    public void remove(int index) {
         this.items.remove(index);
         notifyDataSetChanged();
     }
@@ -95,7 +95,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     /**
      * Clears all items from the adapter and notifies the attached ListView.
      */
-    public final void clear() {
+    public void clear() {
         this.items.clear();
         notifyDataSetChanged();
     }
