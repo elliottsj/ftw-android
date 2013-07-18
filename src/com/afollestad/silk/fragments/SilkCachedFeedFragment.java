@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 import com.afollestad.silk.cache.SilkCacheManager;
 
+import java.io.Serializable;
+
 /**
  * A {@link SilkFeedFragment} that automatically caches loaded feeds locally and loads them again later.
  * <p/>
@@ -11,9 +13,9 @@ import com.afollestad.silk.cache.SilkCacheManager;
  *
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCachedFeedFragment<T> extends SilkFeedFragment<T> {
+public abstract class SilkCachedFeedFragment<T extends Serializable> extends SilkFeedFragment<T> {
 
-    private SilkCacheManager cache;
+    private SilkCacheManager<T> cache;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

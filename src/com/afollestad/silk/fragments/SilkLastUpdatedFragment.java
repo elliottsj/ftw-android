@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.afollestad.silk.R;
 import com.afollestad.silk.TimeUtils;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Calendar;
  *
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkLastUpdatedFragment<T> extends SilkCachedFeedFragment<T> {
+public abstract class SilkLastUpdatedFragment<T extends Serializable> extends SilkCachedFeedFragment<T> {
 
     private TextView mLastUpdateLabel;
     private ImageView mLastUpdateAction;

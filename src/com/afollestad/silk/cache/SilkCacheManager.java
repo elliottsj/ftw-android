@@ -16,11 +16,7 @@ import java.util.List;
  *
  * @author Aidan Follestad (afollestad)
  */
-public final class SilkCacheManager<T> {
-
-    public interface AddFilter<T> {
-        public boolean isSame(T one, T two);
-    }
+public final class SilkCacheManager<T extends Serializable> {
 
     public interface RemoveFilter<T> {
         public boolean shouldRemove(T item);
@@ -70,29 +66,15 @@ public final class SilkCacheManager<T> {
     /**
      * Writes a single object to the cache, without overwriting previous entries.
      *
-     * @param toAdd  the item to add to the cache.
-     * @param filter The optional filter that overwrites the item being added if it's already in the cache.
+     * @param toAdd the item to add to the cache.
      */
-    public void add(T toAdd, AddFilter<T> filter) throws Exception {
-        List<T> cache = read();
-        if (filter != null) {
-            boolean found = false;
-            for (int i = 0; i < cache.size(); i++) {
-                if (filter.isSame(toAdd, cache.get(i))) {
-                    found = true;
-                    cache.set(i, toAdd);
-                    break;
-                }
-            }
-            if (!found) cache.add(toAdd);
-        } else cache.add(toAdd);
-        write(cache);
+    public void add(T toAdd) throws Exception {
+        List<T> temp = new ArrayList<T>();
+        temp.add(toAdd);
+        write(temp, true);
     }
 
-    /**
-     * Writes a list of items to the cache from the calling thread, overwriting all current entries in the cache.
-     */
-    public void write(List<T> items) throws Exception {
+    private void write(List<T> items, boolean append) throws Exception {
         if (items == null || items.size() == 0) {
             if (cacheFile.exists()) {
                 log("Adapter for " + cacheFile.getName() + " is empty, deleting file...");
@@ -100,7 +82,7 @@ public final class SilkCacheManager<T> {
             }
             return;
         }
-        FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
+        FileOutputStream fileOutputStream = new FileOutputStream(cacheFile, append);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
         for (T item : items) objectOutputStream.writeObject(item);
         objectOutputStream.close();
@@ -108,10 +90,17 @@ public final class SilkCacheManager<T> {
     }
 
     /**
+     * Writes a list of items to the cache from the calling thread, overwriting all current entries in the cache.
+     */
+    public void write(List<T> items) throws Exception {
+        write(items, false);
+    }
+
+    /**
      * Writes an array of items to the cache from the calling thread, overwriting all current entries in the cache.
      */
     public void write(T[] items) throws Exception {
-        write(Arrays.asList(items));
+        write(Arrays.asList(items), false);
     }
 
     /**
@@ -119,7 +108,7 @@ public final class SilkCacheManager<T> {
      */
     public void write(SilkAdapter<T> adapter) throws Exception {
         if (adapter == null) throw new IllegalArgumentException("The adapter cannot be null.");
-        write(adapter.getItems());
+        write(adapter.getItems(), false);
     }
 
     /**
@@ -130,7 +119,7 @@ public final class SilkCacheManager<T> {
             @Override
             public void run() {
                 try {
-                    write(items);
+                    write(items, false);
                 } catch (Exception e) {
                     log("Cache write error: " + e.getMessage());
                     e.printStackTrace();
@@ -269,7 +258,7 @@ public final class SilkCacheManager<T> {
                 break;
             }
         }
-        write(cache);
+        write(cache, false);
         log("Removed " + removed + " items from " + cacheFile.getName());
     }
 }
