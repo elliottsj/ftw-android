@@ -266,6 +266,7 @@ public final class SilkCacheManager<T> {
             if (filter.shouldRemove(cache.get(i))) {
                 removed++;
                 cache.remove(i);
+                break;
             }
         }
         write(cache);
