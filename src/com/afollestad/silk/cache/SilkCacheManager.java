@@ -136,14 +136,6 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
-     * Writes the contents of a {@link SilkAdapter} to the cache file from the calling thread, overwriting all current entries in the cache.
-     */
-    public void write(SilkAdapter<T> adapter) throws Exception {
-        if (adapter == null) throw new IllegalArgumentException("The adapter cannot be null.");
-        write(adapter.getItems(), false);
-    }
-
-    /**
      * Reads from the cache file on the calling thread and returns the results.
      */
     public List<T> read() throws Exception {
@@ -184,24 +176,29 @@ public final class SilkCacheManager<T extends SilkComparable> {
         return index;
     }
 
+    private void runPriorityThread(Runnable runnable) {
+        Thread t = new Thread(runnable);
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+    }
+
     /**
      * Writes a single object to the cache from a separate thread, posting results to a callback.
      */
     public void addAsync(final T toAdd, final AddCallback callback) throws Exception {
-        Thread t = new Thread(new Runnable() {
+        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
+        runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     add(toAdd);
-                    if (callback != null) callback.onAdded(toAdd);
+                    callback.onAdded(toAdd);
                 } catch (Exception e) {
                     log("Cache write error: " + e.getMessage());
-                    if (callback != null) callback.onError(e);
+                    callback.onError(e);
                 }
             }
         });
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
     }
 
     /**
@@ -209,20 +206,19 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * posted to a callback.
      */
     public void updateAsync(final T toUpdate, final UpdateCallback callback) {
-        Thread t = new Thread(new Runnable() {
+        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
+        runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     boolean isAdded = update(toUpdate);
-                    if (callback != null) callback.onUpdated(toUpdate, isAdded);
+                    callback.onUpdated(toUpdate, isAdded);
                 } catch (Exception e) {
                     log("Cache write error: " + e.getMessage());
-                    if (callback != null) callback.onError(e);
+                    callback.onError(e);
                 }
             }
         });
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
     }
 
     /**
@@ -230,7 +226,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      */
     public void writeAsync(final List<T> items, final WriteCallback callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
-        Thread t = new Thread(new Runnable() {
+        runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -252,16 +248,6 @@ public final class SilkCacheManager<T extends SilkComparable> {
                 }
             }
         });
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
-    }
-
-    /**
-     * Writes the contents of a {@link SilkAdapter} to the cache file from a separate thread, overwriting all current entries in the cache.
-     */
-    public void writeAsync(SilkAdapter<T> adapter, WriteCallback callback) {
-        if (adapter == null) throw new IllegalArgumentException("The adapter cannot be null.");
-        writeAsync(adapter.getItems(), callback);
     }
 
     /**
@@ -274,7 +260,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
             callback.onCacheEmpty();
             return;
         }
-        Thread t = new Thread(new Runnable() {
+        runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -287,7 +273,6 @@ public final class SilkCacheManager<T extends SilkComparable> {
                         }
                     });
                 } catch (final Exception e) {
-                    e.printStackTrace();
                     log("Cache read error: " + e.getMessage());
                     mHandler.post(new Runnable() {
                         @Override
@@ -298,8 +283,6 @@ public final class SilkCacheManager<T extends SilkComparable> {
                 }
             }
         });
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
     }
 
     /**
@@ -312,8 +295,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
     public void readAsync(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment, final boolean clearIfEmpty) {
         if (adapter == null || fragment == null)
             throw new IllegalArgumentException("The adapter and fragment parameters cannot be null.");
-        else if (fragment.isLoading())
-            return;
+        else if (fragment.isLoading()) return;
         fragment.setLoading(false);
         readAsync(new ReadCallback<T>() {
             @Override
@@ -344,7 +326,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      */
     public void removeAsync(final long itemId, final RemoveCallback callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
-        Thread t = new Thread(new Runnable() {
+        runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -366,7 +348,5 @@ public final class SilkCacheManager<T extends SilkComparable> {
                 }
             }
         });
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
     }
 }
