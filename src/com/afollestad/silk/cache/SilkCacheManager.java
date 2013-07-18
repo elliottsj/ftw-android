@@ -17,25 +17,25 @@ import java.util.List;
  */
 public final class SilkCacheManager<T extends SilkComparable> {
 
-    public interface AddCallback {
+    public interface AddCallback<T> {
         public void onAdded(T item);
 
         public void onError(Exception e);
     }
 
-    public interface UpdateCallback {
+    public interface UpdateCallback<T> {
         public void onUpdated(T item, boolean added);
 
         public void onError(Exception e);
     }
 
-    public interface WriteCallback {
+    public interface WriteCallback<T> {
         public void onWrite(List<T> items);
 
         public void onError(Exception e);
     }
 
-    public interface ReadCallback {
+    public interface ReadCallback<T> {
         public void onRead(List<T> results);
 
         public void onError(Exception e);
@@ -315,7 +315,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
         else if (fragment.isLoading())
             return;
         fragment.setLoading(false);
-        readAsync(new ReadCallback() {
+        readAsync(new ReadCallback<T>() {
             @Override
             public void onRead(List<T> results) {
                 adapter.clear();

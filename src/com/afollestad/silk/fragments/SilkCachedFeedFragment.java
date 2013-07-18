@@ -5,6 +5,8 @@ import android.view.View;
 import com.afollestad.silk.cache.SilkCacheManager;
 import com.afollestad.silk.cache.SilkComparable;
 
+import java.util.List;
+
 /**
  * A {@link SilkFeedFragment} that automatically caches loaded feeds locally and loads them again later.
  * <p/>
@@ -63,7 +65,16 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
             if (visible)
                 cache.readAsync(getAdapter(), this, true);
             else
-                cache.writeAsync(getAdapter());
+                cache.writeAsync(getAdapter(), new SilkCacheManager.WriteCallback() {
+                    @Override
+                    public void onWrite(List items) {
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+                });
         }
     }
 }
