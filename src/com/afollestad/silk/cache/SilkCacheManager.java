@@ -16,11 +16,7 @@ import java.util.List;
  *
  * @author Aidan Follestad (afollestad)
  */
-public final class SilkCacheManager<T extends Serializable> {
-
-    public interface RemoveFilter<T> {
-        public boolean shouldRemove(T item);
-    }
+public final class SilkCacheManager<T extends SilkComparable> {
 
     public interface ReadCallback<T> {
 
@@ -72,6 +68,25 @@ public final class SilkCacheManager<T extends Serializable> {
         List<T> temp = new ArrayList<T>();
         temp.add(toAdd);
         write(temp, true);
+    }
+
+    /**
+     * Updates an item in the cache. If it's not found, it's added.
+     *
+     * @param toUpdate The item to update, or add.
+     */
+    public void update(T toUpdate) throws Exception {
+        List<T> cache = read();
+        boolean found = false;
+        for (int i = 0; i < cache.size(); i++) {
+            if (cache.get(i).getId() == toUpdate.getId()) {
+                cache.set(i, toUpdate);
+                found = true;
+                break;
+            }
+        }
+        if (found) write(cache);
+        else add(toUpdate);
     }
 
     private void write(List<T> items, boolean append) throws Exception {
@@ -243,23 +258,27 @@ public final class SilkCacheManager<T extends Serializable> {
     }
 
     /**
-     * Removes items from the cache file based on the passed filter.
-     *
-     * @param filter The remove filter used to decide what objects are removed from the cache.
+     * Removes an item from the cache.
      */
-    public void remove(RemoveFilter<T> filter) throws Exception {
-        if (filter == null) throw new IllegalArgumentException("Remove filter cannot be null.");
+    public void remove(long itemId) throws Exception {
         List<T> cache = read();
         if (cache.size() == 0) return;
         int removed = 0;
         for (int i = 0; i < cache.size(); i++) {
-            if (filter.shouldRemove(cache.get(i))) {
-                removed++;
+            if (cache.get(i).getId() == itemId) {
                 cache.remove(i);
+                removed++;
                 break;
             }
         }
         write(cache, false);
         log("Removed " + removed + " items from " + cacheFile.getName());
+    }
+
+    /**
+     * Removes an item from the cache.
+     */
+    public void remove(T item) throws Exception {
+        remove(item.getId());
     }
 }

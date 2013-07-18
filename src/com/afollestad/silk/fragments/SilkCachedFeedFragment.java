@@ -3,8 +3,7 @@ package com.afollestad.silk.fragments;
 import android.os.Bundle;
 import android.view.View;
 import com.afollestad.silk.cache.SilkCacheManager;
-
-import java.io.Serializable;
+import com.afollestad.silk.cache.SilkComparable;
 
 /**
  * A {@link SilkFeedFragment} that automatically caches loaded feeds locally and loads them again later.
@@ -13,7 +12,7 @@ import java.io.Serializable;
  *
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCachedFeedFragment<T extends Serializable> extends SilkFeedFragment<T> {
+public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends SilkFeedFragment<T> {
 
     private SilkCacheManager<T> cache;
 

@@ -26,7 +26,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     private final Context context;
-    private final List<T> items;
+    private List<T> items;
 
     /**
      * Called to get the layout of a view being inflated by the SilkAdapter. The inheriting adapter class must return
@@ -76,6 +76,14 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     public void set(T[] toSet) {
         this.items.clear();
         this.items.addAll(Arrays.asList(toSet));
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
+     */
+    public void set(List<T> toSet) {
+        this.items = toSet;
         notifyDataSetChanged();
     }
 
