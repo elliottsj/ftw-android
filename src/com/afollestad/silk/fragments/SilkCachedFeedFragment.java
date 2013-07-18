@@ -62,10 +62,10 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onVisibilityChange(boolean visible) {
         if (cache != null) {
-            if (visible)
+            if (visible) {
                 cache.readAsync(getAdapter(), this, true);
-            else
-                cache.writeAsync(getAdapter(), new SilkCacheManager.WriteCallback() {
+            } else {
+                cache.writeAsync(getAdapter().getItems(), new SilkCacheManager.WriteCallback() {
                     @Override
                     public void onWrite(List items) {
                     }
@@ -75,6 +75,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
                         e.printStackTrace();
                     }
                 });
+            }
         }
     }
 }
