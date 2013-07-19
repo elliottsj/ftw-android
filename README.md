@@ -47,6 +47,13 @@ Same as the `SilkTextView` but it's an `EditText`.
 NOTE: You MUST copy the `assets` folder from this library to your application. The assets folder does not get compiled
 in your app when it's only in the library
 
+### Activities
+
+###### SilkDrawerActivity
+
+Makes interacting with a `DrawerLayout` in your Activity's layout easier, handles mostly everything related to it on
+its own.
+
 ### Utilities
 
 ###### SilkCacheManager
