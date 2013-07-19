@@ -57,7 +57,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      */
     public SilkCacheManager(String cacheName) {
         mHandler = new Handler();
-        cacheFile = new File(CACHE_DIRECTORY, cacheName + ".cache");
+        cacheFile = new File(CACHE_DIRECTORY, cacheName.toLowerCase() + ".cache");
         if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
     }
 
@@ -69,7 +69,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      */
     public SilkCacheManager(String cacheName, Handler handler) {
         mHandler = handler;
-        cacheFile = new File(CACHE_DIRECTORY, cacheName + ".cache");
+        cacheFile = new File(CACHE_DIRECTORY, cacheName.toLowerCase() + ".cache");
         if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
     }
 
