@@ -73,13 +73,21 @@ public final class SilkCacheManager<T extends SilkComparable> {
         if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
     }
 
-    public final File CACHE_DIRECTORY = new File(Environment.getExternalStorageDirectory(), "Silk Cache");
+    private File CACHE_DIRECTORY = new File(Environment.getExternalStorageDirectory(), "Silk Cache");
 
     private final Handler mHandler;
     private final File cacheFile;
 
     private void log(String message) {
         Log.d("SilkCacheManager", message);
+    }
+
+    /**
+     * Sets the directory where cache files are stored. By default, it's in "/sdcard/Silk Cache".
+     */
+    public SilkCacheManager setCacheDirectory(File directory) {
+        CACHE_DIRECTORY = directory;
+        return this;
     }
 
     /**
