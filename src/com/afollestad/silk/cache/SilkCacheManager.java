@@ -102,7 +102,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
         List<T> cache = read();
         boolean found = false;
         for (int i = 0; i < cache.size(); i++) {
-            if (cache.get(i).getId() == toUpdate.getId()) {
+            if (cache.get(i).isSameAs(toUpdate)) {
                 cache.set(i, toUpdate);
                 found = true;
                 break;
@@ -165,7 +165,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
         if (cache.size() == 0) return -1;
         int index = -1;
         for (int i = 0; i < cache.size(); i++) {
-            if (cache.get(i).getId() == itemId) {
+            if (cache.get(i).isSameAs(itemId)) {
                 cache.remove(i);
                 index = i;
                 break;

@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  * @author Aidan Follestad (afollestad)
  */
-public interface SilkComparable extends Serializable {
+public interface SilkComparable<T> extends Serializable {
 
-    public abstract long getId();
+    public abstract boolean isSameAs(T another);
 }
