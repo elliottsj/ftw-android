@@ -3,7 +3,7 @@ package com.afollestad.silk.fragments;
 import android.os.Bundle;
 import android.view.View;
 import com.afollestad.silk.R;
-import com.afollestad.silk.Utils;
+import com.afollestad.silk.Silk;
 
 /**
  * A {@link com.afollestad.silk.fragments.SilkListFragment} that pulls data from the network, and automatically puts the retrieved data in its list.
@@ -40,7 +40,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
      */
     public void performRefresh(boolean progress) {
         if (isLoading()) return;
-        else if (!Utils.isOnline(getActivity())) {
+        else if (!Silk.isOnline(getActivity())) {
             onError(getString(R.string.offline_error));
             setLoadComplete(true);
             return;
@@ -66,7 +66,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
                         @Override
                         public void run() {
                             setLoadComplete(true);
-                            if (!Utils.isOnline(getActivity())) {
+                            if (!Silk.isOnline(getActivity())) {
                                 onError(getString(R.string.offline_error));
                             } else {
                                 onError(e.getMessage());

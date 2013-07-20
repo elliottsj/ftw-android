@@ -1,6 +1,7 @@
 package com.afollestad.silk;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -9,7 +10,7 @@ import android.net.NetworkInfo;
  *
  * @author Aidan Follestad (afollestad)
  */
-public class Utils {
+public class Silk {
 
     /**
      * Checks if the device is currently online, works for both wifi and mobile networks.
@@ -30,5 +31,13 @@ public class Utils {
         if (activeNetwork != null)
             state = activeNetwork.isConnectedOrConnecting();
         return state;
+    }
+
+    /**
+     * Clears out preferences persisted for Silk.
+     */
+    public static void clearPersistence(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("feed_last_update", 0);
+        prefs.edit().clear().commit();
     }
 }
