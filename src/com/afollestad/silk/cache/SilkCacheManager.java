@@ -293,7 +293,6 @@ public final class SilkCacheManager<T extends SilkComparable> {
         if (adapter == null || fragment == null)
             throw new IllegalArgumentException("The adapter and fragment parameters cannot be null.");
         else if (fragment.isLoading()) return;
-        fragment.setLoading(false);
         readAsync(new ReadCallback<T>() {
             @Override
             public void onRead(List<T> results) {
