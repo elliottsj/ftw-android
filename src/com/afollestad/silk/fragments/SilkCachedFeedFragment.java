@@ -75,7 +75,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onVisibilityChange(boolean visible) {
         if (cache != null) {
-            if (visible) {
+            if (visible && !isLoading() && getAdapter().getCount() == 0) {
                 cache.readAsync(getAdapter(), this, clearIfEmpty);
             } else {
                 cache.writeAsync(getAdapter().getItems(), new SilkCacheManager.WriteCallback() {
