@@ -116,12 +116,12 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     @Override
-    public final int getCount() {
+    public int getCount() {
         return items.size();
     }
 
     @Override
-    public final T getItem(int i) {
+    public T getItem(int i) {
         return items.get(i);
     }
 
