@@ -7,13 +7,13 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
-import com.afollestad.silk.SilkAdapter;
+import com.afollestad.silk.adapters.SilkAdapter;
 
 /**
  * A {@link com.afollestad.silk.fragments.SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
  * convenience methods and handles a lot of things on its own to make things easy.
  * <p/>
- * The fragment uses a {@link com.afollestad.silk.SilkAdapter} to display items of type T.
+ * The fragment uses a {@link com.afollestad.silk.adapters.SilkAdapter} to display items of type T.
  *
  * @param <T> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)

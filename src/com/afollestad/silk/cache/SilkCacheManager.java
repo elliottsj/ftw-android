@@ -2,7 +2,7 @@ package com.afollestad.silk.cache;
 
 import android.os.Handler;
 import android.util.Log;
-import com.afollestad.silk.SilkAdapter;
+import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.fragments.SilkCachedFeedFragment;
 
 import java.io.*;
