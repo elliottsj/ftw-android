@@ -33,7 +33,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
         if (cache != null && !isLoading() && getAdapter().getCount() == 0)
-            cache.readAsync(getAdapter(), this, true);
+            cache.readAsync(getAdapter(), this, false);
         else performRefresh(true);
     }
 
