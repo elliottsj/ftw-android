@@ -29,7 +29,11 @@ public class SilkCondensedTextView extends TextView {
     }
 
     private void init(Context context) {
-        Typeface tf = Typeface.createFromAsset(context.getAssets(), "Roboto-Condensed.ttf");
-        setTypeface(tf);
+        try {
+            Typeface tf = Typeface.createFromAsset(context.getAssets(), "Roboto-Condensed.ttf");
+            setTypeface(tf);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Make sure you copied the 'assets' folder from Silk to your own project; " + e.getMessage());
+        }
     }
 }
