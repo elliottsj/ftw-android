@@ -19,6 +19,7 @@ import java.util.List;
 public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends SilkFeedFragment<T> {
 
     private SilkCacheManager<T> cache;
+    private boolean clearIfEmpty = false; // the fragment contents will not be cleared when the cache comes back as empty
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,13 +34,13 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
         if (cache != null && !isLoading() && getAdapter().getCount() == 0)
-            cache.readAsync(getAdapter(), this, false);
+            cache.readAsync(getAdapter(), this, clearIfEmpty);
         else performRefresh(true);
     }
 
     /**
      * The directory set to the {@link SilkCacheManager} used by the Fragment. Will be "/sdcard/Silk Cache" by default,
-     * but can be overridden.
+     * but can be overridden by inheriting classes.
      */
     public File getCacheDirectory() {
         return new File(Environment.getExternalStorageDirectory(), "Silk Cache");
@@ -75,7 +76,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     public void onVisibilityChange(boolean visible) {
         if (cache != null) {
             if (visible) {
-                cache.readAsync(getAdapter(), this, true);
+                cache.readAsync(getAdapter(), this, clearIfEmpty);
             } else {
                 cache.writeAsync(getAdapter().getItems(), new SilkCacheManager.WriteCallback() {
                     @Override
