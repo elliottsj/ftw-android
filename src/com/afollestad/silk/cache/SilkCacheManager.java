@@ -1,6 +1,5 @@
 package com.afollestad.silk.cache;
 
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import com.afollestad.silk.SilkAdapter;
@@ -55,10 +54,10 @@ public final class SilkCacheManager<T extends SilkComparable> {
      *
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      */
-    public SilkCacheManager(String cacheName) {
+    public SilkCacheManager(String cacheName, File cacheDir) {
         mHandler = new Handler();
-        cacheFile = new File(CACHE_DIRECTORY, cacheName.toLowerCase() + ".cache");
-        if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
+        cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
+        if (!cacheDir.exists()) cacheDir.mkdirs();
     }
 
     /**
@@ -67,27 +66,17 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      * @param handler   If the manager isn't being created on the UI thread, a handler that was.
      */
-    public SilkCacheManager(String cacheName, Handler handler) {
+    public SilkCacheManager(String cacheName, File cacheDir, Handler handler) {
         mHandler = handler;
-        cacheFile = new File(CACHE_DIRECTORY, cacheName.toLowerCase() + ".cache");
-        if (!CACHE_DIRECTORY.exists()) CACHE_DIRECTORY.mkdirs();
+        cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
+        if (!cacheDir.exists()) cacheDir.mkdirs();
     }
-
-    private File CACHE_DIRECTORY = new File(Environment.getExternalStorageDirectory(), "Silk Cache");
 
     private final Handler mHandler;
     private final File cacheFile;
 
     private void log(String message) {
         Log.d("SilkCacheManager", message);
-    }
-
-    /**
-     * Sets the directory where cache files are stored. By default, it's in "/sdcard/Silk Cache".
-     */
-    public SilkCacheManager setCacheDirectory(File directory) {
-        CACHE_DIRECTORY = directory;
-        return this;
     }
 
     /**

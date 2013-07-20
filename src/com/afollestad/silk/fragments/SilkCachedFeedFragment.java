@@ -24,7 +24,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getCacheTitle() != null) {
-            cache = new SilkCacheManager<T>(getCacheTitle()).setCacheDirectory(getCacheDirectory());
+            cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory());
         }
     }
 
