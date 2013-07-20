@@ -136,7 +136,8 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
     @Override
     public void onCacheEmpty() {
         // Overriding the default behavior of refreshing immediately to show the last updated label if necessary
-        if (!invalidateLastUpdated()) super.onCacheEmpty();
+        Calendar last = getLastUpdatedTime();
+        if (last == null || !invalidateLastUpdated()) super.onCacheEmpty();
     }
 
     /**

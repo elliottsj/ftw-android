@@ -1,6 +1,7 @@
 package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import com.afollestad.silk.R;
 import com.afollestad.silk.Utils;
@@ -40,6 +41,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
      */
     public void performRefresh(boolean progress) {
         if (isLoading()) {
+            Log.v("SilkFeedFragment", "Loading cancelled, already is loading...");
             return;
         } else if (!Utils.isOnline(getActivity())) {
             onError(getString(R.string.offline_error));
