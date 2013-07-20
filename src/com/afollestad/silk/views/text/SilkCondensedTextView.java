@@ -1,29 +1,29 @@
-package com.afollestad.silk.views;
+package com.afollestad.silk.views.text;
 
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.EditText;
+import android.widget.TextView;
 
 /**
- * A EditView that automatically sets its typeface to Roboto Light (a thinner version of Roboto). The font is loaded
+ * A TextView that automatically sets its typeface to Roboto Condensed. The font is loaded
  * from the library's assets so it will work on any version of Android.
  *
  * @author Aidan Follestad
  */
-public class SilkCondensedEditText extends EditText {
+public class SilkCondensedTextView extends TextView {
 
-    public SilkCondensedEditText(Context context) {
+    public SilkCondensedTextView(Context context) {
         super(context);
         init(context);
     }
 
-    public SilkCondensedEditText(Context context, AttributeSet attrs) {
+    public SilkCondensedTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public SilkCondensedEditText(Context context, AttributeSet attrs, int defStyle) {
+    public SilkCondensedTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
