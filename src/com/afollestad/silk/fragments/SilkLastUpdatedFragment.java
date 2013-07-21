@@ -23,7 +23,6 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
     private TextView mLastUpdateLabel;
     private ImageView mLastUpdateAction;
 
-
     /**
      * Sets whether or not the last updated frame is visible.
      */

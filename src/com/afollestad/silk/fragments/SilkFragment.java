@@ -2,7 +2,9 @@ package com.afollestad.silk.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * The base of all other fragments in the library; contains methods that help maintain consistency among all fragments,
@@ -25,11 +27,6 @@ public abstract class SilkFragment extends Fragment {
     public abstract String getTitle();
 
     /**
-     * Gets the menu resource for the action bar, return 0 if none.
-     */
-    public abstract int getMenu();
-
-    /**
      * Called when the Fragment becomes visible or invisible to the user.
      * <p/>
      * This works even when in a ViewPager when Fragments that are not actually visible are initialized off to the side.
@@ -50,15 +47,8 @@ public abstract class SilkFragment extends Fragment {
     /**
      * Gets whether or not the fragment is attached and visible to the user.
      */
-    public final boolean isAttached() {
+    public final boolean isActuallyVisible() {
         return mAttached;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getMenu() > 0)
-            setHasOptionsMenu(true);
     }
 
     @Override
@@ -95,12 +85,6 @@ public abstract class SilkFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(getLayout(), null);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(getMenu(), menu);
     }
 
     public final void runOnUiThread(Runnable runnable) {

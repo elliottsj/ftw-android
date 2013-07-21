@@ -23,7 +23,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     /**
      * Gets the cache manager used by the fragment to read and write its cache.
      */
-    public SilkCacheManager<T> getCacheManager() {
+    protected final SilkCacheManager<T> getCacheManager() {
         return cache;
     }
 
@@ -59,7 +59,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
      * The directory set to the {@link SilkCacheManager} used by the Fragment. Will be "/sdcard/Silk Cache" by default,
      * but can be overridden by inheriting classes.
      */
-    public File getCacheDirectory() {
+    protected File getCacheDirectory() {
         return new File(Environment.getExternalStorageDirectory(), "Silk Cache");
     }
 
@@ -67,7 +67,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
      * Gets the name of the fragment's cache, used by a {@link SilkCacheManager} instance and should be unique
      * from any other cached feed fragment,
      */
-    public abstract String getCacheTitle();
+    protected abstract String getCacheTitle();
 
     /**
      * Fired from the {@link SilkCacheManager} when the cache was found to be empty during view creation. By default,

@@ -17,7 +17,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // If caching is enabled, the SilkCachedFeedFragment will handle this instead
+        // If caching is enabled, the SilkCachedFeedFragment will handle this instead. super.onViewCreated() still must be called though.
         if (!mCacheEnabled) {
             // Immediately load the fragment's feed
             performRefresh(true);

@@ -54,12 +54,6 @@ public abstract class SilkListFragment<T> extends SilkFragment {
         return null;
     }
 
-    @Override
-    public int getMenu() {
-        // This isn't needed but can be overridden by inheriting classes if needed.
-        return 0;
-    }
-
     /**
      * Inheriting classes return a string resource for the list's empty text value here.
      * <p/>
