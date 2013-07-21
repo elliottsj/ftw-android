@@ -1,7 +1,6 @@
 package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import com.afollestad.silk.cache.SilkCacheManager;
 import com.afollestad.silk.cache.SilkComparable;
@@ -56,11 +55,11 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     }
 
     /**
-     * The directory set to the {@link SilkCacheManager} used by the Fragment. Will be "/sdcard/Silk Cache" by default,
-     * but can be overridden by inheriting classes.
+     * The directory set to the {@link SilkCacheManager} used by the Fragment. Will be "/sdcard/Silk Cache" by default
+     * (as that's what the SilkCacheManager interprets null as), but can be overridden by inheriting classes.
      */
     protected File getCacheDirectory() {
-        return new File(Environment.getExternalStorageDirectory(), "Silk Cache");
+        return null;
     }
 
     /**

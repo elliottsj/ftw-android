@@ -1,5 +1,6 @@
 package com.afollestad.silk.cache;
 
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import com.afollestad.silk.adapters.SilkAdapter;
@@ -19,6 +20,8 @@ public final class SilkCacheManager<T extends SilkComparable> {
     public interface AddCallback<T> {
         public void onAdded(T item);
 
+        public void onIgnored(T item);
+
         public void onError(Exception e);
     }
 
@@ -29,7 +32,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     public interface WriteCallback<T> {
-        public void onWrite(List<T> items);
+        public void onWrite(List<T> items, boolean isAppended);
 
         public void onError(Exception e);
     }
@@ -42,38 +45,69 @@ public final class SilkCacheManager<T extends SilkComparable> {
         public void onCacheEmpty();
     }
 
-    public interface RemoveCallback {
-        public void onRemoved(int index, long itemId);
+    public interface RemoveCallback<T> {
+        public void onRemoved(List<T> items);
 
         public void onError(Exception e);
     }
 
+    public interface RemoveFilter<T> {
+        public boolean shouldRemove(T item);
+    }
+
 
     /**
-     * Initializes a new SilkCacheManager.
+     * Initializes a new SilkCacheManager, using the default cache file and default cache directory.
+     */
+    public SilkCacheManager() {
+        init(null, null, null);
+    }
+
+    /**
+     * Initializes a new SilkCacheManager, using the default cache directory.
      *
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      */
-    public SilkCacheManager(String cacheName, File cacheDir) {
-        mHandler = new Handler();
-        cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
-        if (!cacheDir.exists()) cacheDir.mkdirs();
+    public SilkCacheManager(String cacheName) {
+        init(cacheName, null, null);
     }
 
     /**
      * Initializes a new SilkCacheManager.
      *
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
+     * @param cacheDir  The directory that the cache file will be stored in, defaults to "/sdcard/Silk".
+     */
+    public SilkCacheManager(String cacheName, File cacheDir) {
+        init(cacheName, cacheDir, null);
+    }
+
+    /**
+     * Initializes a new SilkCacheManager.
+     *
+     * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
+     * @param cacheDir  The directory that the cache file will be stored in, defaults to "/sdcard/Silk".
      * @param handler   If the manager isn't being created on the UI thread, a handler that was.
      */
     public SilkCacheManager(String cacheName, File cacheDir, Handler handler) {
-        mHandler = handler;
-        cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
-        if (!cacheDir.exists()) cacheDir.mkdirs();
+        init(cacheName, cacheDir, handler);
     }
 
-    private final Handler mHandler;
-    private final File cacheFile;
+    private Handler mHandler;
+    private File cacheFile;
+
+    private void init(String cacheName, File cacheDir, Handler handler) {
+        if (cacheName == null || cacheName.trim().isEmpty())
+            cacheName = "default";
+        if (handler == null)
+            mHandler = new Handler();
+        else mHandler = handler;
+        if (cacheDir == null)
+            cacheDir = new File(Environment.getExternalStorageDirectory(), "Silk");
+        if (!cacheDir.exists())
+            cacheDir.mkdirs();
+        cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
+    }
 
     private void log(String message) {
         Log.d("SilkCacheManager", message);
@@ -84,11 +118,12 @@ public final class SilkCacheManager<T extends SilkComparable> {
      *
      * @param toAdd the item to add to the cache.
      */
-    public void add(T toAdd) throws Exception {
-        if (toAdd.shouldIgnore()) return;
+    public boolean add(T toAdd) throws Exception {
+        if (toAdd.shouldIgnore()) return false;
         List<T> temp = new ArrayList<T>();
         temp.add(toAdd);
         write(temp, true);
+        return true;
     }
 
     /**
@@ -112,7 +147,11 @@ public final class SilkCacheManager<T extends SilkComparable> {
         return found;
     }
 
-    private void write(List<T> items, boolean append) throws Exception {
+    /**
+     * Writes an list of items to the cache from the calling thread. Allows you set whether to overwrite the cache
+     * or append to it.
+     */
+    public void write(List<T> items, boolean append) throws Exception {
         if (items == null || items.size() == 0) {
             if (cacheFile.exists()) {
                 log("Adapter for " + cacheFile.getName() + " is empty, deleting file...");
@@ -120,14 +159,18 @@ public final class SilkCacheManager<T extends SilkComparable> {
             }
             return;
         }
+        int subtraction = 0;
         FileOutputStream fileOutputStream = new FileOutputStream(cacheFile, append);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
         for (T item : items) {
-            if (item.shouldIgnore()) continue;
+            if (item.shouldIgnore()) {
+                subtraction++;
+                continue;
+            }
             objectOutputStream.writeObject(item);
         }
         objectOutputStream.close();
-        log("Wrote " + items.size() + " items to " + cacheFile.getName());
+        log("Wrote " + (items.size() - subtraction) + " items to " + cacheFile.getName());
     }
 
     /**
@@ -160,22 +203,23 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
-     * Removes an item from the cache.
+     * Removes items from the cache based on a filter that makes decisions. Returns a list of items that were removed.
      */
-    public int remove(long itemId) throws Exception {
+    public List<T> remove(RemoveFilter<T> filter) throws Exception {
+        if (filter == null) throw new IllegalArgumentException("You must specify a filter");
+        List<T> toReturn = new ArrayList<T>();
         List<T> cache = read();
-        if (cache.size() == 0) return -1;
-        int index = -1;
+        if (cache.size() == 0) return toReturn;
         for (int i = 0; i < cache.size(); i++) {
-            if (cache.get(i).isSameAs(itemId)) {
+            if (filter.shouldRemove(cache.get(i))) {
                 cache.remove(i);
-                index = i;
+                toReturn.add(cache.get(i));
                 break;
             }
         }
         write(cache, false);
-        log("Removed item at index " + index + " from " + cacheFile.getName());
-        return index;
+        log("Removed " + toReturn.size() + " items from " + cacheFile.getName());
+        return toReturn;
     }
 
     private void runPriorityThread(Runnable runnable) {
@@ -187,14 +231,14 @@ public final class SilkCacheManager<T extends SilkComparable> {
     /**
      * Writes a single object to the cache from a separate thread, posting results to a callback.
      */
-    public void addAsync(final T toAdd, final AddCallback callback) throws Exception {
+    public void addAsync(final T toAdd, final AddCallback<T> callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    add(toAdd);
-                    callback.onAdded(toAdd);
+                    if (add(toAdd)) callback.onAdded(toAdd);
+                    else callback.onIgnored(toAdd);
                 } catch (Exception e) {
                     log("Cache write error: " + e.getMessage());
                     callback.onError(e);
@@ -207,7 +251,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * Updates an item in the cache. If it's not found, it's added. This is done on a separate thread and results are
      * posted to a callback.
      */
-    public void updateAsync(final T toUpdate, final UpdateCallback callback) {
+    public void updateAsync(final T toUpdate, final UpdateCallback<T> callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         runPriorityThread(new Runnable() {
             @Override
@@ -223,20 +267,25 @@ public final class SilkCacheManager<T extends SilkComparable> {
         });
     }
 
+    public void writeAsync(final List<T> items, final WriteCallback<T> callback) {
+        writeAsync(items, false, callback);
+    }
+
     /**
-     * Writes a list of items to the cache from a separate thread, overwriting all current entries in the cache.
+     * Writes a list of items to the cache from a separate thread. Allows you set whether to overwrite the cache
+     * or append to it.
      */
-    public void writeAsync(final List<T> items, final WriteCallback callback) {
+    public void writeAsync(final List<T> items, final boolean append, final WriteCallback<T> callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    write(items, false);
+                    write(items, append);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onWrite(items);
+                            callback.onWrite(items, append);
                         }
                     });
                 } catch (final Exception e) {
@@ -255,7 +304,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
     /**
      * Reads from the cache file on a separate thread and posts results to a callback.
      */
-    public void readAsync(final ReadCallback callback) {
+    public void readAsync(final ReadCallback<T> callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         if (!cacheFile.exists()) {
             log("No cache for " + cacheFile.getName());
@@ -322,23 +371,24 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
-     * Removes an item from the cache, results are posted to a callback.
+     * Removes items from the cache based on a filter that makes decisions. Results are posted to a callback.
      */
-    public void removeAsync(final long itemId, final RemoveCallback callback) {
-        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
+    public void removeAsync(final RemoveFilter<T> filter, final RemoveCallback<T> callback) {
+        if (filter == null) throw new IllegalArgumentException("You must specify a filter");
+        else if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final int removeIndex = remove(itemId);
+                    final List<T> results = remove(filter);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onRemoved(removeIndex, itemId);
+                            callback.onRemoved(results);
                         }
                     });
                 } catch (final Exception e) {
-                    log("Cache write error: " + e.getMessage());
+                    log("Cache remove error: " + e.getMessage());
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
