@@ -153,7 +153,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      */
     public void write(List<T> items, boolean append) throws Exception {
         if (items == null || items.size() == 0) {
-            if (cacheFile.exists()) {
+            if (cacheFile.exists() && !append) {
                 log("Adapter for " + cacheFile.getName() + " is empty, deleting file...");
                 cacheFile.delete();
             }
