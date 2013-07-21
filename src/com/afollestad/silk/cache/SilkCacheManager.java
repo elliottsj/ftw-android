@@ -203,6 +203,18 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
+     * Removes a single item from the cache, uses isSameAs() remove the {@link RemoveFilter} to find the item.
+     */
+    public void remove(final T toRemove) throws Exception {
+        remove(new RemoveFilter<T>() {
+            @Override
+            public boolean shouldRemove(T item) {
+                return item.isSameAs(toRemove);
+            }
+        });
+    }
+
+    /**
      * Removes items from the cache based on a filter that makes decisions. Returns a list of items that were removed.
      */
     public List<T> remove(RemoveFilter<T> filter) throws Exception {
@@ -365,6 +377,41 @@ public final class SilkCacheManager<T extends SilkComparable> {
                 if (clearIfEmpty) adapter.clear();
                 fragment.setLoadFromCacheComplete(false);
                 fragment.onCacheEmpty();
+            }
+        });
+    }
+
+    /**
+     * Removes a single item from the cache, uses isSameAs() remove the {@link RemoveFilter} to find the item. Results are
+     * posted to a callback.
+     */
+    public void removeAsync(final T toRemove, final RemoveCallback<T> callback) {
+        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
+        runPriorityThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final List<T> results = remove(new RemoveFilter<T>() {
+                        @Override
+                        public boolean shouldRemove(T item) {
+                            return item.isSameAs(toRemove);
+                        }
+                    });
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onRemoved(results);
+                        }
+                    });
+                } catch (final Exception e) {
+                    log("Cache remove error: " + e.getMessage());
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onError(e);
+                        }
+                    });
+                }
             }
         });
     }
