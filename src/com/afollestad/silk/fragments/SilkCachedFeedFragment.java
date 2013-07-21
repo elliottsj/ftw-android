@@ -19,7 +19,26 @@ import java.util.List;
 public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends SilkFeedFragment<T> {
 
     private SilkCacheManager<T> cache;
-    private boolean clearIfEmpty = false; // the fragment contents will not be cleared when the cache comes back as empty
+
+    /**
+     * Gets the cache manager used by the fragment to read and write its cache.
+     */
+    public SilkCacheManager<T> getCacheManager() {
+        return cache;
+    }
+
+    /**
+     * Performs the action done when the fragment wants to try loading itself from the cache, can be overridden to change behavior.
+     */
+    protected boolean onPerformCacheRead() {
+        if (cache != null && !isLoading() && getAdapter().getCount() == 0) {
+            getAdapter().clear();
+            boolean clearIfEmpty = false; // the fragment contents will not be cleared when the cache comes back as empty
+            cache.readAsync(getAdapter(), this, clearIfEmpty);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,9 +52,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
-        if (cache != null && !isLoading() && getAdapter().getCount() == 0)
-            cache.readAsync(getAdapter(), this, clearIfEmpty);
-        else performRefresh(true);
+        if (!onPerformCacheRead()) performRefresh(true);
     }
 
     /**
@@ -75,9 +92,8 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onVisibilityChange(boolean visible) {
         if (cache != null) {
-            if (visible && !isLoading() && getAdapter().getCount() == 0) {
-                cache.readAsync(getAdapter(), this, clearIfEmpty);
-            } else {
+            if (visible) onPerformCacheRead();
+            else {
                 cache.writeAsync(getAdapter().getItems(), new SilkCacheManager.WriteCallback() {
                     @Override
                     public void onWrite(List items) {

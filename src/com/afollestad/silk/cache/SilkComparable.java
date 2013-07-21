@@ -9,5 +9,13 @@ import java.io.Serializable;
  */
 public interface SilkComparable<T> extends Serializable {
 
+    /**
+     * Whether or not this item is the same as another.
+     */
     public abstract boolean isSameAs(T another);
+
+    /**
+     * Whether or not this item should be put into the cache.
+     */
+    public abstract boolean shouldIgnore();
 }

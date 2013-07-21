@@ -73,10 +73,8 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     /**
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
-    public void set(T[] toSet) {
-        this.items.clear();
-        this.items.addAll(Arrays.asList(toSet));
-        notifyDataSetChanged();
+    public final void set(T[] toSet) {
+        set(Arrays.asList(toSet));
     }
 
     /**
@@ -131,7 +129,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     @Override
-    public final View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
             int type = getItemViewType(i);
             view = LayoutInflater.from(context).inflate(getLayout(type), null);

@@ -85,6 +85,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * @param toAdd the item to add to the cache.
      */
     public void add(T toAdd) throws Exception {
+        if (toAdd.shouldIgnore()) return;
         List<T> temp = new ArrayList<T>();
         temp.add(toAdd);
         write(temp, true);
@@ -96,6 +97,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * @param toUpdate The item to update, or add.
      */
     public boolean update(T toUpdate) throws Exception {
+        if (toUpdate.shouldIgnore()) return false;
         List<T> cache = read();
         boolean found = false;
         for (int i = 0; i < cache.size(); i++) {
@@ -120,7 +122,10 @@ public final class SilkCacheManager<T extends SilkComparable> {
         }
         FileOutputStream fileOutputStream = new FileOutputStream(cacheFile, append);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-        for (T item : items) objectOutputStream.writeObject(item);
+        for (T item : items) {
+            if (item.shouldIgnore()) continue;
+            objectOutputStream.writeObject(item);
+        }
         objectOutputStream.close();
         log("Wrote " + items.size() + " items to " + cacheFile.getName());
     }
@@ -297,7 +302,6 @@ public final class SilkCacheManager<T extends SilkComparable> {
         readAsync(new ReadCallback<T>() {
             @Override
             public void onRead(List<T> results) {
-                adapter.clear();
                 for (T item : results) adapter.add(item);
                 fragment.setLoadFromCacheComplete(false);
             }
