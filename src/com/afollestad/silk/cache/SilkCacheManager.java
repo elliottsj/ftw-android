@@ -214,7 +214,6 @@ public final class SilkCacheManager<T extends SilkComparable> {
             if (filter.shouldRemove(cache.get(i))) {
                 cache.remove(i);
                 toReturn.add(cache.get(i));
-                break;
             }
         }
         write(cache, false);
