@@ -203,13 +203,32 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
-     * Removes a single item from the cache, uses isSameAs() remove the {@link RemoveFilter} to find the item.
+     * Removes a single item from the cache, uses isSameAs() from the {@link SilkComparable} to find the item.
      */
     public void remove(final T toRemove) throws Exception {
         remove(new RemoveFilter<T>() {
             @Override
             public boolean shouldRemove(T item) {
                 return item.isSameAs(toRemove);
+            }
+        });
+    }
+
+    /**
+     * Removes multiple items from the cache, uses isSameAs() from the {@link SilkComparable} to find the item.
+     */
+    public void remove(final T... toRemove) throws Exception {
+        remove(new RemoveFilter<T>() {
+            @Override
+            public boolean shouldRemove(T item) {
+                boolean found = false;
+                for (int i = 0; i < toRemove.length; i++) {
+                    if (toRemove[i].isSameAs(item)) {
+                        found = true;
+                        break;
+                    }
+                }
+                return found;
             }
         });
     }
