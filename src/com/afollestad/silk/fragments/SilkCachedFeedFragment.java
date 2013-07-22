@@ -32,7 +32,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     protected boolean onPerformCacheRead() {
         if (cache != null && !isLoading() && getAdapter().getCount() == 0) {
             getAdapter().clear();
-            boolean clearIfEmpty = false; // the fragment contents will not be cleared when the cache comes back as empty
+            boolean clearIfEmpty = true; // the fragment contents will be cleared when the cache comes back as empty
             cache.readAsync(getAdapter(), this, clearIfEmpty);
             return true;
         }
