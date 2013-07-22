@@ -81,7 +81,8 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
     public void set(List<T> toSet) {
-        this.items = toSet;
+        this.items.clear();
+        this.items.addAll(toSet);
         notifyDataSetChanged();
     }
 
