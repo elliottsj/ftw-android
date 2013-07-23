@@ -2,7 +2,6 @@ package com.afollestad.silk.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +54,16 @@ public class SilkDatePicker extends LinearLayout {
 
     public Calendar getCalendar() {
         return mCal;
+    }
+
+    public void setTime(long milliseconds) {
+        mCal.setTimeInMillis(milliseconds);
+        Spinner monthSpinner = (Spinner) getChildAt(0);
+        monthSpinner.setSelection(mCal.get(Calendar.MONTH));
+        Spinner daySpinner = (Spinner) getChildAt(1);
+        daySpinner.setSelection(mCal.get(Calendar.DAY_OF_MONTH) - 1);
+        Spinner yearSpinner = (Spinner) getChildAt(2);
+        yearSpinner.setSelection(mCurrentYear - getMinYear());
     }
 
     public int getMinYear() {
@@ -127,10 +136,6 @@ public class SilkDatePicker extends LinearLayout {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-        monthSpinner.setSelection(mCal.get(Calendar.MONTH));
-        daySpinner.setSelection(mCal.get(Calendar.DAY_OF_MONTH) - 1);
-        yearSpinner.setSelection(mCurrentYear - getMinYear());
     }
 
     private void fillMonths() {
