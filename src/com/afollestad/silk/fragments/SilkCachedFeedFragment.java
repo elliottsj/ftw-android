@@ -38,6 +38,12 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        onPerformCacheRead();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getCacheTitle() != null) {
