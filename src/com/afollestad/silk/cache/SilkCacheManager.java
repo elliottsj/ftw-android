@@ -410,6 +410,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
         readAsync(new ReadCallback<T>() {
             @Override
             public void onRead(List<T> results) {
+                adapter.clear();
                 for (T item : results) adapter.add(item);
                 if (fragment != null) fragment.setLoadFromCacheComplete(false);
                 adapter.resetChanged();
@@ -426,6 +427,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
 
             @Override
             public void onCacheEmpty() {
+                adapter.clear();
                 if (fragment != null) {
                     fragment.setLoadFromCacheComplete(false);
                     fragment.onCacheEmpty();
