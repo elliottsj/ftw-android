@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
+
+import java.io.File;
 
 /**
  * Various convenience methods.
@@ -39,5 +42,6 @@ public class Silk {
     public static void clearPersistence(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("feed_last_update", 0);
         prefs.edit().clear().commit();
+        new File(Environment.getExternalStorageDirectory(), "Silk").delete();
     }
 }

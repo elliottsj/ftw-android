@@ -36,6 +36,19 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
     public abstract void onError(String message);
 
     /**
+     * Called from a separate thread when refresh() has returned results. Can be overridden
+     * to do something with the results before being added to the adapter.
+     */
+    protected void onReceived(final T[] results) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getAdapter().set(results);
+            }
+        });
+    }
+
+    /**
      * Causes sub-fragments to pull from the network, and adds the results to the list.
      */
     public void performRefresh(boolean progress) {
@@ -56,7 +69,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                getAdapter().set(results);
+                                onReceived(results);
                             }
                         });
                     }
