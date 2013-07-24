@@ -20,6 +20,15 @@ import java.util.Calendar;
  */
 public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends SilkCachedFeedFragment<T> {
 
+    /**
+     * Initializes a new SilkLastUpdatedFragment.
+     *
+     * @param cacheTitle The title to use for the Fragment's {@link com.afollestad.silk.cache.SilkCacheManager}.
+     */
+    public SilkLastUpdatedFragment(String cacheTitle) {
+        super(cacheTitle);
+    }
+
     private TextView mLastUpdateLabel;
     private ImageView mLastUpdateAction;
 
@@ -38,9 +47,9 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
      */
     public final Calendar getLastUpdatedTime() {
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
-        if (prefs.contains(getCacheTitle())) {
+        if (prefs.contains(mCacheTitle)) {
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(prefs.getLong(getCacheTitle(), 0));
+            cal.setTimeInMillis(prefs.getLong(mCacheTitle, 0));
             return cal;
         }
         return null;
@@ -113,7 +122,7 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
     public final void setLastUpdatedTime() {
         Calendar now = Calendar.getInstance();
         SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
-        prefs.edit().putLong(getCacheTitle(), now.getTimeInMillis()).commit();
+        prefs.edit().putLong(mCacheTitle, now.getTimeInMillis()).commit();
         invalidateLastUpdated();
     }
 

@@ -17,6 +17,28 @@ import java.util.List;
  */
 public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends SilkFeedFragment<T> {
 
+    /**
+     * Initializes a new SilkCachedFeedFragment.
+     *
+     * @param cacheTitle The title to use for the Fragment's {@link SilkCacheManager}.
+     */
+    public SilkCachedFeedFragment(String cacheTitle) {
+        mCacheTitle = cacheTitle;
+    }
+
+    /**
+     * Initializes a new SilkCachedFeedFragment.
+     *
+     * @param cacheTitle     The title to use for the Fragment's {@link SilkCacheManager}.
+     * @param cacheDirectory The directory set to the Fragment's {@link SilkCacheManager}, will be '/sdcard/Silk' by default.
+     */
+    public SilkCachedFeedFragment(String cacheTitle, File cacheDirectory) {
+        this(cacheTitle);
+        mCacheDir = cacheDirectory;
+    }
+
+    protected String mCacheTitle;
+    private File mCacheDir;
     private SilkCacheManager<T> cache;
 
     /**
@@ -30,7 +52,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
      * Performs the action done when the fragment wants to try loading itself from the cache, can be overridden to change behavior.
      */
     protected boolean onPerformCacheRead() {
-        if (cache != null && !isLoading() && getAdapter().getCount() == 0) {
+        if (!isLoading() && getAdapter().getCount() == 0) {
             cache.readAsync(getAdapter(), this);
             return true;
         }
@@ -46,9 +68,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getCacheTitle() != null) {
-            cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory());
-        }
+        cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir);
     }
 
     @Override
@@ -57,20 +77,6 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         super.onViewCreated(view, savedInstanceState);
         if (!onPerformCacheRead()) performRefresh(true);
     }
-
-    /**
-     * The directory set to the {@link SilkCacheManager} used by the Fragment. Will be "/sdcard/Silk Cache" by default
-     * (as that's what the SilkCacheManager interprets null as), but can be overridden by inheriting classes.
-     */
-    protected File getCacheDirectory() {
-        return null;
-    }
-
-    /**
-     * Gets the name of the fragment's cache, used by a {@link SilkCacheManager} instance and should be unique
-     * from any other cached feed fragment,
-     */
-    protected abstract String getCacheTitle();
 
     /**
      * Fired from the {@link SilkCacheManager} when the cache was found to be empty during view creation. By default,
@@ -83,12 +89,10 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     protected void onReceived(T[] results) {
         super.onReceived(results);
-        if (cache != null) {
-            try {
-                cache.write(getAdapter());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            cache.write(getAdapter());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -106,7 +110,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
 
     @Override
     public void onVisibilityChange(boolean visible) {
-        if (cache != null && !visible) {
+        if (!visible) {
             cache.writeAsync(getAdapter(), new SilkCacheManager.WriteCallback<T>() {
                 @Override
                 public void onWrite(List<T> items, boolean isAppended) {
