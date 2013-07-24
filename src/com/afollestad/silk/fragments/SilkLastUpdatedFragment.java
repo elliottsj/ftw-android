@@ -10,6 +10,7 @@ import com.afollestad.silk.R;
 import com.afollestad.silk.TimeUtils;
 import com.afollestad.silk.cache.SilkComparable;
 
+import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -27,6 +28,16 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
      */
     public SilkLastUpdatedFragment(String cacheTitle) {
         super(cacheTitle);
+    }
+
+    /**
+     * Initializes a new SilkLastUpdatedFragment.
+     *
+     * @param cacheTitle     The title to use for the Fragment's {@link com.afollestad.silk.cache.SilkCacheManager}.
+     * @param cacheDirectory The directory set to the Fragment's {@link com.afollestad.silk.cache.SilkCacheManager}, will be '/sdcard/Silk' by default.
+     */
+    public SilkLastUpdatedFragment(String cacheTitle, File cacheDirectory) {
+        super(cacheTitle, cacheDirectory);
     }
 
     private TextView mLastUpdateLabel;
