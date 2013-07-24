@@ -185,7 +185,10 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * The adapter's isChanged() is reset to false every time the cache reads to it or if it's reset elsewhere by you.
      */
     public void write(SilkAdapter<T> adapter) throws Exception {
-        if (!adapter.isChanged()) return;
+        if (!adapter.isChanged()) {
+            log("The adapter has not been changed, skipped writing to " + cacheFile.getName());
+            return;
+        }
         write(adapter.getItems(), false);
     }
 
@@ -319,7 +322,10 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * to it or if it's reset elsewhere by you.
      */
     public void writeAsync(final SilkAdapter<T> adapter, final WriteCallback<T> callback) {
-        if (!adapter.isChanged()) return;
+        if (!adapter.isChanged()) {
+            log("The adapter has not been changed, skipped writing to " + cacheFile.getName());
+            return;
+        }
         writeAsync(adapter.getItems(), false, callback);
     }
 

@@ -92,7 +92,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         if (cache != null) {
             if (visible) onPerformCacheRead();
             else {
-                cache.writeAsync(getAdapter().getItems(), new SilkCacheManager.WriteCallback<T>() {
+                cache.writeAsync(getAdapter(), new SilkCacheManager.WriteCallback<T>() {
                     @Override
                     public void onWrite(List<T> items, boolean isAppended) {
                     }
