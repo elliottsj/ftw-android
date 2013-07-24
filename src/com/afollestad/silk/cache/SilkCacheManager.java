@@ -189,6 +189,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
             log("The adapter has not been changed, skipped writing to " + cacheFile.getName());
             return;
         }
+        adapter.resetChanged();
         write(adapter.getItems(), false);
     }
 
@@ -326,6 +327,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
             log("The adapter has not been changed, skipped writing to " + cacheFile.getName());
             return;
         }
+        adapter.resetChanged();
         writeAsync(adapter.getItems(), false, callback);
     }
 
