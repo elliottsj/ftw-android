@@ -14,6 +14,7 @@ import com.afollestad.silk.R;
 public abstract class SilkPagerFragment extends SilkFragment {
 
     private ViewPager mViewPager;
+    private int page;
 
     public abstract FragmentPagerAdapter getPagerAdapter();
 
@@ -28,6 +29,7 @@ public abstract class SilkPagerFragment extends SilkFragment {
         mViewPager = (ViewPager) view.findViewById(R.id.pager);
         mViewPager.setAdapter(getPagerAdapter());
         mViewPager.setOffscreenPageLimit(5);
+        if (page > 0) mViewPager.setCurrentItem(page);
     }
 
     /**
@@ -41,6 +43,10 @@ public abstract class SilkPagerFragment extends SilkFragment {
      * Sets the currently visible page in the ViewPager.
      */
     public final void setCurrentPage(int page) {
+        if (mViewPager == null) {
+            this.page = page;
+            return;
+        }
         mViewPager.setCurrentItem(page);
     }
 
