@@ -36,10 +36,10 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
     public abstract void onError(String message);
 
     /**
-     * Called from a separate thread when refresh() has returned results. Can be overridden
-     * to do something with the results before being added to the adapter.
+     * Called from a separate thread (not the UI thread) when refresh() has returned results. Can
+     * be overridden to do something with the results before being added to the adapter.
      */
-    protected void onReceived(final T[] results) {
+    protected void onPostLoad(final T[] results) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -69,7 +69,7 @@ public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                onReceived(results);
+                                onPostLoad(results);
                             }
                         });
                     }

@@ -75,7 +75,6 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
-        if (!onPerformCacheRead()) performRefresh(true);
     }
 
     /**
@@ -87,8 +86,8 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     }
 
     @Override
-    protected void onReceived(T[] results) {
-        super.onReceived(results);
+    protected void onPostLoad(T[] results) {
+        super.onPostLoad(results);
         try {
             cache.write(getAdapter());
         } catch (Exception e) {
