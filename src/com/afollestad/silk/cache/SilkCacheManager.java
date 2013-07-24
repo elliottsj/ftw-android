@@ -398,32 +398,36 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * Reads from the manager's cache file into a {@link SilkAdapter}, and notifies a {@link SilkCachedFeedFragment} when it's loading and done loading.
      *
      * @param adapter  The adapter that items will be added to.
-     * @param fragment The fragment that will receive loading notifications.
+     * @param fragment The optional fragment that will receive loading notifications.
      */
     public void readAsync(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment) {
-        if (adapter == null || fragment == null)
-            throw new IllegalArgumentException("The adapter and fragment parameters cannot be null.");
-        else if (fragment.isLoading()) return;
-        fragment.setLoading(false);
+        if (adapter == null)
+            throw new IllegalArgumentException("The adapter parameter cannot be null.");
+        else if (fragment != null && fragment.isLoading()) return;
+        if (fragment != null) fragment.setLoading(false);
         readAsync(new ReadCallback<T>() {
             @Override
             public void onRead(List<T> results) {
                 for (T item : results) adapter.add(item);
-                fragment.setLoadFromCacheComplete(false);
+                if (fragment != null) fragment.setLoadFromCacheComplete(false);
                 adapter.resetChanged();
             }
 
             @Override
             public void onError(Exception e) {
-                fragment.setLoadFromCacheComplete(true);
-                if (adapter.getCount() == 0) fragment.onCacheEmpty();
+                if (fragment != null) {
+                    fragment.setLoadFromCacheComplete(true);
+                    if (adapter.getCount() == 0) fragment.onCacheEmpty();
+                }
                 adapter.resetChanged();
             }
 
             @Override
             public void onCacheEmpty() {
-                fragment.setLoadFromCacheComplete(false);
-                fragment.onCacheEmpty();
+                if (fragment != null) {
+                    fragment.setLoadFromCacheComplete(false);
+                    fragment.onCacheEmpty();
+                }
                 adapter.resetChanged();
             }
         });
