@@ -181,6 +181,15 @@ public final class SilkCacheManager<T extends SilkComparable> {
     }
 
     /**
+     * Writes an adapter to the cache. The adapter will not be written if its isChanged() method returns false.
+     * The adapter's isChanged() is reset to false every time the cache reads to it or if it's reset elsewhere by you.
+     */
+    public void write(SilkAdapter<T> adapter) throws Exception {
+        if (!adapter.isChanged()) return;
+        write(adapter.getItems(), false);
+    }
+
+    /**
      * Reads from the cache file on the calling thread and returns the results.
      */
     public List<T> read() throws Exception {
@@ -297,13 +306,26 @@ public final class SilkCacheManager<T extends SilkComparable> {
         });
     }
 
+    /**
+     * Writes a list of items to the cache from a separate thread. Posts results to a callback.
+     */
     public void writeAsync(final List<T> items, final WriteCallback<T> callback) {
         writeAsync(items, false, callback);
     }
 
     /**
+     * Writes an adapter to the cache from a separate thread. The adapter will not be written if its
+     * isChanged() method returns false. The adapter's isChanged() is reset to false every time the cache reads
+     * to it or if it's reset elsewhere by you.
+     */
+    public void writeAsync(final SilkAdapter<T> adapter, final WriteCallback<T> callback) {
+        if (!adapter.isChanged()) return;
+        writeAsync(adapter.getItems(), false, callback);
+    }
+
+    /**
      * Writes a list of items to the cache from a separate thread. Allows you set whether to overwrite the cache
-     * or append to it.
+     * or append to it. Posts results to a callback.
      */
     public void writeAsync(final List<T> items, final boolean append, final WriteCallback<T> callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
@@ -382,18 +404,21 @@ public final class SilkCacheManager<T extends SilkComparable> {
             public void onRead(List<T> results) {
                 for (T item : results) adapter.add(item);
                 fragment.setLoadFromCacheComplete(false);
+                adapter.resetChanged();
             }
 
             @Override
             public void onError(Exception e) {
                 fragment.setLoadFromCacheComplete(true);
                 if (adapter.getCount() == 0) fragment.onCacheEmpty();
+                adapter.resetChanged();
             }
 
             @Override
             public void onCacheEmpty() {
                 fragment.setLoadFromCacheComplete(false);
                 fragment.onCacheEmpty();
+                adapter.resetChanged();
             }
         });
     }

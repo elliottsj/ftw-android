@@ -27,6 +27,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
 
     private final Context context;
     private List<T> items;
+    private boolean isChanged = false;
 
     /**
      * Called to get the layout of a view being inflated by the SilkAdapter. The inheriting adapter class must return
@@ -58,6 +59,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
      * Adds a single item to the adapter and notifies the attached ListView.
      */
     public void add(T toAdd) {
+        isChanged = true;
         this.items.add(toAdd);
         notifyDataSetChanged();
     }
@@ -66,6 +68,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
      * Adds an array of items to the adapter and notifies the attached ListView.
      */
     public void add(T[] toAdd) {
+        isChanged = true;
         Collections.addAll(this.items, toAdd);
         notifyDataSetChanged();
     }
@@ -81,6 +84,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
     public void set(List<T> toSet) {
+        isChanged = true;
         this.items.clear();
         this.items.addAll(toSet);
         notifyDataSetChanged();
@@ -95,6 +99,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
      * Removes an item from the list by its index.
      */
     public void remove(int index) {
+        isChanged = true;
         this.items.remove(index);
         notifyDataSetChanged();
     }
@@ -103,6 +108,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
      * Clears all items from the adapter and notifies the attached ListView.
      */
     public void clear() {
+        isChanged = true;
         this.items.clear();
         notifyDataSetChanged();
     }
@@ -136,5 +142,20 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(getLayout(type), null);
         }
         return onViewCreated(i, view, getItem(i));
+    }
+
+    /**
+     * Resets the changed state of the adapter, indicating that the adapter has not been changed. Every call
+     * to a mutator method (e.g. add, set, remove, clear) will set it back to true.
+     */
+    public void resetChanged() {
+        isChanged = false;
+    }
+
+    /**
+     * Gets whether or not the adapter has been changed since the last time {#resetChanged} was called.
+     */
+    public boolean isChanged() {
+        return isChanged;
     }
 }
