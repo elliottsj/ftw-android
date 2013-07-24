@@ -30,7 +30,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
      * Performs the action done when the fragment wants to try loading itself from the cache, can be overridden to change behavior.
      */
     protected boolean onPerformCacheRead() {
-        if (cache != null && !isLoading()) {
+        if (cache != null && !isLoading() && getAdapter().getCount() == 0) {
             cache.readAsync(getAdapter(), this);
             return true;
         }
