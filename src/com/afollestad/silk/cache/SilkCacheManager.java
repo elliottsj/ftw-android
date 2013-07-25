@@ -262,9 +262,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
                 removeIndexes.add(i);
             }
         }
-        for (Integer i : removeIndexes) {
-            cache.remove(i.intValue());
-        }
+        for (Integer i : removeIndexes) cache.remove(i.intValue());
 
         write(cache, false);
         log("Removed " + toReturn.size() + " items from " + cacheFile.getName());
