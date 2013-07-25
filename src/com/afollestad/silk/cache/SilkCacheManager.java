@@ -93,6 +93,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
         init(cacheName, cacheDir, handler);
     }
 
+
     private Handler mHandler;
     private File cacheFile;
 
@@ -112,6 +113,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
     private void log(String message) {
         Log.d("SilkCacheManager", message);
     }
+
 
     /**
      * Writes a single object to the cache, without overwriting previous entries.
