@@ -224,7 +224,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
             public boolean shouldRemove(T item) {
                 return item.isSameAs(toRemove);
             }
-        });
+        }, true);
     }
 
     /**
@@ -243,13 +243,15 @@ public final class SilkCacheManager<T extends SilkComparable> {
                 }
                 return found;
             }
-        });
+        }, true);
     }
 
     /**
      * Removes items from the cache based on a filter that makes decisions. Returns a list of items that were removed.
+     *
+     * @param removeOne If true, it will remove one and stop searching, which can improve performance. Otherwise it'll search through the entire cache and remove multiple entries that match the filter.
      */
-    public List<T> remove(RemoveFilter<T> filter) throws Exception {
+    public List<T> remove(RemoveFilter<T> filter, boolean removeOne) throws Exception {
         if (filter == null) throw new IllegalArgumentException("You must specify a filter");
         List<T> toReturn = new ArrayList<T>();
         List<T> cache = read();
@@ -260,6 +262,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
             if (filter.shouldRemove(cache.get(i))) {
                 toReturn.add(cache.get(i));
                 removeIndexes.add(i);
+                if (removeOne) break;
             }
         }
         for (Integer i : removeIndexes) cache.remove(i.intValue());
@@ -456,7 +459,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
                         public boolean shouldRemove(T item) {
                             return item.isSameAs(toRemove);
                         }
-                    });
+                    }, true);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -479,14 +482,14 @@ public final class SilkCacheManager<T extends SilkComparable> {
     /**
      * Removes items from the cache based on a filter that makes decisions. Results are posted to a callback.
      */
-    public void removeAsync(final RemoveFilter<T> filter, final RemoveCallback<T> callback) {
+    public void removeAsync(final RemoveFilter<T> filter, final boolean removeOne, final RemoveCallback<T> callback) {
         if (filter == null) throw new IllegalArgumentException("You must specify a filter");
         else if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final List<T> results = remove(filter);
+                    final List<T> results = remove(filter, removeOne);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
