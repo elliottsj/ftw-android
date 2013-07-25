@@ -43,6 +43,10 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
     private TextView mLastUpdateLabel;
     private ImageView mLastUpdateAction;
 
+    private SharedPreferences getPrefs() {
+        return getActivity().getSharedPreferences("feed_last_update", 0);
+    }
+
     /**
      * Sets whether or not the last updated frame is visible.
      */
@@ -57,7 +61,7 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
      * Gets the last time the fragment was updated (did a full refresh from the web).
      */
     public final Calendar getLastUpdatedTime() {
-        SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
+        SharedPreferences prefs = getPrefs();
         if (prefs.contains(mCacheTitle)) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(prefs.getLong(mCacheTitle, 0));
@@ -132,8 +136,7 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
      */
     public final void setLastUpdatedTime() {
         Calendar now = Calendar.getInstance();
-        SharedPreferences prefs = getActivity().getSharedPreferences("feed_last_update", 0);
-        prefs.edit().putLong(mCacheTitle, now.getTimeInMillis()).commit();
+        getPrefs().edit().putLong(mCacheTitle, now.getTimeInMillis()).commit();
         invalidateLastUpdated();
     }
 
