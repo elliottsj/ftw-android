@@ -254,12 +254,16 @@ public final class SilkCacheManager<T extends SilkComparable> {
         List<T> toReturn = new ArrayList<T>();
         List<T> cache = read();
         if (cache.size() == 0) return toReturn;
+
+        ArrayList<Integer> removeIndexes = new ArrayList<Integer>();
         for (int i = 0; i < cache.size(); i++) {
-            if (filter.shouldRemove(cache.get(i))) {
-                cache.remove(i);
-                toReturn.add(cache.get(i));
-            }
+            if (filter.shouldRemove(cache.get(i))) removeIndexes.add(i);
         }
+        for (Integer i : removeIndexes) {
+            cache.remove(i.intValue());
+            toReturn.add(cache.get(i));
+        }
+
         write(cache, false);
         log("Removed " + toReturn.size() + " items from " + cacheFile.getName());
         return toReturn;
