@@ -12,64 +12,50 @@ public class TimeUtils {
     /**
      * Gets a human-readable long time string (includes both the time and date, excluded certain parts if possible).
      */
-    public static String getFriendlyTimeLong(long time) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(time);
-        return getFriendlyDate(cal);
-    }
-
-    /**
-     * Gets a human-readable long time string (includes both the time and date, excluded certain parts if possible).
-     */
-    public static String getFriendlyTimeLong(Calendar time) {
+    public static String getFriendlyTimeLong(Calendar date, boolean includeTime) {
         Calendar now = Calendar.getInstance();
-        String am_pm = "AM";
-        if (time.get(Calendar.AM_PM) == Calendar.PM) am_pm = "PM";
-        String day = "";
-        if (time.get(Calendar.DAY_OF_MONTH) < 10) day = "0";
-        day += time.get(Calendar.DAY_OF_MONTH);
-        if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
+        int hourInt = date.get(Calendar.HOUR);
+        int minuteInt = date.get(Calendar.MINUTE);
+        int dayInt = date.get(Calendar.DAY_OF_MONTH);
+
+        String timeStr = "";
+        String dayStr;
+        if (hourInt == 0) timeStr += "12";
+        else if (hourInt < 10) timeStr += ":0" + hourInt;
+        else timeStr += ":" + hourInt;
+        if (minuteInt < 10) timeStr += ":0" + minuteInt;
+        else timeStr += ":" + minuteInt;
+        if (date.get(Calendar.AM_PM) == Calendar.AM) timeStr += "AM";
+        else timeStr += "PM";
+        if (dayInt < 10) dayStr = "0" + dayInt;
+        else dayStr = "" + dayInt;
+
+        if (now.get(Calendar.YEAR) == date.get(Calendar.YEAR)) {
             // Same year
-            if (now.get(Calendar.MONTH) == time.get(Calendar.MONTH)) {
+            if (now.get(Calendar.MONTH) == date.get(Calendar.MONTH)) {
                 // Same year, same month
-                if (now.get(Calendar.DAY_OF_YEAR) == time.get(Calendar.DAY_OF_YEAR)) {
+                if (now.get(Calendar.DAY_OF_YEAR) == date.get(Calendar.DAY_OF_YEAR)) {
                     // Same year, same month, same day
-                    String minute = Integer.toString(time.get(Calendar.MINUTE));
-                    int hour = time.get(Calendar.HOUR);
-                    if (hour == 0) {
-                        // 12AM will be 0 since it's the first hour in the day
-                        hour = 12;
-                    }
-                    if (minute.length() == 1) {
-                        // Add a zero before the minute if it's below 10 (1 character in length), since 12:1 looks stupid compared to 12:01.
-                        minute = ("0" + minute);
-                    }
-                    return hour + ":" + minute + am_pm;
+                    return timeStr;
                 } else {
                     // Same year, same month, different day
-                    return convertMonth(time.get(Calendar.MONTH)) + " " + day;
+                    String toReturn = convertMonth(date.get(Calendar.MONTH)) + " " + dayStr;
+                    if (includeTime) toReturn += " " + timeStr;
+                    return toReturn;
                 }
             } else {
                 // Different month, same year
-                return convertMonth(time.get(Calendar.MONTH)) + " " + day;
+                String toReturn = convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + " " + timeStr;
+                if (includeTime) toReturn += " " + timeStr;
+                return toReturn;
             }
         } else {
             // Different year
-            String year = Integer.toString(time.get(Calendar.YEAR));
-            return convertMonth(time.get(Calendar.MONTH)) + " " + day + ", " + year;
+            String year = Integer.toString(date.get(Calendar.YEAR));
+            String toReturn = convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + ", " + year + " " + timeStr;
+            if (includeTime) toReturn += " " + timeStr;
+            return toReturn;
         }
-    }
-
-    /**
-     * Gets a human-readable date string (month, day, and year).
-     *
-     * @param time
-     * @return
-     */
-    public static String getFriendlyDate(long time) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(time);
-        return getFriendlyDate(cal);
     }
 
     /**
