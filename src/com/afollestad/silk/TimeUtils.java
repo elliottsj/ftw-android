@@ -21,8 +21,7 @@ public class TimeUtils {
         String timeStr = "";
         String dayStr;
         if (hourInt == 0) timeStr += "12";
-        else if (hourInt < 10) timeStr += ":0" + hourInt;
-        else timeStr += ":" + hourInt;
+        else timeStr += "" + hourInt;
         if (minuteInt < 10) timeStr += ":0" + minuteInt;
         else timeStr += ":" + minuteInt;
         if (date.get(Calendar.AM_PM) == Calendar.AM) timeStr += "AM";
