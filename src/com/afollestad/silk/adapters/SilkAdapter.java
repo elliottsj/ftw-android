@@ -20,6 +20,11 @@ import java.util.List;
  */
 public abstract class SilkAdapter<T> extends BaseAdapter {
 
+    public interface Filter<T> {
+        public abstract boolean isSame(T one, T two);
+    }
+
+
     public SilkAdapter(Context context) {
         this.context = context;
         this.items = new ArrayList<T>();
@@ -74,6 +79,24 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     /**
+     * Updates a single item in the adapter using a Filter to find it. Once the filter finds the item, the loop is broken
+     * so you cannot update multiple items with a single call.
+     * <p/>
+     * If the item is not found, it will be added to the adapter.
+     */
+    public void update(T toUpdate, Filter<T> filter) {
+        boolean found = false;
+        for (int i = 0; i < items.size(); i++) {
+            if (filter.isSame(toUpdate, items.get(i))) {
+                items.set(i, toUpdate);
+                found = true;
+                break;
+            }
+        }
+        if (!found) add(toUpdate);
+    }
+
+    /**
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
     public final void set(T[] toSet) {
@@ -102,6 +125,19 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
         isChanged = true;
         this.items.remove(index);
         notifyDataSetChanged();
+    }
+
+    /**
+     * Removes a single item in the adapter using a Filter to find it. Once the filter finds the item, the loop is broken
+     * so you cannot remove multiple items with a single call.
+     */
+    public void remove(T toRemove, Filter<T> filter) {
+        for (int i = 0; i < items.size(); i++) {
+            if (filter.isSame(toRemove, items.get(i))) {
+                items.remove(i);
+                break;
+            }
+        }
     }
 
     /**
