@@ -88,16 +88,6 @@ public class TimeUtils {
      * Gets a human readable short time string, that indicates how long it's been since a specified time.
      * The format is similar to what most Twitter clients do (e.g. 1s, 1m, 1h, 1d, 1w, 1m, 1y).
      */
-    public static String getFriendlyTimeShort(long time) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(time);
-        return getFriendlyTimeShort(cal);
-    }
-
-    /**
-     * Gets a human readable short time string, that indicates how long it's been since a specified time.
-     * The format is similar to what most Twitter clients do (e.g. 1s, 1m, 1h, 1d, 1w, 1m, 1y).
-     */
     public static String getFriendlyTimeShort(Calendar time) {
         Calendar now = Calendar.getInstance();
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
