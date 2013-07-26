@@ -61,6 +61,11 @@ public class SilkDatePicker extends LinearLayout {
         invalidateCalendar();
     }
 
+    public void setTime(Calendar time) {
+        mCal.setTimeInMillis(time.getTimeInMillis());
+        invalidateCalendar();
+    }
+
     private void invalidateCalendar() {
         Spinner monthSpinner = (Spinner) getChildAt(0);
         monthSpinner.setSelection(mCal.get(Calendar.MONTH));
