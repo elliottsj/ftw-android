@@ -24,8 +24,8 @@ public class TimeUtils {
         else timeStr += "" + hourInt;
         if (minuteInt < 10) timeStr += ":0" + minuteInt;
         else timeStr += ":" + minuteInt;
-        if (date.get(Calendar.AM_PM) == Calendar.AM) timeStr += "AM";
-        else timeStr += "PM";
+        if (date.get(Calendar.AM_PM) == Calendar.AM) timeStr += "am";
+        else timeStr += "pm";
         if (dayInt < 10) dayStr = "0" + dayInt;
         else dayStr = "" + dayInt;
 
@@ -38,21 +38,24 @@ public class TimeUtils {
                     return timeStr;
                 } else {
                     // Same year, same month, different day
-                    String toReturn = convertMonth(date.get(Calendar.MONTH)) + " " + dayStr;
-                    if (includeTime) toReturn += " " + timeStr;
+                    String toReturn = "";
+                    if (includeTime) toReturn = timeStr;
+                    toReturn += " " + convertMonth(date.get(Calendar.MONTH)) + " " + dayStr;
                     return toReturn;
                 }
             } else {
                 // Different month, same year
-                String toReturn = convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + " " + timeStr;
-                if (includeTime) toReturn += " " + timeStr;
+                String toReturn = "";
+                if (includeTime) toReturn = timeStr;
+                toReturn += " " + convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + " " + timeStr;
                 return toReturn;
             }
         } else {
             // Different year
             String year = Integer.toString(date.get(Calendar.YEAR));
-            String toReturn = convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + ", " + year + " " + timeStr;
-            if (includeTime) toReturn += " " + timeStr;
+            String toReturn = "";
+            if (includeTime) toReturn = timeStr;
+            toReturn += " " + convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + ", " + year + " " + timeStr;;
             return toReturn;
         }
     }
