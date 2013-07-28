@@ -16,18 +16,15 @@ public class TimeUtils {
         Calendar now = Calendar.getInstance();
         int hourInt = date.get(Calendar.HOUR);
         int minuteInt = date.get(Calendar.MINUTE);
-        int dayInt = date.get(Calendar.DAY_OF_MONTH);
+        String dayStr = getNumberWithSuffix(date.get(Calendar.DAY_OF_MONTH));
 
         String timeStr = "";
-        String dayStr;
         if (hourInt == 0) timeStr += "12";
         else timeStr += "" + hourInt;
         if (minuteInt < 10) timeStr += ":0" + minuteInt;
         else timeStr += ":" + minuteInt;
         if (date.get(Calendar.AM_PM) == Calendar.AM) timeStr += "am";
         else timeStr += "pm";
-        if (dayInt < 10) dayStr = "0" + dayInt;
-        else dayStr = "" + dayInt;
 
         if (now.get(Calendar.YEAR) == date.get(Calendar.YEAR)) {
             // Same year
@@ -54,8 +51,8 @@ public class TimeUtils {
             // Different year
             String year = Integer.toString(date.get(Calendar.YEAR));
             String toReturn = "";
-            if (includeTime) toReturn = timeStr;
-            toReturn += " " + convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + ", " + year + " " + timeStr;;
+            if (includeTime) toReturn = timeStr + " ";
+            toReturn += convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + ", " + year + " " + timeStr;
             return toReturn;
         }
     }
@@ -65,9 +62,7 @@ public class TimeUtils {
      */
     public static String getFriendlyDate(Calendar time) {
         Calendar now = Calendar.getInstance();
-        String day = "";
-        if (time.get(Calendar.DAY_OF_MONTH) < 10) day = "0";
-        day += time.get(Calendar.DAY_OF_MONTH);
+        String day = getNumberWithSuffix(time.get(Calendar.DAY_OF_MONTH));
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
             // Same year
             if (now.get(Calendar.MONTH) == time.get(Calendar.MONTH)) {
@@ -160,5 +155,19 @@ public class TimeUtils {
             case Calendar.DECEMBER:
                 return "Dec";
         }
+    }
+
+    private static String getNumberWithSuffix(int number) {
+        int j = number % 10;
+        if (j == 1 && number != 11) {
+            return number + "st";
+        }
+        if (j == 2 && number != 12) {
+            return number + "nd";
+        }
+        if (j == 3 && number != 13) {
+            return number + "rd";
+        }
+        return number + "th";
     }
 }
