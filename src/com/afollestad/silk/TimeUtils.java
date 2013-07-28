@@ -25,8 +25,8 @@ public class TimeUtils {
         else timeStr += "" + hourInt;
         if (minuteInt < 10) timeStr += ":0" + minuteInt;
         else timeStr += ":" + minuteInt;
-        if (date.get(Calendar.AM_PM) == Calendar.AM) timeStr += "am";
-        else timeStr += "pm";
+        if (date.get(Calendar.AM_PM) == Calendar.AM) timeStr += "AM";
+        else timeStr += "PM";
 
         if (now.get(Calendar.YEAR) == date.get(Calendar.YEAR)) {
             // Same year
@@ -38,15 +38,15 @@ public class TimeUtils {
                 } else {
                     // Same year, same month, different day
                     String toReturn = "";
-                    if (includeTime) toReturn = timeStr;
-                    toReturn += " " + convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr;
+                    if (includeTime) toReturn = timeStr + " ";
+                    toReturn += convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr;
                     return toReturn;
                 }
             } else {
                 // Different month, same year
                 String toReturn = "";
-                if (includeTime) toReturn = timeStr;
-                toReturn += " " + convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr + " " + timeStr;
+                if (includeTime) toReturn = timeStr + " ";
+                toReturn += convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr + " " + timeStr;
                 return toReturn;
             }
         } else {
