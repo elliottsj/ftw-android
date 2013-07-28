@@ -93,7 +93,7 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
         setLastUpdatedVisibile(shouldShow);
         if (shouldShow) {
             mLastUpdateLabel.setText(getString(R.string.last_updated).replace("{date}",
-                    TimeUtils.getFriendlyTimeLong(getLastUpdatedTime(), false)));
+                    TimeUtils.toString(getLastUpdatedTime(), false, true)));
         }
         return shouldShow;
     }
