@@ -11,8 +11,10 @@ public class TimeUtils {
 
     /**
      * Gets a human-readable long time string (includes both the time and date, excluded certain parts if possible).
+     *
+     * @param shortMonth Whether or display a long or short month string (e.g. 'January' or 'Jan').
      */
-    public static String getFriendlyTimeLong(Calendar date, boolean includeTime) {
+    public static String toString(Calendar date, boolean includeTime, boolean shortMonth) {
         Calendar now = Calendar.getInstance();
         int hourInt = date.get(Calendar.HOUR);
         int minuteInt = date.get(Calendar.MINUTE);
@@ -37,14 +39,14 @@ public class TimeUtils {
                     // Same year, same month, different day
                     String toReturn = "";
                     if (includeTime) toReturn = timeStr;
-                    toReturn += " " + convertMonth(date.get(Calendar.MONTH)) + " " + dayStr;
+                    toReturn += " " + convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr;
                     return toReturn;
                 }
             } else {
                 // Different month, same year
                 String toReturn = "";
                 if (includeTime) toReturn = timeStr;
-                toReturn += " " + convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + " " + timeStr;
+                toReturn += " " + convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr + " " + timeStr;
                 return toReturn;
             }
         } else {
@@ -52,38 +54,36 @@ public class TimeUtils {
             String year = Integer.toString(date.get(Calendar.YEAR));
             String toReturn = "";
             if (includeTime) toReturn = timeStr + " ";
-            toReturn += convertMonth(date.get(Calendar.MONTH)) + " " + dayStr + ", " + year + " " + timeStr;
+            toReturn += convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr + ", " + year + " " + timeStr;
             return toReturn;
         }
     }
 
     /**
      * Gets a human-readable date string (month, day, and year).
+     *
+     * @param shortMonth Whether or display a long or short month string (e.g. 'January' or 'Jan').
      */
-    public static String getFriendlyDate(Calendar time) {
+    public static String getFriendlyDate(Calendar time, boolean shortMonth) {
         Calendar now = Calendar.getInstance();
         String day = getNumberWithSuffix(time.get(Calendar.DAY_OF_MONTH));
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
             // Same year
             if (now.get(Calendar.MONTH) == time.get(Calendar.MONTH)) {
                 // Same year, same month
-                return convertMonth(time.get(Calendar.MONTH)) + " " + day;
+                return convertMonth(time.get(Calendar.MONTH), shortMonth) + " " + day;
             } else {
                 // Different month, same year
-                return convertMonth(time.get(Calendar.MONTH)) + " " + day;
+                return convertMonth(time.get(Calendar.MONTH), shortMonth) + " " + day;
             }
         } else {
             // Different year
             String year = Integer.toString(time.get(Calendar.YEAR));
-            return convertMonth(time.get(Calendar.MONTH)) + " " + day + ", " + year;
+            return convertMonth(time.get(Calendar.MONTH), shortMonth) + " " + day + ", " + year;
         }
     }
 
-    /**
-     * Gets a human readable short time string, that indicates how long it's been since a specified time.
-     * The format is similar to what most Twitter clients do (e.g. 1s, 1m, 1h, 1d, 1w, 1m, 1y).
-     */
-    public static String getFriendlyTimeShort(Calendar time) {
+    public static String toStringShort(Calendar time) {
         Calendar now = Calendar.getInstance();
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
             // Same year
@@ -128,33 +128,48 @@ public class TimeUtils {
         }
     }
 
-    private static String convertMonth(int month) {
+    private static String convertMonth(int month, boolean useShort) {
+        String monthStr;
         switch (month) {
             default:
-                return "Jan";
+                monthStr = "January";
+                break;
             case Calendar.FEBRUARY:
-                return "Feb";
+                monthStr = "February";
+                break;
             case Calendar.MARCH:
-                return "Mar";
+                monthStr = "March";
+                break;
             case Calendar.APRIL:
-                return "Apr";
+                monthStr = "April";
+                break;
             case Calendar.MAY:
-                return "May";
+                monthStr = "May";
+                break;
             case Calendar.JUNE:
-                return "Jun";
+                monthStr = "June";
+                break;
             case Calendar.JULY:
-                return "Jul";
+                monthStr = "July";
+                break;
             case Calendar.AUGUST:
-                return "Aug";
+                monthStr = "August";
+                break;
             case Calendar.SEPTEMBER:
-                return "Sep";
+                monthStr = "September";
+                break;
             case Calendar.OCTOBER:
-                return "Oct";
+                monthStr = "October";
+                break;
             case Calendar.NOVEMBER:
-                return "Nov";
+                monthStr = "November";
+                break;
             case Calendar.DECEMBER:
-                return "Dec";
+                monthStr = "December";
+                break;
         }
+        if (useShort) monthStr = monthStr.substring(0, 3);
+        return monthStr;
     }
 
     private static String getNumberWithSuffix(int number) {
