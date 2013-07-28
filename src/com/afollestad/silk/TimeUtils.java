@@ -64,7 +64,7 @@ public class TimeUtils {
      *
      * @param shortMonth Whether or display a long or short month string (e.g. 'January' or 'Jan').
      */
-    public static String getFriendlyDate(Calendar time, boolean shortMonth) {
+    public static String toStringDate(Calendar time, boolean shortMonth) {
         Calendar now = Calendar.getInstance();
         String day = getNumberWithSuffix(time.get(Calendar.DAY_OF_MONTH));
         if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
