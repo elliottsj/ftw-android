@@ -236,14 +236,10 @@ public final class SilkCacheManager<T extends SilkComparable> {
         remove(new RemoveFilter<T>() {
             @Override
             public boolean shouldRemove(T item) {
-                boolean found = false;
-                for (int i = 0; i < toRemove.length; i++) {
-                    if (toRemove[i].isSameAs(item)) {
-                        found = true;
-                        break;
-                    }
+                for (T i : toRemove) {
+                    if (i.isSameAs(item)) return true;
                 }
-                return found;
+                return false;
             }
         }, true);
     }

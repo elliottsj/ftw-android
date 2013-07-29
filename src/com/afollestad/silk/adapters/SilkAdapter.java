@@ -31,7 +31,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     private final Context context;
-    private List<T> items;
+    private final List<T> items;
     private boolean isChanged = false;
 
     /**

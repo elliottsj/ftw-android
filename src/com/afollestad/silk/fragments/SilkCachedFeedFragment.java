@@ -37,7 +37,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         mCacheDir = cacheDirectory;
     }
 
-    protected String mCacheTitle;
+    protected final String mCacheTitle;
     private File mCacheDir;
     private SilkCacheManager<T> cache;
 
