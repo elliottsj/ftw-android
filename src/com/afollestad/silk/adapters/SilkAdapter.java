@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import com.afollestad.silk.cache.SilkComparable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ import java.util.List;
  * @param <T> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkAdapter<T> extends BaseAdapter implements Filter<T> {
+public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter {
 
     public SilkAdapter(Context context) {
         this.context = context;
@@ -74,15 +75,15 @@ public abstract class SilkAdapter<T> extends BaseAdapter implements Filter<T> {
     }
 
     /**
-     * Updates a single item in the adapter using a Filter to find it. Once the filter finds the item, the loop is broken
+     * Updates a single item in the adapter using isSame() from SilkComparable. Once the filter finds the item, the loop is broken
      * so you cannot update multiple items with a single call.
      * <p/>
      * If the item is not found, it will be added to the adapter.
      */
-    public void update(T toUpdate, Filter<T> filter) {
+    public void update(T toUpdate) {
         boolean found = false;
         for (int i = 0; i < items.size(); i++) {
-            if (filter.isSame(toUpdate, items.get(i))) {
+            if (toUpdate.isSameAs(items.get(i))) {
                 items.set(i, toUpdate);
                 found = true;
                 break;
@@ -114,7 +115,7 @@ public abstract class SilkAdapter<T> extends BaseAdapter implements Filter<T> {
     public final boolean contains(T item) {
         for (int i = 0; i < getCount(); i++) {
             T curItem = getItem(i);
-            if (isSame(item, curItem)) return true;
+            if (item.isSameAs(curItem)) return true;
         }
         return false;
     }
@@ -129,12 +130,12 @@ public abstract class SilkAdapter<T> extends BaseAdapter implements Filter<T> {
     }
 
     /**
-     * Removes a single item in the adapter using a Filter to find it. Once the filter finds the item, the loop is broken
+     * Removes a single item in the adapter using isSame() from SilkComparable. Once the filter finds the item, the loop is broken
      * so you cannot remove multiple items with a single call.
      */
-    public void remove(T toRemove, Filter<T> filter) {
+    public void remove(T toRemove) {
         for (int i = 0; i < items.size(); i++) {
-            if (filter.isSame(toRemove, items.get(i))) {
+            if (toRemove.isSameAs(items.get(i))) {
                 items.remove(i);
                 break;
             }
