@@ -4,13 +4,14 @@ import android.os.Bundle;
 import android.view.View;
 import com.afollestad.silk.R;
 import com.afollestad.silk.Silk;
+import com.afollestad.silk.cache.SilkComparable;
 
 /**
  * A {@link com.afollestad.silk.fragments.SilkListFragment} that pulls data from the network, and automatically puts the retrieved data in its list.
  *
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkFeedFragment<T> extends SilkListFragment<T> {
+public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkListFragment<T> {
 
     protected boolean mCacheEnabled = false;
 
