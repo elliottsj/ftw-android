@@ -18,12 +18,7 @@ import java.util.List;
  * @param <T> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkAdapter<T> extends BaseAdapter {
-
-    public interface Filter<T> {
-        public abstract boolean isSame(T one, T two);
-    }
-
+public abstract class SilkAdapter<T> extends BaseAdapter implements Filter<T> {
 
     public SilkAdapter(Context context) {
         this.context = context;
@@ -114,9 +109,15 @@ public abstract class SilkAdapter<T> extends BaseAdapter {
     }
 
     /**
-     * Checks whether or not the adapter contains an item yet.
+     * Checks whether or not the adapter contains an item based on the adapter's inherited Filter.
      */
-    public abstract boolean contains(T item);
+    public final boolean contains(T item) {
+        for (int i = 0; i < getCount(); i++) {
+            T curItem = getItem(i);
+            if (isSame(item, curItem)) return true;
+        }
+        return false;
+    }
 
     /**
      * Removes an item from the list by its index.
