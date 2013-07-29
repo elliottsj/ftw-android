@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkAdapter;
+import com.afollestad.silk.cache.SilkComparable;
 
 /**
  * A {@link com.afollestad.silk.fragments.SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
@@ -18,7 +19,7 @@ import com.afollestad.silk.adapters.SilkAdapter;
  * @param <T> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkListFragment<T> extends SilkFragment {
+public abstract class SilkListFragment<T extends SilkComparable> extends SilkFragment {
 
     private ListView mListView;
     private TextView mEmpty;
