@@ -1,6 +1,7 @@
 package com.afollestad.silk.images;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
@@ -10,6 +11,14 @@ public class SilkImageView extends ImageView {
 
     public SilkImageView(Context context) {
         super(context);
+    }
+
+    public SilkImageView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public SilkImageView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
     }
 
     private String mUrl;
