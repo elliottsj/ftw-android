@@ -51,6 +51,8 @@ public abstract class SilkDrawerActivity extends Activity {
     private void setupDrawer() {
         mTitle = getTitle();
         DrawerLayout mDrawerLayout = getDrawerLayout();
+        if (mDrawerLayout == null)
+            throw new IllegalStateException("You must return a drawer layout in getDrawerLayout() of your Activity.");
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, getDrawerIndicatorRes(), getOpenedTextRes(), getOpenedTextRes()) {
             @Override
             public void onDrawerOpened(View drawerView) {

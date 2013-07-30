@@ -9,7 +9,6 @@ import com.afollestad.silk.cache.SilkComparable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,10 +67,10 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     /**
      * Adds an array of items to the adapter and notifies the attached ListView.
      */
-    public void add(T[] toAdd) {
+    public final void add(T[] toAdd) {
         isChanged = true;
-        Collections.addAll(this.items, toAdd);
-        notifyDataSetChanged();
+        for (T item : toAdd)
+            add(item);
     }
 
     /**
