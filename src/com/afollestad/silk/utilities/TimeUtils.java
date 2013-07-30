@@ -1,4 +1,4 @@
-package com.afollestad.silk;
+package com.afollestad.silk.utilities;
 
 import java.util.Calendar;
 

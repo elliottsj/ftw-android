@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.silk.R;
-import com.afollestad.silk.TimeUtils;
+import com.afollestad.silk.utilities.TimeUtils;
 import com.afollestad.silk.cache.SilkComparable;
 
 import java.io.File;
