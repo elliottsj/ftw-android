@@ -56,6 +56,7 @@ public abstract class SilkDrawerActivity extends Activity {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, getDrawerIndicatorRes(), getOpenedTextRes(), getOpenedTextRes()) {
             @Override
             public void onDrawerOpened(View drawerView) {
+                mTitle = getActionBar().getTitle();
                 getActionBar().setTitle(getOpenedTextRes());
             }
 
