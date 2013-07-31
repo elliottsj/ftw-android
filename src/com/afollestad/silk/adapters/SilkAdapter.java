@@ -135,7 +135,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     public void remove(T toRemove) {
         for (int i = 0; i < items.size(); i++) {
             if (toRemove.isSameAs(items.get(i))) {
-                items.remove(i);
+                this.remove(i);
                 break;
             }
         }
