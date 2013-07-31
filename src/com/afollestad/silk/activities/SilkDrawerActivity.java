@@ -19,7 +19,19 @@ import android.view.View;
 public abstract class SilkDrawerActivity extends Activity {
 
     private ActionBarDrawerToggle mDrawerToggle;
-    protected CharSequence mTitle;
+    private CharSequence mTitle;
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        super.setTitle(title);
+    }
+
+    @Override
+    public void setTitle(int titleId) {
+        mTitle = getString(titleId);
+        super.setTitle(titleId);
+    }
 
     /**
      * Gets the drawer indicator drawable resource that will be displayed next to the the home up button in the activity. This is usually
