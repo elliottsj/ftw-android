@@ -25,12 +25,14 @@ public abstract class SilkDrawerActivity extends Activity {
     public void setTitle(CharSequence title) {
         mTitle = title;
         super.setTitle(title);
+        getActionBar().setTitle(mTitle);
     }
 
     @Override
     public void setTitle(int titleId) {
         mTitle = getString(titleId);
         super.setTitle(titleId);
+        getActionBar().setTitle(titleId);
     }
 
     /**
