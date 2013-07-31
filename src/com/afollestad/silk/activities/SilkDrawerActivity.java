@@ -36,6 +36,14 @@ public abstract class SilkDrawerActivity extends Activity {
     }
 
     /**
+     * Checks whether or not any drawer is open in the DrawerActivity.
+     */
+    public final boolean isDrawerOpen() {
+        DrawerLayout drawer = getDrawerLayout();
+        return drawer.isDrawerOpen(Gravity.START) || drawer.isDrawerOpen(Gravity.LEFT) || drawer.isDrawerOpen(Gravity.RIGHT);
+    }
+
+    /**
      * Gets the drawer indicator drawable resource that will be displayed next to the the home up button in the activity. This is usually
      * an icon consisting of 3 vertically orientated lines.
      */
@@ -72,11 +80,13 @@ public abstract class SilkDrawerActivity extends Activity {
             public void onDrawerOpened(View drawerView) {
                 mTitle = getActionBar().getTitle();
                 getActionBar().setTitle(getOpenedTextRes());
+                invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 getActionBar().setTitle(mTitle);
+                invalidateOptionsMenu();
             }
         };
         mDrawerLayout.setDrawerShadow(getDrawerShadowRes(), Gravity.START);

@@ -142,6 +142,13 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     }
 
     /**
+     * Removes an array of items from the adapter, uses isSame() from SilkComparable to find the items.
+     */
+    public final void remove(T[] toRemove) {
+        for (T item : toRemove) remove(item);
+    }
+
+    /**
      * Clears all items from the adapter and notifies the attached ListView.
      */
     public void clear() {
