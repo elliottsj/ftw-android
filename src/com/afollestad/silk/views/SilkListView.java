@@ -8,6 +8,12 @@ import android.widget.ListView;
 import com.afollestad.silk.adapters.SilkAdapter;
 
 /**
+ * A {@link ListView} that connects to a {@link SilkAdapter} and notifies the adapter of its scroll state.
+ * <p/>
+ * When the ListView becomes idle (is no longer being scrolled or flinged), it notifies the adapter causing it to update.
+ * <p/>
+ * You can use getScrollState() from within a {@link SilkAdapter} to only load images when the ListView isn't scrolling.
+ *
  * @author Aidan Follestad (afollestad)
  */
 public class SilkListView extends ListView {
