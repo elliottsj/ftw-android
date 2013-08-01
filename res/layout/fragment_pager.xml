@@ -3,7 +3,7 @@
                                    android:id="@+id/pager"
                                    android:layout_width="match_parent"
                                    android:layout_height="match_parent">
-                         x
+
     <android.support.v4.view.PagerTitleStrip android:id="@+id/pagerStrip" android:layout_width="fill_parent"
                                              android:layout_height="wrap_content"
                                              android:layout_gravity="top"
