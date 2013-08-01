@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import com.afollestad.silk.cache.SilkComparable;
 
@@ -28,6 +29,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     private final Context context;
     private final List<T> items;
     private boolean isChanged = false;
+    private int mScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
     /**
      * Called to get the layout of a view being inflated by the SilkAdapter. The inheriting adapter class must return
@@ -201,5 +203,19 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
      */
     public boolean isChanged() {
         return isChanged;
+    }
+
+    /**
+     * Used by the {@link com.afollestad.silk.views.SilkListView} to update the adapter with its scroll state.
+     */
+    public final void setScrollState(int state) {
+        mScrollState = state;
+    }
+
+    /**
+     * Gets the scroll state set by a {@link com.afollestad.silk.views.SilkListView}.
+     */
+    public final int getScrollState() {
+        return mScrollState;
     }
 }
