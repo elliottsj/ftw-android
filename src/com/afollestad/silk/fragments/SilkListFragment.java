@@ -3,7 +3,6 @@ package com.afollestad.silk.fragments;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
@@ -31,7 +30,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     /**
      * Gets the ListView contained in the Fragment's layout.
      */
-    public final ListView getListView() {
+    public final SilkListView getListView() {
         return mListView;
     }
 
