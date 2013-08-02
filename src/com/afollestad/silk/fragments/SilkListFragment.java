@@ -63,6 +63,13 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     public abstract int getEmptyText();
 
     /**
+     * Updates the edit text that was initially set to the value of {@link #getEmptyText()}.
+     */
+    public final void setEmptyText(CharSequence text) {
+        mEmpty.setText(text);
+    }
+
+    /**
      * Gets the SilkAdapter used to add and remove items from the list.
      */
     public final SilkAdapter<T> getAdapter() {
