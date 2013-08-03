@@ -75,13 +75,27 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
             add(item);
     }
 
+
     /**
      * Updates a single item in the adapter using isSame() from SilkComparable. Once the filter finds the item, the loop is broken
      * so you cannot update multiple items with a single call.
      * <p/>
      * If the item is not found, it will be added to the adapter.
+     *
+     * @return True if the item was updated.
      */
-    public void update(T toUpdate) {
+    public boolean update(T toUpdate) {
+        return update(toUpdate, true);
+    }
+
+    /**
+     * Updates a single item in the adapter using isSame() from SilkComparable. Once the filter finds the item, the loop is broken
+     * so you cannot update multiple items with a single call.
+     *
+     * @param addIfNotFound Whether or not the item will be added if it's not found.
+     * @return True if the item was updated or added.
+     */
+    public boolean update(T toUpdate, boolean addIfNotFound) {
         boolean found = false;
         for (int i = 0; i < items.size(); i++) {
             if (toUpdate.isSameAs(items.get(i))) {
@@ -90,7 +104,12 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
                 break;
             }
         }
-        if (!found) add(toUpdate);
+        if (found) return true;
+        else if (addIfNotFound && !found) {
+            add(toUpdate);
+            return true;
+        }
+        return false;
     }
 
     /**
