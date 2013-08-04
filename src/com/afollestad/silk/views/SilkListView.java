@@ -33,10 +33,14 @@ public class SilkListView extends ListView {
         init();
     }
 
+    private int lastState;
+
     private void init() {
         setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (lastState == scrollState) return;
+                lastState = scrollState;
                 SilkAdapter adapter = (SilkAdapter) getAdapter();
                 adapter.setScrollState(scrollState);
                 if (scrollState == SCROLL_STATE_IDLE) {
