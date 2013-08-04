@@ -2,6 +2,7 @@ package com.afollestad.silk;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -34,6 +35,13 @@ public class Silk {
         if (activeNetwork != null)
             state = activeNetwork.isConnectedOrConnecting();
         return state;
+    }
+
+    /**
+     * Detects whether or not the device is a tablet.
+     */
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     /**
