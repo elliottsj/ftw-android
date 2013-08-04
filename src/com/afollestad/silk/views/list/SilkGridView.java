@@ -1,4 +1,4 @@
-package com.afollestad.silk.views;
+package com.afollestad.silk.views.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -8,27 +8,27 @@ import android.widget.ListView;
 import com.afollestad.silk.adapters.SilkAdapter;
 
 /**
- * A {@link ListView} that connects to a {@link SilkAdapter} and notifies the adapter of its scroll state.
+ * A {@link android.widget.GridView} that connects to a {@link com.afollestad.silk.adapters.SilkAdapter} and notifies the adapter of its scroll state.
  * <p/>
- * When the ListView becomes idle (is no longer being scrolled or flinged), it notifies the adapter causing it to update.
+ * When the GridView becomes idle (is no longer being scrolled or flinged), it notifies the adapter causing it to update.
  * <p/>
- * You can use getScrollState() from within a {@link SilkAdapter} to only load images when the ListView isn't scrolling.
+ * You can use getScrollState() from within a {@link com.afollestad.silk.adapters.SilkAdapter} to only load images when the ListView isn't scrolling.
  *
  * @author Aidan Follestad (afollestad)
  */
-public class SilkListView extends ListView {
+public class SilkGridView extends ListView {
 
-    public SilkListView(Context context) {
+    public SilkGridView(Context context) {
         super(context);
         init();
     }
 
-    public SilkListView(Context context, AttributeSet attrs) {
+    public SilkGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public SilkListView(Context context, AttributeSet attrs, int defStyle) {
+    public SilkGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }

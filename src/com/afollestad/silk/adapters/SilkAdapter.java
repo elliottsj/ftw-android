@@ -225,14 +225,14 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     }
 
     /**
-     * Used by the {@link com.afollestad.silk.views.SilkListView} to update the adapter with its scroll state.
+     * Used by the {@link com.afollestad.silk.views.list.SilkListView} to update the adapter with its scroll state.
      */
     public final void setScrollState(int state) {
         mScrollState = state;
     }
 
     /**
-     * Gets the scroll state set by a {@link com.afollestad.silk.views.SilkListView}.
+     * Gets the scroll state set by a {@link com.afollestad.silk.views.list.SilkListView}.
      */
     public final int getScrollState() {
         return mScrollState;

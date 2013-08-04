@@ -2,13 +2,15 @@ package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.cache.SilkComparable;
-import com.afollestad.silk.views.SilkListView;
+import com.afollestad.silk.views.list.SilkGridView;
+import com.afollestad.silk.views.list.SilkListView;
 
 /**
  * A {@link com.afollestad.silk.fragments.SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
@@ -21,7 +23,7 @@ import com.afollestad.silk.views.SilkListView;
  */
 public abstract class SilkListFragment<T extends SilkComparable> extends SilkFragment {
 
-    private SilkListView mListView;
+    private AbsListView mListView;
     private TextView mEmpty;
     private ProgressBar mProgress;
     private SilkAdapter<T> mAdapter;
@@ -30,7 +32,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     /**
      * Gets the ListView contained in the Fragment's layout.
      */
-    public final SilkListView getListView() {
+    public final AbsListView getListView() {
         return mListView;
     }
 
@@ -153,7 +155,11 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mListView = (SilkListView) view.findViewById(R.id.list);
-        mListView.setSilkAdapter(mAdapter);
+        if (mListView instanceof SilkListView)
+            ((SilkListView) mListView).setSilkAdapter(mAdapter);
+        else if (mListView instanceof SilkGridView)
+            ((SilkGridView) mListView).setSilkAdapter(mAdapter);
+        else mListView.setAdapter(mAdapter);
         mEmpty = (TextView) view.findViewById(R.id.empty);
         mListView.setEmptyView(mEmpty);
         mProgress = (ProgressBar) view.findViewById(R.id.progress);
