@@ -154,6 +154,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mListView = (AbsListView) view.findViewById(R.id.list);
         if (mListView instanceof SilkListView)
             ((SilkListView) mListView).setSilkAdapter(mAdapter);
         else if (mListView instanceof SilkGridView)
