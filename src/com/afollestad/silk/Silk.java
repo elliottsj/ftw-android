@@ -37,7 +37,7 @@ public class Silk {
     }
 
     /**
-     * Clears out preferences persisted for Silk.
+     * Clears out preferences and files persisted for Silk.
      */
     public static void clearPersistence(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("feed_last_update", 0);
