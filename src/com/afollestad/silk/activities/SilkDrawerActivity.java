@@ -69,6 +69,17 @@ public abstract class SilkDrawerActivity extends Activity {
      */
     public abstract int getOpenedTextRes();
 
+    /**
+     * Can be overridden.
+     */
+    public void onDrawerOpened() {
+    }
+
+    /**
+     * Can be overridden.
+     */
+    public void onDrawerClosed() {
+    }
 
     private void setupDrawer() {
         mTitle = getTitle();
@@ -81,12 +92,14 @@ public abstract class SilkDrawerActivity extends Activity {
                 mTitle = getActionBar().getTitle();
                 getActionBar().setTitle(getOpenedTextRes());
                 invalidateOptionsMenu();
+                SilkDrawerActivity.this.onDrawerOpened();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 getActionBar().setTitle(mTitle);
                 invalidateOptionsMenu();
+                SilkDrawerActivity.this.onDrawerClosed();
             }
         };
         mDrawerLayout.setDrawerShadow(getDrawerShadowRes(), Gravity.START);
