@@ -3,8 +3,8 @@ package com.afollestad.silk.views.list;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.AbsListView;
+import android.widget.GridView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import com.afollestad.silk.adapters.SilkAdapter;
 
 /**
@@ -16,7 +16,7 @@ import com.afollestad.silk.adapters.SilkAdapter;
  *
  * @author Aidan Follestad (afollestad)
  */
-public class SilkGridView extends ListView {
+public class SilkGridView extends GridView {
 
     public SilkGridView(Context context) {
         super(context);
