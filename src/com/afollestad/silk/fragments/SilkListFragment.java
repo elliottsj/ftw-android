@@ -40,6 +40,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAdapter = initializeAdapter();
+        if (mAdapter == null) throw new RuntimeException("The SilkListFragment's adapter cannot be null.");
     }
 
     /**
