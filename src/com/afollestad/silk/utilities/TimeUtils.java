@@ -46,7 +46,7 @@ public class TimeUtils {
                 // Different month, same year
                 String toReturn = "";
                 if (includeTime) toReturn = timeStr + " ";
-                toReturn += convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr + " " + timeStr;
+                toReturn += convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr;
                 return toReturn;
             }
         } else {
@@ -54,7 +54,7 @@ public class TimeUtils {
             String year = Integer.toString(date.get(Calendar.YEAR));
             String toReturn = "";
             if (includeTime) toReturn = timeStr + " ";
-            toReturn += convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr + ", " + year + " " + timeStr;
+            toReturn += convertMonth(date.get(Calendar.MONTH), shortMonth) + " " + dayStr + ", " + year;
             return toReturn;
         }
     }
