@@ -55,6 +55,13 @@ public final class SilkCacheManager<T extends SilkComparable> {
         public boolean shouldRemove(T item);
     }
 
+    public interface FindCallback<T> {
+        public void onFound(T item);
+
+        public void onNothing();
+
+        public void onError(Exception e);
+    }
 
     /**
      * Initializes a new SilkCacheManager, using the default cache file and default cache directory.
@@ -268,6 +275,16 @@ public final class SilkCacheManager<T extends SilkComparable> {
         write(cache, false);
         log("Removed " + toReturn.size() + " items from " + cacheFile.getName());
         return toReturn;
+    }
+
+    private T find(T query) throws Exception {
+        List<T> cache = read();
+        if (cache.size() == 0) return null;
+        for (int i = 0; i < cache.size(); i++) {
+            if (cache.get(i).isSameAs(query))
+                return cache.get(i);
+        }
+        return null;
     }
 
     private void runPriorityThread(Runnable runnable) {
@@ -496,6 +513,33 @@ public final class SilkCacheManager<T extends SilkComparable> {
                     });
                 } catch (final Exception e) {
                     log("Cache remove error: " + e.getMessage());
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onError(e);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void findAsync(final T query, final FindCallback<T> callback) {
+        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
+        runPriorityThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final T result = find(query);
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (result == null) callback.onNothing();
+                            else callback.onFound(result);
+                        }
+                    });
+                } catch (final Exception e) {
+                    log("Cache find error: " + e.getMessage());
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
