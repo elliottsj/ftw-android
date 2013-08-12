@@ -277,7 +277,12 @@ public final class SilkCacheManager<T extends SilkComparable> {
         return toReturn;
     }
 
-    private T find(T query) throws Exception {
+    /**
+     * Finds an item in the cache using isSameAs() from SilkComparable on the calling thread.
+     *
+     * @param query An item that will match up with another item via isSameAs().
+     */
+    public T find(T query) throws Exception {
         List<T> cache = read();
         log("Searching " + cache.size() + " items...");
         if (cache.size() == 0) return null;
@@ -286,6 +291,14 @@ public final class SilkCacheManager<T extends SilkComparable> {
                 return cache.get(i);
         }
         return null;
+    }
+
+    /**
+     * Deletes the manager's cache file, which causes the cache to be cleared.
+     */
+    public boolean clear() {
+        log("Deleting: " + cacheFile.getAbsolutePath());
+        return cacheFile.delete();
     }
 
     private void runPriorityThread(Runnable runnable) {
@@ -525,6 +538,12 @@ public final class SilkCacheManager<T extends SilkComparable> {
         });
     }
 
+    /**
+     * Finds an item in the cache using isSameAs() from SilkComparable on a separate thread, and posts
+     * results to a callback.
+     *
+     * @param query An item that will match up with another item via isSameAs().
+     */
     public void findAsync(final T query, final FindCallback<T> callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         runPriorityThread(new Runnable() {
