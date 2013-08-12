@@ -279,6 +279,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
 
     private T find(T query) throws Exception {
         List<T> cache = read();
+        log("Searching " + cache.size() + " items...");
         if (cache.size() == 0) return null;
         for (int i = 0; i < cache.size(); i++) {
             if (cache.get(i).isSameAs(query))
