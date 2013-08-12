@@ -57,6 +57,12 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
         return context;
     }
 
+    public void add(int index, T toAdd) {
+        isChanged = true;
+        this.items.add(index, toAdd);
+        notifyDataSetChanged();
+    }
+
     /**
      * Adds a single item to the adapter and notifies the attached ListView.
      */
@@ -116,7 +122,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
     public final void set(T[] toSet) {
-        set(Arrays.asList(toSet));
+        set(new ArrayList<T>(Arrays.asList(toSet)));
     }
 
     /**
