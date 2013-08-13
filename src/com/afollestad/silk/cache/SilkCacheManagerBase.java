@@ -49,10 +49,19 @@ class SilkCacheManagerBase<T extends SilkComparable> {
 
     protected void reloadIfNeeded() {
         if (buffer.size() > 0) return;
-        buffer = read();
+        buffer = loadItems();
     }
 
-    private List<T> read() {
+    /**
+     * Gets the items currently stored in the cache manager's buffer; the buffer is loaded when the manager
+     * is instantiated, cleared when it commits, and reloaded when needed.
+     */
+    public List<T> read() {
+        reloadIfNeeded();
+        return buffer;
+    }
+
+    private List<T> loadItems() {
         try {
             final List<T> results = new ArrayList<T>();
             if (cacheFile.exists()) {
