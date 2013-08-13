@@ -1,13 +1,12 @@
 package com.afollestad.silk.cache;
 
-import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.fragments.SilkCachedFeedFragment;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,41 +14,7 @@ import java.util.List;
  *
  * @author Aidan Follestad (afollestad)
  */
-public final class SilkCacheManager<T extends SilkComparable> {
-
-    public interface AddCallback<T> {
-        public void onAdded(T item);
-
-        public void onIgnored(T item);
-
-        public void onError(Exception e);
-    }
-
-    public interface UpdateCallback<T> {
-        public void onUpdated(T item, boolean added);
-
-        public void onError(Exception e);
-    }
-
-    public interface WriteCallback<T> {
-        public void onWrite(List<T> items, boolean isAppended);
-
-        public void onError(Exception e);
-    }
-
-    public interface ReadCallback<T> {
-        public void onRead(List<T> results);
-
-        public void onError(Exception e);
-
-        public void onCacheEmpty();
-    }
-
-    public interface RemoveCallback<T> {
-        public void onRemoved(List<T> items);
-
-        public void onError(Exception e);
-    }
+public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheManagerBase<T> {
 
     public interface RemoveFilter<T> {
         public boolean shouldRemove(T item);
@@ -63,11 +28,20 @@ public final class SilkCacheManager<T extends SilkComparable> {
         public void onError(Exception e);
     }
 
+    public interface CommitCallback extends SimpleCommitCallback {
+        public void onCommitted(boolean returnValue);
+    }
+
+    public interface SimpleCommitCallback {
+        public void onError(Exception e);
+    }
+
+
     /**
      * Initializes a new SilkCacheManager, using the default cache file and default cache directory.
      */
-    public SilkCacheManager() {
-        init(null, null, null);
+    public SilkCacheManager() throws Exception {
+        super(null, null);
     }
 
     /**
@@ -76,179 +50,169 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      */
     public SilkCacheManager(String cacheName) {
-        init(cacheName, null, null);
+        super(cacheName, null);
     }
 
     /**
      * Initializes a new SilkCacheManager.
      *
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
-     * @param cacheDir  The directory that the cache file will be stored in, defaults to "/sdcard/Silk".
+     * @param cacheDir  The directory that the cache file will be stored in, defaults to a folder called "Silk" in your external storage directory.
      */
     public SilkCacheManager(String cacheName, File cacheDir) {
-        init(cacheName, cacheDir, null);
+        super(cacheName, cacheDir);
     }
 
     /**
-     * Initializes a new SilkCacheManager.
-     *
-     * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
-     * @param cacheDir  The directory that the cache file will be stored in, defaults to "/sdcard/Silk".
-     * @param handler   If the manager isn't being created on the UI thread, a handler that was.
+     * Sets the handler used when making callbacks from separate threads. This should be used if you didn't
+     * instantiate the cache manager from the UI thread.
      */
-    public SilkCacheManager(String cacheName, File cacheDir, Handler handler) {
-        init(cacheName, cacheDir, handler);
-    }
-
-
-    private Handler mHandler;
-    private File cacheFile;
-
-    private void init(String cacheName, File cacheDir, Handler handler) {
-        if (cacheName == null || cacheName.trim().isEmpty())
-            cacheName = "default";
-        if (handler == null)
-            mHandler = new Handler();
-        else mHandler = handler;
-        if (cacheDir == null)
-            cacheDir = new File(Environment.getExternalStorageDirectory(), "Silk");
-        if (!cacheDir.exists())
-            cacheDir.mkdirs();
-        cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
-    }
-
-    private void log(String message) {
-        Log.d("SilkCacheManager", message);
-    }
-
-
-    /**
-     * Writes a single object to the cache, without overwriting previous entries.
-     *
-     * @param toAdd the item to add to the cache.
-     */
-    public boolean add(T toAdd) throws Exception {
-        if (toAdd.shouldIgnore()) return false;
-        List<T> temp = new ArrayList<T>();
-        temp.add(toAdd);
-        write(temp, true);
-        return true;
+    public SilkCacheManager<T> setHandler(Handler handler) {
+        super.mHandler = handler;
+        return this;
     }
 
     /**
-     * Updates an item in the cache. If it's not found, it's added.
-     *
-     * @param toUpdate The item to update, or add.
+     * Appends a single item to the cache.
      */
-    public boolean update(T toUpdate) throws Exception {
-        if (toUpdate.shouldIgnore()) return false;
-        List<T> cache = read();
+    public SilkCacheManager<T> append(T toAdd) {
+        if (toAdd == null || toAdd.shouldIgnore()) {
+            log("Item passed to append() was null or marked for ignoring.");
+            return this;
+        }
+        reloadIfNeeded();
+        super.buffer.add(toAdd);
+        log("Appended 1 item to the cache.");
+        return this;
+    }
+
+    /**
+     * Appends a collection of items to the cache.
+     */
+    public SilkCacheManager<T> append(List<T> toAppend) {
+        if (toAppend == null || toAppend.size() == 0) {
+            log("List passed to append() was null or empty.");
+            return this;
+        }
+        reloadIfNeeded();
+        int count = 0;
+        for (T item : toAppend) {
+            if (item.shouldIgnore()) continue;
+            super.buffer.add(item);
+            count++;
+        }
+        log("Appended " + count + " items to the cache.");
+        return this;
+    }
+
+    /**
+     * Appends an array of items to the cache.
+     */
+    public SilkCacheManager<T> append(T[] toAppend) {
+        if (toAppend == null || toAppend.length == 0) {
+            log("Array passed to append() was null or empty.");
+            return this;
+        }
+        append(new ArrayList<T>(Arrays.asList(toAppend)));
+        return this;
+    }
+
+    /**
+     * Appends the contents of a {@link SilkAdapter} to the cache, and resets the adapter's changed state to unchanged.
+     * If the adapter is marked as unchanged already, its contents will not be written.
+     */
+    public SilkCacheManager<T> append(SilkAdapter<T> adapter) {
+        if (adapter == null || adapter.getCount() == 0) {
+            log("Adapter passed to append() was null.");
+            return this;
+        }
+        if (!adapter.isChanged()) {
+            log("The adapter has not been changed, skipped writing to " + super.getCacheFile().getName());
+            return this;
+        }
+        adapter.resetChanged();
+        append(adapter.getItems());
+        return this;
+    }
+
+    /**
+     * Updates an item in the cache, using isSameAs() from SilkComparable to find the item.
+     *
+     * @param appendIfNotFound Whether or not the item will be appended to the end of the cache if it's not found.
+     */
+    public SilkCacheManager<T> update(T toUpdate, boolean appendIfNotFound) {
+        if (toUpdate == null || toUpdate.shouldIgnore()) {
+            log("Item passed to update() was null or marked for ignoring.");
+            return this;
+        }
+        reloadIfNeeded();
+        if (super.buffer.size() == 0) {
+            log("Cache buffer is empty.");
+            return this;
+        }
         boolean found = false;
-        for (int i = 0; i < cache.size(); i++) {
-            if (cache.get(i).isSameAs(toUpdate)) {
-                cache.set(i, toUpdate);
+        for (int i = 0; i < buffer.size(); i++) {
+            if (buffer.get(i).isSameAs(toUpdate)) {
+                buffer.set(i, toUpdate);
                 found = true;
                 break;
             }
         }
-        if (found) write(cache);
-        else add(toUpdate);
-        return found;
+        if (found) {
+            log("Updated 1 item in the cache.");
+        } else if (appendIfNotFound) {
+            append(toUpdate);
+        }
+        return this;
     }
 
     /**
-     * Writes an list of items to the cache from the calling thread. Allows you set whether to overwrite the cache
-     * or append to it.
+     * Overwrites all items in the cache with a set of items from an array.
+     * <p/>
+     * This is equivalent to calling clear() and then append().
      */
-    public void write(List<T> items, boolean append) throws Exception {
-        if (items == null || items.size() == 0) {
-            if (cacheFile.exists() && !append) {
-                log(cacheFile.getName() + " is empty, deleting file...");
-                cacheFile.delete();
-            }
-            return;
-        }
-        int subtraction = 0;
-        FileOutputStream fileOutputStream = new FileOutputStream(cacheFile, append);
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-        for (T item : items) {
-            if (item.shouldIgnore()) {
-                subtraction++;
-                continue;
-            }
-            objectOutputStream.writeObject(item);
-        }
-        objectOutputStream.close();
-        log("Wrote " + (items.size() - subtraction) + " items to " + cacheFile.getName());
+    public SilkCacheManager<T> set(T[] toSet) {
+        set(new ArrayList<T>(Arrays.asList(toSet)));
+        return this;
     }
 
     /**
-     * Writes an list of items to the cache from the calling thread, overwriting all current entries in the cache.
+     * Overwrites all items in the cache with a set of items from a collection.
+     * <p/>
+     * This is equivalent to calling clear() and then append().
      */
-    public void write(List<T> items) throws Exception {
-        write(items, false);
+    public SilkCacheManager<T> set(List<T> toSet) {
+        clear();
+        append(toSet);
+        return this;
     }
 
     /**
-     * Writes an adapter to the cache. The adapter will not be written if its isChanged() method returns false.
-     * The adapter's isChanged() is reset to false every time the cache reads to it or if it's reset elsewhere by you.
+     * Overwrites all items in the cache with a set of items from a collection.
+     * <p/>
+     * This is equivalent to calling clear() and then append().
      */
-    public void write(SilkAdapter<T> adapter) throws Exception {
-        if (!adapter.isChanged()) {
-            log("The adapter has not been changed, skipped writing to " + cacheFile.getName());
-            return;
-        }
-        adapter.resetChanged();
-        write(adapter.getItems(), false);
-    }
-
-    /**
-     * Reads from the cache file on the calling thread and returns the results.
-     */
-    public List<T> read() throws Exception {
-        final List<T> results = new ArrayList<T>();
-        if (cacheFile.exists()) {
-            FileInputStream fileInputStream = new FileInputStream(cacheFile);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            while (true) {
-                try {
-                    final T item = (T) objectInputStream.readObject();
-                    if (item != null) results.add(item);
-                } catch (EOFException eof) {
-                    break;
-                }
-            }
-            objectInputStream.close();
-        }
-        log("Read " + results.size() + " items from " + cacheFile.getName());
-        return results;
+    public SilkCacheManager<T> set(SilkAdapter<T> adapter) {
+        clear();
+        append(adapter);
+        return this;
     }
 
     /**
      * Removes a single item from the cache, uses isSameAs() from the {@link SilkComparable} to find the item.
      */
-    public void remove(final T toRemove) throws Exception {
+    public SilkCacheManager<T> remove(final T toRemove) throws Exception {
+        if (toRemove == null) {
+            log("Item passed to remove() was null.");
+            return this;
+        }
         remove(new RemoveFilter<T>() {
             @Override
             public boolean shouldRemove(T item) {
                 return item.isSameAs(toRemove);
             }
         }, true);
-    }
-
-    /**
-     * Removes multiple items from the cache, uses isSameAs() from the {@link SilkComparable} to find the item.
-     */
-    public void remove(final T... toRemove) throws Exception {
-        remove(new RemoveFilter<T>() {
-            @Override
-            public boolean shouldRemove(T item) {
-                for (T i : toRemove) {
-                    if (i.isSameAs(item)) return true;
-                }
-                return false;
-            }
-        }, true);
+        return this;
     }
 
     /**
@@ -256,180 +220,64 @@ public final class SilkCacheManager<T extends SilkComparable> {
      *
      * @param removeOne If true, it will remove one and stop searching, which can improve performance. Otherwise it'll search through the entire cache and remove multiple entries that match the filter.
      */
-    public List<T> remove(RemoveFilter<T> filter, boolean removeOne) throws Exception {
-        if (filter == null) throw new IllegalArgumentException("You must specify a filter");
-        List<T> toReturn = new ArrayList<T>();
-        List<T> cache = read();
-        if (cache.size() == 0) return toReturn;
-
+    public SilkCacheManager<T> remove(RemoveFilter<T> filter, boolean removeOne) throws Exception {
+        if (filter == null) throw new IllegalArgumentException("You must specify a RemoveFilter.");
+        reloadIfNeeded();
+        if (super.buffer.size() == 0) {
+            log("Cache buffer is empty.");
+            return this;
+        }
         ArrayList<Integer> removeIndexes = new ArrayList<Integer>();
-        for (int i = 0; i < cache.size(); i++) {
-            if (filter.shouldRemove(cache.get(i))) {
-                toReturn.add(cache.get(i));
+        for (int i = 0; i < super.buffer.size(); i++) {
+            if (filter.shouldRemove(super.buffer.get(i))) {
                 removeIndexes.add(i);
                 if (removeOne) break;
             }
         }
-        for (Integer i : removeIndexes) cache.remove(i.intValue());
-
-        write(cache, false);
-        log("Removed " + toReturn.size() + " items from " + cacheFile.getName());
-        return toReturn;
+        for (Integer i : removeIndexes)
+            super.buffer.remove(i.intValue());
+        log("Removed " + removeIndexes.size() + " items from " + super.getCacheFile().getName());
+        return this;
     }
 
     /**
-     * Finds an item in the cache using isSameAs() from SilkComparable on the calling thread.
+     * Finds an item in the cache using isSameAs() from SilkComparable.
      *
-     * @param query An item that will match up with another item via isSameAs().
+     * @param query An item that will match up with another item using SilkComparable.isSameAs().
      */
     public T find(T query) throws Exception {
-        List<T> cache = read();
-        log("Searching " + cache.size() + " items...");
-        if (cache.size() == 0) return null;
-        for (int i = 0; i < cache.size(); i++) {
-            if (cache.get(i).isSameAs(query))
-                return cache.get(i);
+        if (query == null) {
+            log("Item passed to find() was null.");
+            return null;
+        }
+        reloadIfNeeded();
+        log("Searching " + super.buffer.size() + " items...");
+        if (super.buffer.size() == 0) {
+            log("Cache buffer is empty.");
+            return null;
+        }
+        for (int i = 0; i < super.buffer.size(); i++) {
+            T currentItem = super.buffer.get(i);
+            if (currentItem.isSameAs(query))
+                return currentItem;
         }
         return null;
     }
 
     /**
-     * Deletes the manager's cache file, which causes the cache to be cleared.
+     * Clears all items from the cahce.
      */
-    public boolean clear() {
-        log("Deleting: " + cacheFile.getAbsolutePath());
-        return cacheFile.delete();
-    }
-
-    private void runPriorityThread(Runnable runnable) {
-        Thread t = new Thread(runnable);
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
+    public SilkCacheManager clear() {
+        log("Cache was cleared.");
+        super.buffer.clear();
+        return this;
     }
 
     /**
-     * Writes a single object to the cache from a separate thread, posting results to a callback.
+     * Gets the total number of items in the cache.
      */
-    public void addAsync(final T toAdd, final AddCallback<T> callback) {
-        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
-        runPriorityThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (add(toAdd)) callback.onAdded(toAdd);
-                    else callback.onIgnored(toAdd);
-                } catch (Exception e) {
-                    log("Cache write error: " + e.getMessage());
-                    callback.onError(e);
-                }
-            }
-        });
-    }
-
-    /**
-     * Updates an item in the cache. If it's not found, it's added. This is done on a separate thread and results are
-     * posted to a callback.
-     */
-    public void updateAsync(final T toUpdate, final UpdateCallback<T> callback) {
-        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
-        runPriorityThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    boolean isAdded = update(toUpdate);
-                    callback.onUpdated(toUpdate, isAdded);
-                } catch (Exception e) {
-                    log("Cache write error: " + e.getMessage());
-                    callback.onError(e);
-                }
-            }
-        });
-    }
-
-    /**
-     * Writes a list of items to the cache from a separate thread. Posts results to a callback.
-     */
-    public void writeAsync(final List<T> items, final WriteCallback<T> callback) {
-        writeAsync(items, false, callback);
-    }
-
-    /**
-     * Writes an adapter to the cache from a separate thread. The adapter will not be written if its
-     * isChanged() method returns false. The adapter's isChanged() is reset to false every time the cache reads
-     * to it or if it's reset elsewhere by you.
-     */
-    public void writeAsync(final SilkAdapter<T> adapter, final WriteCallback<T> callback) {
-        if (!adapter.isChanged()) {
-            log("The adapter has not been changed, skipped writing to " + cacheFile.getName());
-            return;
-        }
-        adapter.resetChanged();
-        writeAsync(adapter.getItems(), false, callback);
-    }
-
-    /**
-     * Writes a list of items to the cache from a separate thread. Allows you set whether to overwrite the cache
-     * or append to it. Posts results to a callback.
-     */
-    public void writeAsync(final List<T> items, final boolean append, final WriteCallback<T> callback) {
-        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
-        runPriorityThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    write(items, append);
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onWrite(items, append);
-                        }
-                    });
-                } catch (final Exception e) {
-                    log("Cache write error: " + e.getMessage());
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onError(e);
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    /**
-     * Reads from the cache file on a separate thread and posts results to a callback.
-     */
-    public void readAsync(final ReadCallback<T> callback) {
-        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
-        if (!cacheFile.exists()) {
-            log("No cache for " + cacheFile.getName());
-            callback.onCacheEmpty();
-            return;
-        }
-        runPriorityThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final List<T> results = read();
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (results.size() == 0) callback.onCacheEmpty();
-                            else callback.onRead(results);
-                        }
-                    });
-                } catch (final Exception e) {
-                    log("Cache read error: " + e.getMessage());
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onError(e);
-                        }
-                    });
-                }
-            }
-        });
+    public int size() throws Exception {
+        return super.buffer.size();
     }
 
     /**
@@ -439,98 +287,41 @@ public final class SilkCacheManager<T extends SilkComparable> {
      * @param fragment The optional fragment that will receive loading notifications.
      */
     public void readAsync(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment) {
-        if (adapter == null)
-            throw new IllegalArgumentException("The adapter parameter cannot be null.");
+        if (adapter == null) throw new IllegalArgumentException("The adapter parameter cannot be null.");
         else if (fragment != null && fragment.isLoading()) return;
         if (fragment != null) fragment.setLoading(false);
-        readAsync(new ReadCallback<T>() {
-            @Override
-            public void onRead(List<T> results) {
-                adapter.clear();
-                for (T item : results) adapter.add(item);
-                if (fragment != null) fragment.setLoadFromCacheComplete(false);
-                adapter.resetChanged();
-            }
-
-            @Override
-            public void onError(Exception e) {
-                if (fragment != null) {
-                    fragment.setLoadFromCacheComplete(true);
-                    if (adapter.getCount() == 0) fragment.onCacheEmpty();
-                }
-                adapter.resetChanged();
-            }
-
-            @Override
-            public void onCacheEmpty() {
-                adapter.clear();
-                if (fragment != null) {
-                    fragment.setLoadFromCacheComplete(false);
-                    fragment.onCacheEmpty();
-                }
-                adapter.resetChanged();
-            }
-        });
-    }
-
-    /**
-     * Removes a single item from the cache, uses isSameAs() remove the {@link RemoveFilter} to find the item. Results are
-     * posted to a callback.
-     */
-    public void removeAsync(final T toRemove, final RemoveCallback<T> callback) {
-        if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final List<T> results = remove(new RemoveFilter<T>() {
-                        @Override
-                        public boolean shouldRemove(T item) {
-                            return item.isSameAs(toRemove);
-                        }
-                    }, true);
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onRemoved(results);
-                        }
-                    });
-                } catch (final Exception e) {
-                    log("Cache remove error: " + e.getMessage());
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onError(e);
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    /**
-     * Removes items from the cache based on a filter that makes decisions. Results are posted to a callback.
-     */
-    public void removeAsync(final RemoveFilter<T> filter, final boolean removeOne, final RemoveCallback<T> callback) {
-        if (filter == null) throw new IllegalArgumentException("You must specify a filter");
-        else if (callback == null) throw new IllegalArgumentException("You must specify a callback");
-        runPriorityThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final List<T> results = remove(filter, removeOne);
-                    mHandler.post(new Runnable() {
+                    reloadIfNeeded();
+                    if (buffer.isEmpty()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.clear();
+                                if (fragment != null) {
+                                    fragment.setLoadFromCacheComplete(false);
+                                    fragment.onCacheEmpty();
+                                }
+                                adapter.resetChanged();
+                            }
+                        });
+                        return;
+                    }
+                    adapter.set(buffer);
+                    if (fragment != null) fragment.setLoadFromCacheComplete(false);
+                    adapter.resetChanged();
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onRemoved(results);
-                        }
-                    });
-                } catch (final Exception e) {
-                    log("Cache remove error: " + e.getMessage());
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onError(e);
+                            if (fragment != null) {
+                                fragment.setLoadFromCacheComplete(true);
+                                if (adapter.getCount() == 0) fragment.onCacheEmpty();
+                            }
+                            adapter.resetChanged();
                         }
                     });
                 }
@@ -559,6 +350,7 @@ public final class SilkCacheManager<T extends SilkComparable> {
                         }
                     });
                 } catch (final Exception e) {
+                    e.printStackTrace();
                     log("Cache find error: " + e.getMessage());
                     mHandler.post(new Runnable() {
                         @Override

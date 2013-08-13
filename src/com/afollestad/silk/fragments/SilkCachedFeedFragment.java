@@ -6,7 +6,6 @@ import com.afollestad.silk.cache.SilkCacheManager;
 import com.afollestad.silk.cache.SilkComparable;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * A {@link SilkFeedFragment} that automatically caches loaded feeds locally and loads them again later.
@@ -89,7 +88,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     protected void onPostLoad(T[] results) {
         super.onPostLoad(results);
         try {
-            cache.write(getAdapter());
+            cache.set(getAdapter()).commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,11 +109,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onVisibilityChange(boolean visible) {
         if (!visible) {
-            cache.writeAsync(getAdapter(), new SilkCacheManager.WriteCallback<T>() {
-                @Override
-                public void onWrite(List<T> items, boolean isAppended) {
-                }
-
+            cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
                 @Override
                 public void onError(Exception e) {
                     e.printStackTrace();
