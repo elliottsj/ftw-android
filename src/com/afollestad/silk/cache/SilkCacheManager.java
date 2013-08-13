@@ -73,6 +73,15 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     }
 
     /**
+     * Forces the cache manager to reload its buffer from the cache file.
+     */
+    public SilkCacheManager<T> forceReload() {
+        super.buffer = null;
+        reloadIfNeeded();
+        return this;
+    }
+
+    /**
      * Appends a single item to the cache.
      */
     public SilkCacheManager<T> append(T toAdd) {
