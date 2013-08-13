@@ -40,7 +40,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     /**
      * Initializes a new SilkCacheManager, using the default cache file and default cache directory.
      */
-    public SilkCacheManager() throws Exception {
+    public SilkCacheManager() {
         super(null, null);
     }
 
@@ -229,7 +229,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      *
      * @param removeOne If true, it will remove one and stop searching, which can improve performance. Otherwise it'll search through the entire cache and remove multiple entries that match the filter.
      */
-    public SilkCacheManager<T> remove(RemoveFilter<T> filter, boolean removeOne) throws Exception {
+    public SilkCacheManager<T> remove(RemoveFilter<T> filter, boolean removeOne) {
         if (filter == null) throw new IllegalArgumentException("You must specify a RemoveFilter.");
         reloadIfNeeded();
         if (super.buffer.size() == 0) {
@@ -254,7 +254,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      *
      * @param query An item that will match up with another item using SilkComparable.isSameAs().
      */
-    public T find(T query) throws Exception {
+    public T find(T query) {
         if (query == null) {
             log("Item passed to find() was null.");
             return null;
@@ -265,10 +265,8 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("Cache buffer is empty.");
             return null;
         }
-        for (int i = 0; i < super.buffer.size(); i++) {
-            T currentItem = super.buffer.get(i);
-            if (currentItem.isSameAs(query))
-                return currentItem;
+        for (T item : super.buffer) {
+            if (item.isSameAs(query)) return item;
         }
         return null;
     }
@@ -285,7 +283,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     /**
      * Gets the total number of items in the cache.
      */
-    public int size() throws Exception {
+    public int size() {
         reloadIfNeeded();
         return super.buffer.size();
     }

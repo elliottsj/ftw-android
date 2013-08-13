@@ -26,7 +26,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     }
 
     protected List<T> buffer;
-    private File cacheFile;
+    private final File cacheFile;
     protected Handler mHandler;
 
     protected void log(String message) {
