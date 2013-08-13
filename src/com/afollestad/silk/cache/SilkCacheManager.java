@@ -274,7 +274,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     }
 
     /**
-     * Clears all items from the cahce.
+     * Clears all items from the cache.
      */
     public SilkCacheManager clear() {
         log("Cache was cleared.");

@@ -18,6 +18,7 @@
               android:layout_toLeftOf="@+id/ptrLastUpdateAction" android:layout_marginLeft="5dp"
               android:layout_marginTop="6dp" android:layout_marginBottom="6dp"/>
 
+        <!--suppress AndroidLintContentDescription -->
         <ImageView android:id="@+id/ptrLastUpdateAction" android:layout_width="@dimen/last_updated_frame"
                      android:layout_height="@dimen/last_updated_frame" android:padding="@dimen/refresh_button_padding"
                      android:src="@drawable/refresh_dark" android:background="?android:attr/selectableItemBackground"
