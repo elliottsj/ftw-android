@@ -131,7 +131,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     public void set(List<T> toSet) {
         isChanged = true;
         this.items.clear();
-        this.items.addAll(toSet);
+        for (T item : toSet) this.add(item);
         notifyDataSetChanged();
     }
 
