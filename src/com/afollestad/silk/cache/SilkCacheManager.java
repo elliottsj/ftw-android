@@ -286,6 +286,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * Gets the total number of items in the cache.
      */
     public int size() throws Exception {
+        reloadIfNeeded();
         return super.buffer.size();
     }
 
