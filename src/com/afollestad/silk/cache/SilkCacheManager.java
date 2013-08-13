@@ -309,9 +309,14 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
                         });
                         return;
                     }
-                    adapter.set(buffer);
-                    if (fragment != null) fragment.setLoadFromCacheComplete(false);
-                    adapter.resetChanged();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.set(buffer);
+                            if (fragment != null) fragment.setLoadFromCacheComplete(false);
+                            adapter.resetChanged();
+                        }
+                    });
                 } catch (RuntimeException e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
