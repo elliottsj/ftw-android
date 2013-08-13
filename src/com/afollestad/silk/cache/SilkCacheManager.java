@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Handles caching feeds locally.
+ * Handles caching any item that implements {@link SilkComparable} locally in a file.
  *
  * @author Aidan Follestad (afollestad)
  */
