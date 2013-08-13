@@ -276,7 +276,9 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      */
     public SilkCacheManager clear() {
         log("Cache was cleared.");
-        super.buffer.clear();
+        if (super.buffer == null)
+            super.buffer = new ArrayList<T>();
+        else super.buffer.clear();
         return this;
     }
 
