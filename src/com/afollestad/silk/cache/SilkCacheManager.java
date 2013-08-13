@@ -202,6 +202,10 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * This is equivalent to calling clear() and then append().
      */
     public SilkCacheManager<T> set(SilkAdapter<T> adapter) {
+        if (!adapter.isChanged()) {
+            log("Adapter was not changed, cancelling call to set().");
+            return this;
+        }
         clear();
         append(adapter);
         return this;
