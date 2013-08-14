@@ -43,7 +43,7 @@ cardsAdapter.add(new Card("Tuesday", "Arguably the worst day of the week."));
 cardsAdapter.add(new Card("Wednesday", "Hump day, almost done!"));
 ```
 
-*To use string resources for titles*, you just pass a context and integer in place of the first string for headers and cards.
+**To use string resources for titles**, you just pass a context and integer in place of the first string for headers and cards.
 
 Card Popup Menus
 ===============
@@ -95,7 +95,7 @@ cardsAdapter.add(clickableHeader);
 The `CardListView` handles calling the header's `ActionListener` for you, if you use a plain `ListView` you'll have to
 manually do so through the ListView's OnItemClickListener.
 
-*To use string resources for titles*, you just pass a context and integer in place of the first string for headers and cards.
+**To use string resources for titles**, you just pass a context and integer in place of the first string for headers and cards.
 
 Customization
 ==============
