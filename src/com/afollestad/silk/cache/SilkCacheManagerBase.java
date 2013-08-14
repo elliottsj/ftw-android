@@ -30,7 +30,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     protected Handler mHandler;
 
     protected void log(String message) {
-        Log.d("SilkCacheManager", message);
+        Log.d("SilkCacheManager", getCacheFile().getName() + ": " + message);
     }
 
     protected void runPriorityThread(Runnable runnable) {
