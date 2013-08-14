@@ -47,7 +47,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         return cacheFile;
     }
 
-    protected void reloadIfNeeded() {
+    protected void reloadIfNecessary() {
         if (buffer.size() > 0) return;
         buffer = loadItems();
     }
@@ -57,7 +57,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
      * is instantiated, cleared when it commits, and reloaded when needed.
      */
     public List<T> read() {
-        reloadIfNeeded();
+        reloadIfNecessary();
         return buffer;
     }
 
@@ -88,7 +88,8 @@ class SilkCacheManagerBase<T extends SilkComparable> {
      * Commits all changes to the cache file. This is from the calling thread.
      */
     public boolean commit() throws Exception {
-        if (buffer == null) return false;
+        if (buffer == null)
+            throw new IllegalStateException("The SilkCacheManager has already committed, you must re-initialize the manager or call forceReload().");
         else if (buffer.size() == 0) {
             if (cacheFile.exists()) {
                 log("Deleting: " + cacheFile.getName());

@@ -77,7 +77,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      */
     public SilkCacheManager<T> forceReload() {
         super.buffer = null;
-        reloadIfNeeded();
+        reloadIfNecessary();
         return this;
     }
 
@@ -89,7 +89,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("Item passed to append() was null or marked for ignoring.");
             return this;
         }
-        reloadIfNeeded();
         super.buffer.add(toAdd);
         log("Appended 1 item to the cache.");
         return this;
@@ -103,7 +102,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("List passed to append() was null or empty.");
             return this;
         }
-        reloadIfNeeded();
         int count = 0;
         for (T item : toAppend) {
             if (item.shouldIgnore()) continue;
@@ -154,7 +152,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("Item passed to update() was null or marked for ignoring.");
             return this;
         }
-        reloadIfNeeded();
         if (super.buffer.size() == 0) {
             log("Cache buffer is empty.");
             return this;
@@ -215,7 +212,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * Removes an item from a specific index from the cache.
      */
     public SilkCacheManager<T> remove(int index) {
-        reloadIfNeeded();
         super.buffer.remove(index);
         log("Removed item at index " + index + " from " + super.getCacheFile().getName());
         return this;
@@ -245,7 +241,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      */
     public SilkCacheManager<T> remove(RemoveFilter<T> filter, boolean removeOne) {
         if (filter == null) throw new IllegalArgumentException("You must specify a RemoveFilter.");
-        reloadIfNeeded();
         if (super.buffer.size() == 0) {
             log("Cache buffer is empty.");
             return this;
@@ -273,7 +268,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("Item passed to find() was null.");
             return null;
         }
-        reloadIfNeeded();
         log("Searching " + super.buffer.size() + " items...");
         if (super.buffer.size() == 0) {
             log("Cache buffer is empty.");
@@ -300,7 +294,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * Gets the total number of items in the cache.
      */
     public int size() {
-        reloadIfNeeded();
         return super.buffer.size();
     }
 
@@ -318,7 +311,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             @Override
             public void run() {
                 try {
-                    reloadIfNeeded();
                     if (buffer.isEmpty()) {
                         runOnUiThread(new Runnable() {
                             @Override
