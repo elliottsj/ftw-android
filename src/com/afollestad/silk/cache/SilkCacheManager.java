@@ -212,6 +212,16 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     }
 
     /**
+     * Removes an item from a specific index from the cache.
+     */
+    public SilkCacheManager<T> remove(int index) {
+        reloadIfNeeded();
+        super.buffer.remove(index);
+        log("Removed item at index " + index + " from " + super.getCacheFile().getName());
+        return this;
+    }
+
+    /**
      * Removes a single item from the cache, uses isSameAs() from the {@link SilkComparable} to find the item.
      */
     public SilkCacheManager<T> remove(final T toRemove) throws Exception {
