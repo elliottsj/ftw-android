@@ -254,7 +254,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
         }
         for (Integer i : removeIndexes)
             super.buffer.remove(i.intValue());
-        log("Removed " + removeIndexes.size() + " items from " + super.getCacheFile().getName());
+        log("Removed " + removeIndexes.size() + " items from the cache.");
         return this;
     }
 
