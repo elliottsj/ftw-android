@@ -82,12 +82,13 @@ If you ever use Google Play, you've seen how they display a "See More" button ne
 makes it easy to do the same:
 
 ```java
-CardHeader clickableHeader = new CardHeader("Week Days").setAction("See More", new CardHeader.ActionListener() {
-    @Override
-    public void onClick(CardHeader header) {
-        Toast.makeText(getApplicationContext(), header.getTitle(), Toast.LENGTH_LONG).show();
-    }
-});
+CardHeader clickableHeader = new CardHeader("Week Days")
+    .setAction("See More", new CardHeader.ActionListener() {
+        @Override
+        public void onClick(CardHeader header) {
+            Toast.makeText(getApplicationContext(), header.getTitle(), Toast.LENGTH_LONG).show();
+        }
+    });
 cardsAdapter.add(clickableHeader);
 ```
 
