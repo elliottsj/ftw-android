@@ -14,7 +14,6 @@ import java.util.List;
 class SilkCacheManagerBase<T extends SilkComparable> {
 
     public SilkCacheManagerBase(String cacheName, File cacheDir) {
-        buffer = new ArrayList<T>();
         if (cacheName == null || cacheName.trim().isEmpty())
             cacheName = "default";
         mHandler = new Handler();
@@ -49,7 +48,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     }
 
     protected void reloadIfNecessary() {
-        if (buffer.size() > 0) return;
+        if (buffer != null) return;
         buffer = loadItems();
     }
 
@@ -63,6 +62,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     }
 
     private List<T> loadItems() {
+        log("Reloading cache items to buffer.");
         try {
             final List<T> results = new ArrayList<T>();
             if (cacheFile.exists()) {
