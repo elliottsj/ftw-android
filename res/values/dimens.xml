@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="card_outer_padding_vertical">3dp</dimen>
+    <dimen name="card_outer_padding_horizontal">8dp</dimen>
+    <dimen name="card_inner_padding_vertical">8dp</dimen>
+    <dimen name="card_inner_padding_horizontal">15dp</dimen>
+
+    <dimen name="card_title">19sp</dimen>
+    <dimen name="card_content">17sp</dimen>
+    <dimen name="card_shadow">3dp</dimen>
+
+    <dimen name="card_header">21sp</dimen>
+    <dimen name="card_header_padding_top">20dp</dimen>
+    <dimen name="card_header_padding_bottom">5dp</dimen>
+    <dimen name="card_header_padding_horizontal">17dp</dimen>
+    <dimen name="card_header_button_text">13sp</dimen>
+    <dimen name="card_header_button_padding_side">8dp</dimen>
+    <dimen name="card_header_button_padding_top">5dp</dimen>
+
+</resources>

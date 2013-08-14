@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="card_pressed">#CC0099CC</color>
+    <color name="header_button_default">#494949</color>
+    <color name="card_gray">#E5E5E5</color>
+
+</resources>

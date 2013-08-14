@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidLintUselessParent -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingTop="@dimen/card_outer_padding_vertical"
+              android:paddingBottom="@dimen/card_outer_padding_vertical"
+              android:paddingLeft="@dimen/card_outer_padding_horizontal"
+              android:paddingRight="@dimen/card_outer_padding_horizontal"
+              android:descendantFocusability="blocksDescendants">
+
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:paddingTop="@dimen/card_inner_padding_vertical"
+                  android:paddingBottom="@dimen/card_inner_padding_vertical"
+                  android:paddingLeft="@dimen/card_inner_padding_horizontal"
+                  android:paddingRight="@dimen/card_inner_padding_horizontal"
+                  android:background="@drawable/card_selector"
+                  android:duplicateParentState="true">
+
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+            <TextView android:id="@+id/title"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textSize="@dimen/card_title"
+                      android:layout_alignParentLeft="true"
+                      android:layout_toLeftOf="@+id/menu"/>
+
+            <!--suppress AndroidLintContentDescription -->
+            <ImageButton android:id="@+id/menu" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                         android:layout_alignParentRight="true" android:src="@drawable/card_menu_button"
+                         android:paddingLeft="10dp" android:focusable="false" android:focusableInTouchMode="false"
+                         android:clickable="true" android:background="@android:color/transparent"/>
+
+        </RelativeLayout>
+
+        <com.afollestad.silk.views.text.SilkTextView android:id="@+id/content"
+                                                     android:layout_width="wrap_content"
+                                                     android:layout_height="wrap_content"
+                                                     android:autoLink="all"
+                                                     android:textSize="@dimen/card_content"
+                                                     android:layout_below="@+id/title"/>
+
+    </LinearLayout>
+
+    <!--suppress AndroidLintContentDescription -->
+    <ImageView android:id="@+id/shadow"
+               android:layout_width="match_parent"
+               android:layout_height="@dimen/card_shadow"
+               android:src="@drawable/card_shadow"/>
+
+</LinearLayout>
