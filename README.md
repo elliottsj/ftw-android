@@ -62,7 +62,7 @@ cardsAdapter.setPopupMenu(R.menu.card_popup, new Card.CardMenuListener() {
 });
 ```
 
-You can also set a menu for individual cards, *you can have a menu set to the adapter and individual cards at the same time*,
+You can also set a menu for individual cards, **you can have a menu set to the adapter and individual cards at the same time**,
 but individual card menus will take priority:
 
 ```java
