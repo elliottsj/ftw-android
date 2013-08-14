@@ -17,14 +17,21 @@ public class Card implements SilkComparable<Card> {
         this.isHeader = isHeader;
     }
 
-    public Card(Context context, int titleRes, String content) {
-        this.title = context.getString(titleRes);
-        this.content = content;
-    }
-
     public Card(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public Card(Context context, String title, int contentRes) {
+        this(title, context.getString(contentRes));
+    }
+
+    public Card(Context context, int titleRes, String content) {
+        this(context.getString(titleRes), content);
+    }
+
+    public Card(Context context, int titleRes, int contentRes) {
+        this(context.getString(titleRes), context.getString(contentRes));
     }
 
     public interface CardMenuListener {
