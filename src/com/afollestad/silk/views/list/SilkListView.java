@@ -56,17 +56,21 @@ public class SilkListView extends ListView {
     }
 
     /**
-     * @deprecated Use {@link #setSilkAdapter(com.afollestad.silk.adapters.SilkAdapter)} instead.
+     * @deprecated Use {@link #setAdapter(com.afollestad.silk.adapters.SilkAdapter)} instead.
      */
     @Override
     public void setAdapter(ListAdapter adapter) {
-        throw new RuntimeException("Please use setSilkAdapter() instead of setAdapter() on the SilkListView.");
+        if (adapter instanceof SilkAdapter) {
+            setAdapter((SilkAdapter) adapter);
+            return;
+        }
+        throw new RuntimeException("The SilkListView only accepts SilkAdapters.");
     }
 
     /**
      * Sets the list's adapter, enforces the use of only a SilkAdapter, not any other type of adapter
      */
-    public final void setSilkAdapter(SilkAdapter adapter) {
+    public void setAdapter(SilkAdapter adapter) {
         super.setAdapter(adapter);
     }
 }
