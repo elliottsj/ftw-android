@@ -1,6 +1,7 @@
 package com.afollestad.cardsui;
 
 import android.content.Context;
+import android.view.MenuItem;
 import com.afollestad.silk.cache.SilkComparable;
 
 /**
@@ -26,9 +27,15 @@ public class Card implements SilkComparable<Card> {
         this.content = content;
     }
 
+    public interface CardMenuListener {
+        public void onMenuItemClick(Card card, MenuItem item);
+    }
+
     private String title;
     private String content;
     private boolean isHeader;
+    private int mPopupMenu;
+    private CardMenuListener mPopupListener;
 
     public String getTitle() {
         return title;
@@ -40,6 +47,20 @@ public class Card implements SilkComparable<Card> {
 
     public boolean isHeader() {
         return isHeader;
+    }
+
+    public int getPopupMenu() {
+        return mPopupMenu;
+    }
+
+    public CardMenuListener getPopupListener() {
+        return mPopupListener;
+    }
+
+    public Card setPopupMenu(int menuRes, CardMenuListener listener) {
+        mPopupMenu = menuRes;
+        mPopupListener = listener;
+        return this;
     }
 
     @Override
