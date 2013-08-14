@@ -23,6 +23,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         if (!cacheDir.exists())
             cacheDir.mkdirs();
         cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
+        reloadIfNecessary();
     }
 
     protected List<T> buffer;
