@@ -110,3 +110,13 @@ cardsAdapter.setAccentColorRes(android.R.color.holo_blue_dark);
 ```
 
 **This must be called before adding cards**, otherwise it will not work correctly.
+
+Other Methods
+===============
+There's two other useful methods in the `Card` class:
+
+`setTag(Object)` -- this method allows you to associate an Object of any type with the card. This can be useful for keeping track of cards
+by something other than their title.
+
+`setClickable(boolean)` -- by default a card is clickable; this allows you to disable a card from being highlighted when it's clicked (the white part).
+Card popup menus will still function, however.

@@ -23,7 +23,10 @@ public class CardAdapter extends SilkAdapter<Card> {
 
     @Override
     public boolean isEnabled(int position) {
-        return !getItem(position).isHeader() || ((CardHeader) getItem(position)).getActionCallback() != null;
+        Card item = getItem(position);
+        if (item.isHeader())
+            return ((CardHeader) item).getActionCallback() != null;
+        return item.isClickable();
     }
 
     public void setAccentColor(int color) {

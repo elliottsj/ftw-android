@@ -13,11 +13,12 @@ public class Card implements SilkComparable<Card> {
     }
 
     protected Card(String title, boolean isHeader) {
-        this.title = title;
+        this(title, null);
         this.isHeader = isHeader;
     }
 
     public Card(String title, String content) {
+        this.isClickable = true;
         this.title = title;
         this.content = content;
     }
@@ -43,6 +44,8 @@ public class Card implements SilkComparable<Card> {
     private boolean isHeader;
     private int mPopupMenu;
     private CardMenuListener mPopupListener;
+    private boolean isClickable;
+    private Object mTag;
 
     public String getTitle() {
         return title;
@@ -54,6 +57,24 @@ public class Card implements SilkComparable<Card> {
 
     public boolean isHeader() {
         return isHeader;
+    }
+
+    public boolean isClickable() {
+        return isClickable;
+    }
+
+    public Card setClickable(boolean clickable) {
+        isClickable = clickable;
+        return this;
+    }
+
+    public Object getTag() {
+        return mTag;
+    }
+
+    public Card setTag(Object tag) {
+        mTag = tag;
+        return this;
     }
 
     public int getPopupMenu() {
