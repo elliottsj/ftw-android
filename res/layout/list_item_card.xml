@@ -32,7 +32,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="@dimen/card_title_margin"
                         android:layout_marginLeft="@dimen/card_title_margin_left"
                         android:layout_toRightOf="@+id/thumbnail">
 

@@ -139,6 +139,9 @@ public class Card implements SilkComparable<Card> {
     /**
      * Sets a unique popup menu for the card, this will override any popup menu set for the {@link CardAdapter}
      * that the card is displayed in.
+     * <p/>
+     * Setting the menu resource to -1 disables the menu for this card, and will override any popup menu set
+     * to the {@link CardAdapter}.
      *
      * @param menuRes  The menu resource ID to use for the card's popup menu.
      * @param listener A listener invoked when an option in the popup menu is tapped by the user.

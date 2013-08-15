@@ -21,7 +21,7 @@ public class CardAdapter extends SilkAdapter<Card> {
     }
 
     private int mAccentColor;
-    private int mPopupMenu;
+    private int mPopupMenu = -1;
     private Card.CardMenuListener mPopupListener;
     private boolean mCardsClickable = true;
 
@@ -105,11 +105,18 @@ public class CardAdapter extends SilkAdapter<Card> {
     }
 
     private void setupMenu(final Card card, final View view) {
+        if (card.getPopupMenu() < 0) {
+            // Menu for this card is disabled
+            view.setVisibility(View.INVISIBLE);
+            view.setOnClickListener(null);
+            return;
+        }
         int menuRes = mPopupMenu;
         if (card.getPopupMenu() != 0) menuRes = card.getPopupMenu();
         if (menuRes == 0) {
             // No menu for the adapter or the card
-            view.setVisibility(View.GONE);
+            view.setVisibility(View.INVISIBLE);
+            view.setOnClickListener(null);
             return;
         }
         view.setVisibility(View.VISIBLE);
