@@ -11,7 +11,7 @@
     <dimen name="card_shadow">3dp</dimen>
     <dimen name="card_title_margin">6dp</dimen>
 
-    <dimen name="card_header">24sp</dimen>
+    <dimen name="card_header">21sp</dimen>
     <dimen name="card_subheader">16sp</dimen>
     <dimen name="card_header_padding_top">20dp</dimen>
     <dimen name="card_header_padding_horizontal">17dp</dimen>

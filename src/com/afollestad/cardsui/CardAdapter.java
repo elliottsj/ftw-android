@@ -70,7 +70,10 @@ public class CardAdapter extends SilkAdapter<Card> {
         if (header.getActionCallback() != null) {
             button.setVisibility(View.VISIBLE);
             button.setBackgroundColor(mAccentColor);
-            button.setText(header.getActionTitle());
+            String title = header.getActionTitle();
+            if (header.getActionTitle() == null || header.getActionTitle().trim().isEmpty())
+                title = getContext().getString(R.string.see_more);
+            button.setText(title);
         } else button.setVisibility(View.GONE);
     }
 

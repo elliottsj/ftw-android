@@ -38,6 +38,12 @@ public class CardHeader extends Card {
         public void onClick(CardHeader header);
     }
 
+    public CardHeader setAction(ActionListener callback) {
+        mActionTitle = null;
+        mCallback = callback;
+        return this;
+    }
+
     public CardHeader setAction(String title, ActionListener callback) {
         mActionTitle = title;
         mCallback = callback;
