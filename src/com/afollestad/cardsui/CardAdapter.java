@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.afollestad.silk.adapters.SilkAdapter;
 
 /**
+ * A {@link SilkAdapter} that displays {@link Card} and {@link CardHeader} objects in a {@link CardListView}.
+ *
  * @author Aidan Follestad (afollestad)
  */
 public class CardAdapter extends SilkAdapter<Card> {
@@ -32,22 +34,46 @@ public class CardAdapter extends SilkAdapter<Card> {
         return item.isClickable();
     }
 
+    /**
+     * Sets the accent color used on card titles and header action buttons.
+     * You <b>should</b> call this method before adding any cards to the adapter to avoid issues.
+     *
+     * @param color The resolved color to use as an accent.
+     */
     public final CardAdapter setAccentColor(int color) {
         mAccentColor = color;
         return this;
     }
 
+    /**
+     * Sets the accent color resource used on card titles and header action buttons.
+     * You <b>should</b> call this method before adding any cards to the adapter to avoid issues.
+     *
+     * @param colorRes The color resource ID to use as an accent.
+     */
     public final CardAdapter setAccentColorRes(int colorRes) {
         setAccentColor(getContext().getResources().getColor(colorRes));
         return this;
     }
 
+    /**
+     * Sets a popup menu used for every card in the adapter, this will not override individual card popup menus.
+     * You <b>should</b> call this method before adding any cards to the adapter to avoid issues.
+     *
+     * @param menuRes  The menu resource ID to use for the card's popup menu.
+     * @param listener A listener invoked when an option in the popup menu is tapped by the user.
+     */
     public final CardAdapter setPopupMenu(int menuRes, Card.CardMenuListener listener) {
         mPopupMenu = menuRes;
         mPopupListener = listener;
         return this;
     }
 
+    /**
+     * Sets whether or not cards in the adapter are clickable, setting it to false will turn card's list selectors off
+     * and the list's OnItemClickListener will not be called. This <b>will</b> override individual isClickable values
+     * set to {@link Card}s.
+     */
     public final CardAdapter setCardsClickable(boolean clickable) {
         mCardsClickable = clickable;
         return this;

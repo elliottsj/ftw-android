@@ -8,6 +8,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 /**
+ * A {@link ListView} that automates many card related things, such as disabling the background list selector,
+ * removing the list divider, and calling a {@link CardHeader}'s ActionListener when tapped by the user.
+ *
  * @author Aidan Follestad (afollestad)
  */
 public class CardListView extends ListView implements AdapterView.OnItemClickListener {
@@ -65,12 +68,12 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (mItemClickListener != null) mItemClickListener.onItemClick(parent, view, position, id);
         Card item = ((CardAdapter) getAdapter()).getItem(position);
         if (item.isHeader()) {
             CardHeader header = (CardHeader) item;
             if (header.getActionCallback() != null)
                 header.getActionCallback().onClick(header);
-        }
+            else if (mItemClickListener != null) mItemClickListener.onItemClick(parent, view, position, id);
+        } else if (mItemClickListener != null) mItemClickListener.onItemClick(parent, view, position, id);
     }
 }
