@@ -83,7 +83,9 @@ public class CardAdapter extends SilkAdapter<Card> {
             public void onClick(View v) {
                 int menuRes = mPopupMenu;
                 if (card.getPopupMenu() != 0) menuRes = card.getPopupMenu();
-                PopupMenu popup = new PopupMenu(getContext(), view);
+                Context themedContext = getContext();
+                themedContext.setTheme(android.R.style.Theme_Holo_Light);
+                PopupMenu popup = new PopupMenu(themedContext, view);
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(menuRes, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
