@@ -24,8 +24,8 @@ public class CardAdapter extends SilkAdapter<Card> {
 
     @Override
     public boolean isEnabled(int position) {
-        if (!mCardsClickable) return false;
         Card item = getItem(position);
+        if (!mCardsClickable && !item.isHeader()) return false;
         if (item.isHeader())
             return ((CardHeader) item).getActionCallback() != null;
         return item.isClickable();
