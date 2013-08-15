@@ -56,7 +56,8 @@
                                                      android:autoLink="all"
                                                      android:textSize="@dimen/card_content"
                                                      android:layout_below="@+id/titleFrame"
-                                                     android:layout_toRightOf="@+id/thumbnail"/>
+                                                     android:layout_toRightOf="@+id/thumbnail"
+                                                     android:layout_marginLeft="@dimen/card_title_margin_left"/>
 
     </RelativeLayout>
 
