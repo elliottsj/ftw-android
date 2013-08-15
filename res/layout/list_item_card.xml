@@ -15,8 +15,8 @@
                   android:layout_height="match_parent"
                   android:paddingTop="@dimen/card_inner_padding_vertical"
                   android:paddingBottom="@dimen/card_inner_padding_vertical"
-                  android:paddingLeft="@dimen/card_inner_padding_horizontal"
-                  android:paddingRight="@dimen/card_inner_padding_horizontal"
+                  android:paddingLeft="@dimen/card_inner_padding_left"
+                  android:paddingRight="@dimen/card_inner_padding_right"
                   android:background="@drawable/card_selector"
                   android:duplicateParentState="true">
 
