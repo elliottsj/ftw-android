@@ -31,23 +31,23 @@ public class CardAdapter extends SilkAdapter<Card> {
         return item.isClickable();
     }
 
-    public CardAdapter setAccentColor(int color) {
+    public final CardAdapter setAccentColor(int color) {
         mAccentColor = color;
         return this;
     }
 
-    public CardAdapter setAccentColorRes(int colorRes) {
+    public final CardAdapter setAccentColorRes(int colorRes) {
         setAccentColor(getContext().getResources().getColor(colorRes));
         return this;
     }
 
-    public CardAdapter setPopupMenu(int menuRes, Card.CardMenuListener listener) {
+    public final CardAdapter setPopupMenu(int menuRes, Card.CardMenuListener listener) {
         mPopupMenu = menuRes;
         mPopupListener = listener;
         return this;
     }
 
-    public CardAdapter setCardsClickable(boolean clickable) {
+    public final CardAdapter setCardsClickable(boolean clickable) {
         mCardsClickable = clickable;
         return this;
     }
