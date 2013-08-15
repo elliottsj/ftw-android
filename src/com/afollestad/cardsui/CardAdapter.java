@@ -20,26 +20,36 @@ public class CardAdapter extends SilkAdapter<Card> {
     private int mAccentColor;
     private int mPopupMenu;
     private Card.CardMenuListener mPopupListener;
+    private boolean mCardsClickable = true;
 
     @Override
     public boolean isEnabled(int position) {
+        if (!mCardsClickable) return false;
         Card item = getItem(position);
         if (item.isHeader())
             return ((CardHeader) item).getActionCallback() != null;
         return item.isClickable();
     }
 
-    public void setAccentColor(int color) {
+    public CardAdapter setAccentColor(int color) {
         mAccentColor = color;
+        return this;
     }
 
-    public void setAccentColorRes(int colorRes) {
+    public CardAdapter setAccentColorRes(int colorRes) {
         setAccentColor(getContext().getResources().getColor(colorRes));
+        return this;
     }
 
-    public void setPopupMenu(int menuRes, Card.CardMenuListener listener) {
+    public CardAdapter setPopupMenu(int menuRes, Card.CardMenuListener listener) {
         mPopupMenu = menuRes;
         mPopupListener = listener;
+        return this;
+    }
+
+    public CardAdapter setCardsClickable(boolean clickable) {
+        mCardsClickable = clickable;
+        return this;
     }
 
     @Override
