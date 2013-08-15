@@ -1,6 +1,9 @@
 package com.afollestad.cardsui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.MenuItem;
 import com.afollestad.silk.cache.SilkComparable;
 
@@ -46,6 +49,22 @@ public class Card implements SilkComparable<Card> {
     private CardMenuListener mPopupListener;
     private boolean isClickable;
     private Object mTag;
+    private Drawable mThumbnail;
+
+    public Card setThumbnail(Drawable drawable) {
+        mThumbnail = drawable;
+        return this;
+    }
+
+    public Card setThumbnail(Context context, int resId) {
+        setThumbnail(context.getResources().getDrawable(resId));
+        return this;
+    }
+
+    public Card setThumbnail(Context context, Bitmap bitmap) {
+        setThumbnail(new BitmapDrawable(context.getResources(), bitmap));
+        return this;
+    }
 
     public String getTitle() {
         return title;
@@ -89,6 +108,10 @@ public class Card implements SilkComparable<Card> {
         mPopupMenu = menuRes;
         mPopupListener = listener;
         return this;
+    }
+
+    public Drawable getThumbnail() {
+        return mThumbnail;
     }
 
     @Override

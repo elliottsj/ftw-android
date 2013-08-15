@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.afollestad.silk.adapters.SilkAdapter;
@@ -114,6 +115,15 @@ public class CardAdapter extends SilkAdapter<Card> {
         });
     }
 
+    private void setupThumbnail(Card card, ImageView view) {
+        if (card.getThumbnail() == null) {
+            view.setVisibility(View.GONE);
+            return;
+        }
+        view.setVisibility(View.VISIBLE);
+        view.setImageDrawable(card.getThumbnail());
+    }
+
     @Override
     public View onViewCreated(int index, View recycled, Card item) {
         if (item.isHeader()) {
@@ -126,6 +136,7 @@ public class CardAdapter extends SilkAdapter<Card> {
         title.setTextColor(mAccentColor);
         ((TextView) recycled.findViewById(R.id.content)).setText(item.getContent());
         setupMenu(item, recycled.findViewById(R.id.menu));
+        setupThumbnail(item, (ImageView) recycled.findViewById(R.id.thumbnail));
         return recycled;
     }
 

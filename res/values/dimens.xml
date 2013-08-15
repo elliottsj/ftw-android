@@ -4,9 +4,11 @@
     <dimen name="card_outer_padding_vertical">3dp</dimen>
     <dimen name="card_outer_padding_horizontal">8dp</dimen>
     <dimen name="card_inner_padding_vertical">8dp</dimen>
-    <dimen name="card_inner_padding_left">15dp</dimen>
+    <dimen name="card_inner_padding_left">10dp</dimen>
     <dimen name="card_inner_padding_right">5dp</dimen>
 
+    <dimen name="card_thumbnail">56dp</dimen>
+    <dimen name="card_thumbnail_margin">12dp</dimen>
     <dimen name="card_title">20sp</dimen>
     <dimen name="card_content">17sp</dimen>
     <dimen name="card_shadow">3dp</dimen>

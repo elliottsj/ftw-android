@@ -99,6 +99,16 @@ manually do so through the ListView's OnItemClickListener.
 
 **To use string resources for titles**, you just pass a context and integer in place of the string.
 
+Card Thumbnails
+===============
+Adding a thumbnail to a card requires a single method:
+
+```java
+Card card = new Card("Hi", "Hello").setThumbnail();
+```
+
+There's 3 variations of `setThumbnail()`, allowing you to pass a `Drawable`, a `Bitmap`, or a drawable resource ID (which reqires you to pass a `Context` too).
+
 Customization
 ==============
 This library's customization abilities are very limited at for now, but it will allow you to change the color used for header actions

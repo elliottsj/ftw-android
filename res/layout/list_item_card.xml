@@ -10,21 +10,30 @@
               android:paddingRight="@dimen/card_outer_padding_horizontal"
               android:descendantFocusability="blocksDescendants">
 
-    <LinearLayout android:orientation="vertical"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:paddingTop="@dimen/card_inner_padding_vertical"
-                  android:paddingBottom="@dimen/card_inner_padding_vertical"
-                  android:paddingLeft="@dimen/card_inner_padding_left"
-                  android:paddingRight="@dimen/card_inner_padding_right"
-                  android:background="@drawable/card_selector"
-                  android:duplicateParentState="true">
+    <RelativeLayout android:id="@+id/inner_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="@dimen/card_inner_padding_vertical"
+                    android:paddingBottom="@dimen/card_inner_padding_vertical"
+                    android:paddingLeft="@dimen/card_inner_padding_left"
+                    android:paddingRight="@dimen/card_inner_padding_right"
+                    android:background="@drawable/card_selector"
+                    android:duplicateParentState="true">
+
+        <!--suppress AndroidLintContentDescription -->
+        <ImageView android:id="@+id/thumbnail"
+                   android:layout_width="@dimen/card_thumbnail"
+                   android:layout_height="@dimen/card_thumbnail"
+                   android:scaleType="fitXY"
+                   android:layout_marginRight="@dimen/card_thumbnail_margin"
+                   android:layout_alignTop="@+id/titleFrame"/>
 
         <RelativeLayout android:id="@+id/titleFrame"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="@dimen/card_title_margin">
+                        android:layout_marginBottom="@dimen/card_title_margin"
+                        android:layout_toRightOf="@+id/thumbnail">
 
             <TextView android:id="@+id/title"
                       android:layout_width="wrap_content"
@@ -44,9 +53,10 @@
                                                      android:layout_height="wrap_content"
                                                      android:autoLink="all"
                                                      android:textSize="@dimen/card_content"
-                                                     android:layout_below="@+id/titleFrame"/>
+                                                     android:layout_below="@+id/titleFrame"
+                                                     android:layout_toRightOf="@+id/thumbnail"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <!--suppress AndroidLintContentDescription -->
     <ImageView style="@style/card_shadow"/>

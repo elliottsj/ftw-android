@@ -1,6 +1,7 @@
 package com.afollestad.cardsui;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -61,5 +62,10 @@ public class CardHeader extends Card {
 
     public ActionListener getActionCallback() {
         return mCallback;
+    }
+
+    @Override
+    public Card setThumbnail(Drawable drawable) {
+        throw new RuntimeException("Card headers do not support setThumbnail().");
     }
 }
