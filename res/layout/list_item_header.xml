@@ -21,7 +21,8 @@
                                                     android:layout_height="wrap_content"
                                                     android:textSize="@dimen/card_header"
                                                     android:textColor="@android:color/black"
-                                                    android:layout_gravity="center_vertical"/>
+                                                    android:layout_gravity="center_vertical"
+                                                    android:singleLine="true"/>
 
         <com.afollestad.silk.views.text.SilkTextView android:id="@+id/subtitle"
                                                      android:layout_width="wrap_content"

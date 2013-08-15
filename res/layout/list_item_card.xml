@@ -41,7 +41,8 @@
                       android:textSize="@dimen/card_title"
                       android:layout_alignParentLeft="true"
                       android:layout_toLeftOf="@+id/menu"
-                      android:layout_centerVertical="true"/>
+                      android:layout_centerVertical="true"
+                      android:singleLine="true"/>
 
             <!--suppress AndroidLintContentDescription -->
             <ImageButton android:id="@+id/menu" style="@style/card_popup_anchor"/>

@@ -21,5 +21,6 @@
     <dimen name="card_header_button_text">13sp</dimen>
     <dimen name="card_header_button_padding_side">8dp</dimen>
     <dimen name="card_header_button_padding_top">5dp</dimen>
+    <dimen name="card_header_button_margin_left">10dp</dimen>
 
 </resources>
