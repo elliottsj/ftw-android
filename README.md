@@ -32,6 +32,15 @@ Next, you get a reference to the `CardListView` from your code, create a `CardAd
 CardListView cardsList = (CardListView) findViewById(R.id.cardsList);
 CardAdapter cardsAdapter = new CardAdapter(this);
 cardsList.setAdapter(cardsAdapter);
+
+// You can still use the regular OnItemClickListener for the list
+cardsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // But this will never be called if you disable individual cards or the entire CardAdapter from being clickable
+        // It will also not be called for card headers with actions set to them.
+    }
+});
 ```
 
 Last, you just add cards and card headers to the adapter and the list will update itself automatically:
