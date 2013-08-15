@@ -43,6 +43,8 @@ cardsAdapter.add(new Card("Tuesday", "Arguably the worst day of the week."));
 cardsAdapter.add(new Card("Wednesday", "Hump day, almost done!"));
 ```
 
+Card headers optionally take a second string for a subtitle.
+
 **To use string resources for titles**, you just pass a context and integer in place of the strings.
 
 Card Popup Menus

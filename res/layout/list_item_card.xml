@@ -20,7 +20,8 @@
                   android:background="@drawable/card_selector"
                   android:duplicateParentState="true">
 
-        <RelativeLayout android:layout_width="match_parent"
+        <RelativeLayout android:id="@+id/titleFrame"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginBottom="@dimen/card_title_margin">
@@ -34,11 +35,7 @@
                       android:layout_centerVertical="true"/>
 
             <!--suppress AndroidLintContentDescription -->
-            <ImageButton android:id="@+id/menu" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                         android:layout_alignParentRight="true" android:src="@drawable/card_menu_button"
-                         android:paddingLeft="10dp" android:focusable="false" android:focusableInTouchMode="false"
-                         android:clickable="true" android:background="@android:color/transparent"
-                         android:layout_centerVertical="true"/>
+            <ImageButton android:id="@+id/menu" style="@style/card_popup_anchor"/>
 
         </RelativeLayout>
 
@@ -47,14 +44,11 @@
                                                      android:layout_height="wrap_content"
                                                      android:autoLink="all"
                                                      android:textSize="@dimen/card_content"
-                                                     android:layout_below="@+id/title"/>
+                                                     android:layout_below="@+id/titleFrame"/>
 
     </LinearLayout>
 
     <!--suppress AndroidLintContentDescription -->
-    <ImageView android:id="@+id/shadow"
-               android:layout_width="match_parent"
-               android:layout_height="@dimen/card_shadow"
-               android:src="@drawable/card_shadow"/>
+    <ImageView style="@style/card_shadow"/>
 
 </LinearLayout>

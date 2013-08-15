@@ -12,8 +12,8 @@ public class Card implements SilkComparable<Card> {
     protected Card() {
     }
 
-    protected Card(String title, boolean isHeader) {
-        this(title, null);
+    protected Card(String title, String subtitle, boolean isHeader) {
+        this(title, subtitle);
         this.isHeader = isHeader;
     }
 

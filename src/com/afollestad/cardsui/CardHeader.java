@@ -8,11 +8,27 @@ import android.content.Context;
 public class CardHeader extends Card {
 
     public CardHeader(String title) {
-        super(title, true);
+        super(title, null, true);
+    }
+
+    public CardHeader(String title, String subtitle) {
+        super(title, subtitle, true);
     }
 
     public CardHeader(Context context, int titleRes) {
         this(context.getString(titleRes));
+    }
+
+    public CardHeader(Context context, String title, int subtitleRes) {
+        this(title, context.getString(subtitleRes));
+    }
+
+    public CardHeader(Context context, int titleRes, String subtitle) {
+        this(context.getString(titleRes), subtitle);
+    }
+
+    public CardHeader(Context context, int titleRes, int subtitleRes) {
+        this(context.getString(titleRes), context.getString(subtitleRes));
     }
 
     private String mActionTitle;

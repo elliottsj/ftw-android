@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="header_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/card_header_button_text</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:text">@string/see_more</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:background">@color/header_button_default</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:paddingLeft">@dimen/card_header_button_padding_side</item>
+        <item name="android:paddingRight">@dimen/card_header_button_padding_side</item>
+        <item name="android:paddingTop">@dimen/card_header_button_padding_top</item>
+        <item name="android:paddingBottom">@dimen/card_header_button_padding_top</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginTop">@dimen/card_header_padding_top</item>
+    </style>
+
+    <style name="card_popup_anchor">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:src">@drawable/card_menu_button</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="card_shadow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/card_shadow</item>
+        <item name="android:src">@drawable/card_shadow</item>
+    </style>
+
+</resources>

@@ -61,6 +61,11 @@ public class CardAdapter extends SilkAdapter<Card> {
 
     private void setupHeader(CardHeader header, View view) {
         ((TextView) view.findViewById(R.id.title)).setText(header.getTitle());
+        TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
+        if (header.getContent() != null && !header.getContent().trim().isEmpty()) {
+            subtitle.setVisibility(View.VISIBLE);
+            subtitle.setText(header.getContent());
+        } else subtitle.setVisibility(View.GONE);
         TextView button = (TextView) view.findViewById(R.id.button);
         if (header.getActionCallback() != null) {
             button.setVisibility(View.VISIBLE);

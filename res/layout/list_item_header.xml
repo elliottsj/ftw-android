@@ -7,32 +7,31 @@
                 android:descendantFocusability="blocksDescendants"
                 android:background="@drawable/card_header_selector">
 
-    <com.afollestad.cardsui.LightItalicTextView android:id="@+id/title"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:textSize="@dimen/card_header"
-                                                android:layout_alignParentLeft="true"
-                                                android:layout_toLeftOf="@+id/button"
-                                                android:layout_centerVertical="true"
-                                                android:layout_marginTop="@dimen/card_header_padding_top"
-                                                android:layout_marginBottom="@dimen/card_header_padding_bottom"/>
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentLeft="true"
+                  android:layout_toLeftOf="@+id/button"
+                  android:layout_marginTop="@dimen/card_header_padding_top"
+                  android:gravity="center_vertical"
+                  android:layout_centerVertical="true">
 
-    <TextView android:id="@+id/button"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:textAllCaps="true"
-              android:textSize="@dimen/card_header_button_text"
-              android:textColor="@android:color/white"
-              android:text="@string/see_more"
-              android:background="@color/header_button_default"
-              android:layout_alignParentRight="true"
-              android:layout_marginLeft="5dp"
-              android:paddingLeft="@dimen/card_header_button_padding_side"
-              android:paddingRight="@dimen/card_header_button_padding_side"
-              android:paddingTop="@dimen/card_header_button_padding_top"
-              android:paddingBottom="@dimen/card_header_button_padding_top"
-              android:layout_centerVertical="true"
-              android:layout_marginTop="@dimen/card_header_padding_top"
-              android:layout_marginBottom="@dimen/card_header_padding_bottom"/>
+        <com.afollestad.cardsui.LightItalicTextView android:id="@+id/title"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:textSize="@dimen/card_header"
+                                                    android:textColor="@android:color/black"
+                                                    android:layout_gravity="center_vertical"/>
+
+        <com.afollestad.silk.views.text.SilkTextView android:id="@+id/subtitle"
+                                                     android:layout_width="wrap_content"
+                                                     android:layout_height="wrap_content"
+                                                     android:textSize="@dimen/card_subheader"
+                                                     android:visibility="gone"
+                                                     android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
+    <TextView android:id="@+id/button" style="@style/header_button"/>
 
 </RelativeLayout>
