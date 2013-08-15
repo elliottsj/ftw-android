@@ -121,5 +121,5 @@ by something other than their title.
 `Card.setClickable(boolean)` -- by default a card is clickable; this allows you to disable a card from being highlighted when it's clicked (the white part).
 Card popup menus will still function, however.
 
-`CardsAdapter.setCardsClickable(boolean)` -- the same function as calling `setClickable(boolean) on a single card, but this applies
+`CardsAdapter.setCardsClickable(boolean)` -- the same function as calling `setClickable(boolean)` on a single card, but this applies
 to every card in the adapter. This will override the individual isClickable value for a single card. This will not affect card popup menus or card header actions.
