@@ -83,7 +83,6 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
 
     /**
      * Adds a list of items to the adapter and notifies the attached Listview.
-     * @param toAdd
      */
     public final void add(List<T> toAdd) {
         isChanged = true;
