@@ -38,7 +38,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
      * If you override {#getItemViewType} and/or {#getViewTypeCount}, the parameter to this method will be filled with
      * the item type at the index of the item view being inflated. Otherwise, it can be ignored.
      */
-    public abstract int getLayout(int type);
+    public abstract int getLayout(int index, int type);
 
     /**
      * Called when a list item view is inflated and the inheriting adapter must fill in views in the inflated layout.
@@ -219,7 +219,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
             int type = getItemViewType(i);
-            view = LayoutInflater.from(context).inflate(getLayout(type), null);
+            view = LayoutInflater.from(context).inflate(getLayout(i, type), null);
         }
         return onViewCreated(i, view, getItem(i));
     }
