@@ -1,6 +1,7 @@
 package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -115,12 +116,12 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
 
     private void setListShown(boolean shown) {
         if (!shown) {
-            mEmpty.setVisibility(View.GONE);
+            if (mEmpty != null) mEmpty.setVisibility(View.GONE);
         } else {
             mListView.setEmptyView(mEmpty);
             getAdapter().notifyDataSetChanged();
         }
-        mProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
+        if (mProgress != null) mProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
     }
 
     /**
@@ -156,15 +157,23 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mListView = (AbsListView) view.findViewById(R.id.list);
+        mEmpty = (TextView) view.findViewById(R.id.empty);
+        mProgress = (ProgressBar) view.findViewById(R.id.progress);
+        if (mListView == null)
+            throw new RuntimeException("Your list fragment layout must contain a ListView with the ID @+id/list.");
+        if (mEmpty == null)
+            Log.w(getClass().getName(), "Warning: no empty view with ID @+id/empty found in list fragment layout.");
+        if (mProgress == null)
+            Log.w(getClass().getName(), "Warning: no progress view with ID @+id/progress found in list fragment layout.");
+
         if (mListView instanceof SilkListView)
             ((SilkListView) mListView).setAdapter(mAdapter);
         else if (mListView instanceof SilkGridView)
             ((SilkGridView) mListView).setSilkAdapter(mAdapter);
         else mListView.setAdapter(mAdapter);
-        mEmpty = (TextView) view.findViewById(R.id.empty);
         mListView.setEmptyView(mEmpty);
-        mProgress = (ProgressBar) view.findViewById(R.id.progress);
-        if (getEmptyText() > 0)
+
+        if (mEmpty != null && getEmptyText() > 0)
             mEmpty.setText(getEmptyText());
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
