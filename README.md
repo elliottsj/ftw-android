@@ -120,7 +120,54 @@ Card card = new Card("Hi", "Hello").setThumbnail();
 
 There's 3 variations of `setThumbnail()`, allowing you to pass a `Drawable`, a `Bitmap`, or a drawable resource ID (which reqires you to pass a `Context` too).
 
-Customization
+Custom Card Layouts
+==============
+This library allows you to easily modify the look of cards, modifying headers is not supported, at least for now. First,
+you will need a custom card layout. The quickest way to start with this would be to copy the `list_item_card.xml`
+layout resource file from this project into your own and modify its contents. There's a specific set of views you need
+to have in your layout:
+
+1. An `ImageView` with the ID `@android:id/icon`, this is used to display card thumbnails.
+2. A `TextView` with the ID `@android:id/title`, this is used to display card titles.
+3. A `TextView` with the ID `@android:id/content`, this is used to display card content.
+4. A `View` of any type with the ID `@android:id/button1`, this is used as the anchor for card popup menus.
+5. And any other customizations that you want, even additional views (**see the bottom of this section for more details on this**).
+
+To associate your layout with cards, you can either set the layout to the `CardAdapter` to apply the layout to every card:
+
+```java
+cardsAdapter.setCardLayout(R.layout.list_item_card_larger);
+```
+
+Or you can apply the layout to a single card before (or while) you add it to the adapter:
+
+```java
+cardsAdapter.add(new Card("Title", "Content")
+                .setLayout(R.layout.list_item_card_larger));
+```
+
+If you add additional views to your card layout, you will have to override `CardAdapter` like this:
+
+```
+public class CustomCardAdapter extends CardAdapter {
+
+    public CustomCardAdapter(Context context) {
+        super(context);
+    }
+
+    @Override
+    public View onViewCreated(int index, View recycled, Card item) {
+
+        // Get a reference to your custom view and do whatever you want with it
+        View customView = recycled.findViewById(R.id.customView);
+
+        // Let the CardAdapter handle the rest, it will recycle list views and everything for you
+        return super.onViewCreated(index, recycled, item);
+    }
+}
+```
+
+Other Customizations
 ==============
 This library's customization abilities are very limited at for now, but it will allow you to change the color used for header actions
 and the title of cards:
