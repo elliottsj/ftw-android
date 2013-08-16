@@ -1,62 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--suppress AndroidLintUselessParent -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:paddingTop="@dimen/card_outer_padding_vertical"
-              android:paddingBottom="@dimen/card_outer_padding_vertical"
-              android:paddingLeft="@dimen/card_outer_padding_horizontal"
-              android:paddingRight="@dimen/card_outer_padding_horizontal"
-              android:descendantFocusability="blocksDescendants">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/card_outer">
 
-    <RelativeLayout android:id="@+id/inner_frame"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingTop="@dimen/card_inner_padding_vertical"
-                    android:paddingBottom="@dimen/card_inner_padding_vertical"
-                    android:paddingLeft="@dimen/card_inner_padding_left"
-                    android:paddingRight="@dimen/card_inner_padding_right"
-                    android:background="@drawable/card_selector"
-                    android:duplicateParentState="true">
+    <RelativeLayout android:id="@+id/inner_frame" style="@style/card_inner">
 
         <!--suppress AndroidLintContentDescription -->
-        <ImageView android:id="@android:id/icon"
-                   android:layout_width="@dimen/card_thumbnail"
-                   android:layout_height="@dimen/card_thumbnail"
-                   android:scaleType="fitXY"
-                   android:layout_marginRight="@dimen/card_thumbnail_margin"
-                   android:layout_alignTop="@+id/titleFrame"/>
+        <ImageView android:id="@android:id/icon" style="@style/card_thumbnail"/>
 
-        <RelativeLayout android:id="@+id/titleFrame"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/card_title_margin_left"
-                        android:layout_toRightOf="@android:id/icon">
+        <RelativeLayout android:id="@+id/titleFrame" style="@style/card_title_frame">
 
-            <TextView android:id="@android:id/title"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:textSize="@dimen/card_title"
-                      android:layout_alignParentLeft="true"
-                      android:layout_toLeftOf="@android:id/button1"
-                      android:layout_centerVertical="true"
-                      android:singleLine="true"/>
+            <TextView android:id="@android:id/title" style="@style/card_title"/>
 
             <!--suppress AndroidLintContentDescription -->
             <ImageButton android:id="@android:id/button1" style="@style/card_popup_anchor"/>
 
         </RelativeLayout>
 
-        <com.afollestad.silk.views.text.SilkTextView android:id="@android:id/content"
-                                                     android:layout_width="wrap_content"
-                                                     android:layout_height="wrap_content"
-                                                     android:autoLink="all"
-                                                     android:textSize="@dimen/card_content"
-                                                     android:layout_below="@+id/titleFrame"
-                                                     android:layout_toRightOf="@android:id/icon"
-                                                     android:layout_marginLeft="@dimen/card_title_margin_left"/>
+        <com.afollestad.silk.views.text.SilkTextView android:id="@android:id/content" style="@style/card_content"/>
 
     </RelativeLayout>
 
