@@ -216,7 +216,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public final View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
             int type = getItemViewType(i);
             view = LayoutInflater.from(context).inflate(getLayout(i, type), null);
