@@ -157,10 +157,8 @@ public class CustomCardAdapter extends CardAdapter {
 
     @Override
     public View onViewCreated(int index, View recycled, Card item) {
-
         // Get a reference to your custom view and do whatever you want with it
         View customView = recycled.findViewById(R.id.customView);
-
         // Let the CardAdapter handle the rest, it will recycle list views and everything for you
         return super.onViewCreated(index, recycled, item);
     }
@@ -189,7 +187,8 @@ There's two other useful methods in the `Card` class and `CardsAdapter`:
 by something other than their title.
 
 `Card.setClickable(boolean)` -- by default a card is clickable; this allows you to disable a card from being highlighted when it's clicked (the white part).
-Card popup menus will still function, however.
+Card popup menus will still function, however. You cannot disable headers, they will be unclickable by default unless you set
+ an action to them.
 
 `CardsAdapter.setCardsClickable(boolean)` -- the same function as calling `setClickable(boolean)` on a single card, but this applies
 to every card in the adapter. This will override the individual isClickable value for a single card. This will not affect card popup menus or card header actions.
