@@ -89,8 +89,8 @@ public class CardAdapter extends SilkAdapter<Card> {
     }
 
     /**
-     * Sets a custom layout to be used for all cards in the adapter. Must be called before adding cards. This <b>does not</b>
-     * override layouts set to individual cards.
+     * Sets a custom layout to be used for all cards (not including headers) in the adapter. Must be called before
+     * adding cards. This <b>does not</b> override layouts set to individual cards.
      */
     public final CardAdapter setCardLayout(int layoutRes) {
         mLayout = layoutRes;

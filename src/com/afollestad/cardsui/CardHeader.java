@@ -91,4 +91,12 @@ public class CardHeader extends Card {
     public Card setThumbnail(Drawable drawable) {
         throw new RuntimeException("Card headers do not support setThumbnail().");
     }
+
+    /**
+     * @deprecated This method cannot be called for headers, it only works with regular {@link Card} objects.
+     */
+    @Override
+    public Card setLayout(int layoutRes) {
+        throw new RuntimeException("Card headers do not support setLayout().");
+    }
 }
