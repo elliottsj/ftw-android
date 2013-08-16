@@ -148,7 +148,7 @@ cardsAdapter.add(new Card("Title", "Content")
 
 If you add additional views to your card layout, you will have to override `CardAdapter` like this:
 
-```
+```java
 public class CustomCardAdapter extends CardAdapter {
 
     public CustomCardAdapter(Context context) {
