@@ -11,12 +11,12 @@
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:layout_alignParentLeft="true"
-                  android:layout_toLeftOf="@+id/button"
+                  android:layout_toLeftOf="@android:id/button1"
                   android:layout_marginTop="@dimen/card_header_padding_top"
                   android:gravity="center_vertical"
                   android:layout_centerVertical="true">
 
-        <com.afollestad.cardsui.LightItalicTextView android:id="@+id/title"
+        <com.afollestad.cardsui.LightItalicTextView android:id="@android:id/title"
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
                                                     android:textSize="@dimen/card_header"
@@ -24,7 +24,7 @@
                                                     android:layout_gravity="center_vertical"
                                                     android:singleLine="true"/>
 
-        <com.afollestad.silk.views.text.SilkTextView android:id="@+id/subtitle"
+        <com.afollestad.silk.views.text.SilkTextView android:id="@android:id/summary"
                                                      android:layout_width="wrap_content"
                                                      android:layout_height="wrap_content"
                                                      android:textSize="@dimen/card_subheader"
@@ -33,6 +33,6 @@
 
     </LinearLayout>
 
-    <TextView android:id="@+id/button" style="@style/header_button"/>
+    <TextView android:id="@android:id/button1" style="@style/header_button"/>
 
 </RelativeLayout>

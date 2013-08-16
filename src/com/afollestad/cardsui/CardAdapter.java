@@ -24,6 +24,7 @@ public class CardAdapter extends SilkAdapter<Card> {
     private int mPopupMenu = -1;
     private Card.CardMenuListener mPopupListener;
     private boolean mCardsClickable = true;
+    private int mLayout = R.layout.list_item_card;
 
     /**
      * @deprecated Not supported for the card adapter.
@@ -87,32 +88,53 @@ public class CardAdapter extends SilkAdapter<Card> {
         return this;
     }
 
+    /**
+     * Sets a custom layout to be used for all cards in the adapter. Must be called before adding cards. This <b>does not</b>
+     * override layouts set to individual cards.
+     */
+    public final CardAdapter setCardLayout(int layoutRes) {
+        mLayout = layoutRes;
+        return this;
+    }
+
     @Override
-    public int getLayout(int type) {
+    public int getLayout(int index, int type) {
         if (type == 1)
             return R.layout.list_item_header;
-        return R.layout.list_item_card;
+        int layout = getItem(index).getLayout();
+        if (layout == 0)
+            layout = mLayout;
+        return layout;
     }
 
     private void setupHeader(CardHeader header, View view) {
-        ((TextView) view.findViewById(R.id.title)).setText(header.getTitle());
-        TextView subtitle = (TextView) view.findViewById(R.id.subtitle);
+        TextView title = (TextView) view.findViewById(android.R.id.title);
+        if (title == null)
+            throw new RuntimeException("Your header layout must contain a TextView with the ID @android:id/title.");
+        TextView subtitle = (TextView) view.findViewById(android.R.id.summary);
+        if (subtitle == null)
+            throw new RuntimeException("Your header layout must contain a TextView with the ID @android:id/summary.");
+        title.setText(header.getTitle());
         if (header.getContent() != null && !header.getContent().trim().isEmpty()) {
             subtitle.setVisibility(View.VISIBLE);
             subtitle.setText(header.getContent());
         } else subtitle.setVisibility(View.GONE);
-        TextView button = (TextView) view.findViewById(R.id.button);
+        TextView button = (TextView) view.findViewById(android.R.id.button1);
+        if (button == null)
+            throw new RuntimeException("The header layout must contain a TextView with the ID @android:id/button1.");
         if (header.getActionCallback() != null) {
             button.setVisibility(View.VISIBLE);
             button.setBackgroundColor(mAccentColor);
-            String title = header.getActionTitle();
+            String titleTxt = header.getActionTitle();
             if (header.getActionTitle() == null || header.getActionTitle().trim().isEmpty())
-                title = getContext().getString(R.string.see_more);
-            button.setText(title);
+                titleTxt = getContext().getString(R.string.see_more);
+            button.setText(titleTxt);
         } else button.setVisibility(View.GONE);
     }
 
     private void setupMenu(final Card card, final View view) {
+        if (view == null)
+            throw new RuntimeException("The card layout must contain a view with the ID @android:id/button1.");
         if (card.getPopupMenu() < 0) {
             // Menu for this card is disabled
             view.setVisibility(View.INVISIBLE);
@@ -157,6 +179,8 @@ public class CardAdapter extends SilkAdapter<Card> {
     }
 
     private void setupThumbnail(Card card, ImageView view) {
+        if (view == null)
+            throw new RuntimeException("The card layout must contain an ImageView with the ID @android:id/icon.");
         if (card.getThumbnail() == null) {
             view.setVisibility(View.GONE);
             return;
@@ -172,12 +196,17 @@ public class CardAdapter extends SilkAdapter<Card> {
             setupHeader(header, recycled);
             return recycled;
         }
-        TextView title = (TextView) recycled.findViewById(R.id.title);
+        TextView title = (TextView) recycled.findViewById(android.R.id.title);
+        if (title == null)
+            throw new RuntimeException("The card layout must contain a TextView with the ID @android:id/title.");
         title.setText(item.getTitle());
         title.setTextColor(mAccentColor);
-        ((TextView) recycled.findViewById(R.id.content)).setText(item.getContent());
-        setupMenu(item, recycled.findViewById(R.id.menu));
-        setupThumbnail(item, (ImageView) recycled.findViewById(R.id.thumbnail));
+        TextView content = (TextView) recycled.findViewById(android.R.id.content);
+        if (content == null)
+            throw new RuntimeException("The card layout must contain a TextView with the ID @android:id/content.");
+        content.setText(item.getContent());
+        setupMenu(item, recycled.findViewById(android.R.id.button1));
+        setupThumbnail(item, (ImageView) recycled.findViewById(android.R.id.icon));
         return recycled;
     }
 

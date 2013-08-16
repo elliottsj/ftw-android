@@ -52,6 +52,7 @@ public class Card implements SilkComparable<Card> {
     private boolean isClickable;
     private Object mTag;
     private Drawable mThumbnail;
+    private int mLayout;
 
     public String getTitle() {
         return title;
@@ -83,6 +84,10 @@ public class Card implements SilkComparable<Card> {
 
     public Drawable getThumbnail() {
         return mThumbnail;
+    }
+
+    public int getLayout() {
+        return mLayout;
     }
 
     /**
@@ -152,6 +157,15 @@ public class Card implements SilkComparable<Card> {
         return this;
     }
 
+    /**
+     * Sets a custom layout to be used for this card. This will override custom layouts set to the {@link CardAdapter}.
+     *
+     * @param layoutRes The resource ID of a layout containing views with the same IDs as the layout contained in this library.
+     */
+    public Card setLayout(int layoutRes) {
+        mLayout = layoutRes;
+        return this;
+    }
 
     @Override
     public boolean isSameAs(Card another) {
