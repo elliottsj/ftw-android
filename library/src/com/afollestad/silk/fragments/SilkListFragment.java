@@ -156,15 +156,15 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mListView = (AbsListView) view.findViewById(R.id.list);
-        mEmpty = (TextView) view.findViewById(R.id.empty);
-        mProgress = (ProgressBar) view.findViewById(R.id.progress);
+        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mEmpty = (TextView) view.findViewById(android.R.id.empty);
+        mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
         if (mListView == null)
-            throw new RuntimeException("Your list fragment layout must contain a ListView with the ID @+id/list.");
+            throw new RuntimeException(getClass().getName() + ": your list fragment layout must contain a ListView with the ID @android:id/list.");
         if (mEmpty == null)
-            Log.w(getClass().getName(), "Warning: no empty view with ID @+id/empty found in list fragment layout.");
+            Log.w(getClass().getName(), "Warning: no empty view with ID @android:id/empty found in list fragment layout.");
         if (mProgress == null)
-            Log.w(getClass().getName(), "Warning: no progress view with ID @+id/progress found in list fragment layout.");
+            Log.w(getClass().getName(), "Warning: no progress view with ID @android:id/progress found in list fragment layout.");
 
         if (mListView instanceof SilkListView)
             ((SilkListView) mListView).setAdapter(mAdapter);
