@@ -25,13 +25,6 @@ much easier and more consistent to create list adapters, and it handles things l
 A small, more compact version of the stock `DatePicker`. Made up of 3 horizontally-orientated spinners that represent the month,
 day, and year.
 
-###### SilkListView/SilkGridView
-
-Connects to a `SilkAdapter` and notifies it of scroll state changes using `SilkAdapter.setScrollState()`.
-Whenever you stop scrolling/flinging the list and the scroll state becomes idle, the list invokes `notifyDataSetChanged()` to cause a redraw of currently visible list items.
-You can use `SilkAdapter.getScrollState()` to get the current scroll state from within the adapter. This is useful for
-only loading images when the list is not being scrolled.
-
 ###### SilkTextView
 
 A `TextView` that automatically sets its typeface to Roboto Light. It loads
