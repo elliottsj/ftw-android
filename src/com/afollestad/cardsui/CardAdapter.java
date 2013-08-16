@@ -25,6 +25,14 @@ public class CardAdapter extends SilkAdapter<Card> {
     private Card.CardMenuListener mPopupListener;
     private boolean mCardsClickable = true;
 
+    /**
+     * @deprecated Not supported for the card adapter.
+     */
+    @Override
+    public boolean update(Card toUpdate, boolean addIfNotFound) {
+        throw new IllegalAccessError("The CardAdapter does not currently support the update() method from the SilkAdapter.");
+    }
+
     @Override
     public boolean isEnabled(int position) {
         Card item = getItem(position);
