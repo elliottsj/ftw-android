@@ -71,7 +71,7 @@ cache files using a class similar to the stock `SharedPreferences` class. You ca
 ###### TimeUtils
 
 Provides convenience methods for converting Calendar/milliseconds into human readable strings. This is useful for almost any
-app that needs to display a time to the user, but is especially useful for Twitter clients (see `TimeUtils.getFriendlyTimeShort()`).
+app that needs to display a time to the user, but is especially useful for Twitter clients (see `TimeUtils.toStringShort()`).
 
 ### Fragments
 
