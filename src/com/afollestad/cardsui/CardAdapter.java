@@ -18,6 +18,7 @@ public class CardAdapter extends SilkAdapter<Card> {
 
     public CardAdapter(Context context) {
         super(context);
+        mAccentColor = context.getResources().getColor(android.R.color.black);
     }
 
     private int mAccentColor;
