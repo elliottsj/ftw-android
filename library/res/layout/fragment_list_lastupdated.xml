@@ -6,12 +6,13 @@
                     android:layout_width="fill_parent" android:layout_height="@dimen/last_updated_frame"
                     android:paddingLeft="17dp" android:paddingRight="5dp" android:visibility="gone">
 
-        <com.afollestad.silk.views.text.SilkTextView android:id="@+id/ptrLastUpdateLabel" android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:textSize="@dimen/last_updated_text"
-                                                android:layout_centerVertical="true"
-                                                android:layout_alignParentLeft="true"
-                                                android:layout_toLeftOf="@+id/verticalDivider"/>
+        <com.afollestad.silk.views.text.SilkTextView android:id="@+id/ptrLastUpdateLabel"
+                                                     android:layout_width="wrap_content"
+                                                     android:layout_height="wrap_content"
+                                                     android:textSize="@dimen/last_updated_text"
+                                                     android:layout_centerVertical="true"
+                                                     android:layout_alignParentLeft="true"
+                                                     android:layout_toLeftOf="@+id/verticalDivider"/>
 
         <View android:id="@+id/verticalDivider" android:layout_width="1dp" android:layout_height="wrap_content"
               android:background="?android:dividerVertical" android:layout_centerVertical="true"
@@ -20,9 +21,9 @@
 
         <!--suppress AndroidLintContentDescription -->
         <ImageView android:id="@+id/ptrLastUpdateAction" android:layout_width="@dimen/last_updated_frame"
-                     android:layout_height="@dimen/last_updated_frame" android:padding="@dimen/refresh_button_padding"
-                     android:src="@drawable/refresh_dark" android:background="?android:attr/selectableItemBackground"
-                     android:layout_marginLeft="5dp" android:scaleType="fitXY" android:layout_alignParentRight="true"/>
+                   android:layout_height="@dimen/last_updated_frame" android:padding="@dimen/refresh_button_padding"
+                   android:src="@drawable/refresh_dark" android:background="?android:attr/selectableItemBackground"
+                   android:layout_marginLeft="5dp" android:scaleType="fitXY" android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
 
@@ -32,12 +33,12 @@
     <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
 
         <ListView android:id="@android:id/list" android:layout_width="fill_parent"
-                  android:layout_height="fill_parent" android:paddingLeft="7dp" android:paddingRight="7dp"/>
+                  android:layout_height="fill_parent"/>
 
         <com.afollestad.silk.views.text.SilkTextView android:id="@android:id/empty" android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:textSize="@dimen/empty_text_size"
-                                                android:layout_centerInParent="true"/>
+                                                     android:layout_height="wrap_content"
+                                                     android:textSize="@dimen/empty_text_size"
+                                                     android:layout_centerInParent="true"/>
 
         <ProgressBar android:id="@android:id/progress"
                      android:layout_width="wrap_content" android:layout_height="wrap_content"
