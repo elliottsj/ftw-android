@@ -12,7 +12,7 @@ import com.afollestad.silk.cache.SilkComparable;
  *
  * @author Aidan Follestad (afollestad)
  */
-public class Card implements SilkComparable<Card> {
+public class Card implements CardBase {
 
     protected Card() {
     }
@@ -41,7 +41,7 @@ public class Card implements SilkComparable<Card> {
     }
 
     public interface CardMenuListener {
-        public void onMenuItemClick(Card card, MenuItem item);
+        public void onMenuItemClick(CardBase card, MenuItem item);
     }
 
     private String title;
@@ -54,18 +54,22 @@ public class Card implements SilkComparable<Card> {
     private Drawable mThumbnail;
     private int mLayout;
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public String getContent() {
         return content;
     }
 
+    @Override
     public boolean isHeader() {
         return isHeader;
     }
 
+    @Override
     public boolean isClickable() {
         return isClickable;
     }
@@ -74,18 +78,22 @@ public class Card implements SilkComparable<Card> {
         return mTag;
     }
 
+    @Override
     public int getPopupMenu() {
         return mPopupMenu;
     }
 
+    @Override
     public CardMenuListener getPopupListener() {
         return mPopupListener;
     }
 
+    @Override
     public Drawable getThumbnail() {
         return mThumbnail;
     }
 
+    @Override
     public int getLayout() {
         return mLayout;
     }
@@ -168,7 +176,7 @@ public class Card implements SilkComparable<Card> {
     }
 
     @Override
-    public boolean isSameAs(Card another) {
+    public boolean isSameAs(CardBase another) {
         boolean equal = getTitle().equals(another.getTitle()) &&
                 isHeader() == another.isHeader();
         if (getContent() != null) equal = equal && getContent().equals(another.getContent());

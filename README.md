@@ -152,7 +152,7 @@ public class CustomCardAdapter extends CardAdapter {
     }
 
     @Override
-    public View onViewCreated(int index, View recycled, Card item) {
+    public View onViewCreated(int index, View recycled, CardBase item) {
         // Get a reference to your custom view and do whatever you want with it
         View customView = recycled.findViewById(R.id.customView);
         // Let the CardAdapter handle the rest, it will recycle list views and everything for you

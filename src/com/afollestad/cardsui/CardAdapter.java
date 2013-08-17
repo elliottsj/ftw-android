@@ -14,7 +14,7 @@ import com.afollestad.silk.adapters.SilkAdapter;
  *
  * @author Aidan Follestad (afollestad)
  */
-public class CardAdapter extends SilkAdapter<Card> {
+public class CardAdapter extends SilkAdapter<CardBase> {
 
     public CardAdapter(Context context) {
         super(context);
@@ -31,13 +31,13 @@ public class CardAdapter extends SilkAdapter<Card> {
      * @deprecated Not supported for the card adapter.
      */
     @Override
-    public boolean update(Card toUpdate, boolean addIfNotFound) {
+    public boolean update(CardBase toUpdate, boolean addIfNotFound) {
         throw new IllegalAccessError("The CardAdapter does not currently support the update() method from the SilkAdapter.");
     }
 
     @Override
     public boolean isEnabled(int position) {
-        Card item = getItem(position);
+        CardBase item = getItem(position);
         if (!mCardsClickable && !item.isHeader()) return false;
         if (item.isHeader())
             return ((CardHeader) item).getActionCallback() != null;
@@ -133,7 +133,7 @@ public class CardAdapter extends SilkAdapter<Card> {
         } else button.setVisibility(View.GONE);
     }
 
-    private void setupMenu(final Card card, final View view) {
+    private void setupMenu(final CardBase card, final View view) {
         if (view == null)
             throw new RuntimeException("The card layout must contain a view with the ID @android:id/button1.");
         if (card.getPopupMenu() < 0) {
@@ -179,7 +179,7 @@ public class CardAdapter extends SilkAdapter<Card> {
         });
     }
 
-    private void setupThumbnail(Card card, ImageView view) {
+    private void setupThumbnail(CardBase card, ImageView view) {
         if (view == null)
             throw new RuntimeException("The card layout must contain an ImageView with the ID @android:id/icon.");
         if (card.getThumbnail() == null) {
@@ -200,7 +200,7 @@ public class CardAdapter extends SilkAdapter<Card> {
     }
 
     @Override
-    public View onViewCreated(int index, View recycled, Card item) {
+    public View onViewCreated(int index, View recycled, CardBase item) {
         if (item.isHeader()) {
             final CardHeader header = (CardHeader) item;
             setupHeader(header, recycled);
