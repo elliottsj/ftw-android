@@ -74,6 +74,7 @@ public class Card implements CardBase {
         return isClickable;
     }
 
+    @Override
     public Object getTag() {
         return mTag;
     }

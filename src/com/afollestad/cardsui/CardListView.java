@@ -68,7 +68,7 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Card item = ((CardAdapter) getAdapter()).getItem(position);
+        CardBase item = ((CardAdapter) getAdapter()).getItem(position);
         if (item.isHeader()) {
             CardHeader header = (CardHeader) item;
             if (header.getActionCallback() != null)

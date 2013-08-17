@@ -23,4 +23,6 @@ public interface CardBase extends SilkComparable<CardBase> {
     public abstract Drawable getThumbnail();
 
     public abstract int getLayout();
+
+    public abstract Object getTag();
 }
