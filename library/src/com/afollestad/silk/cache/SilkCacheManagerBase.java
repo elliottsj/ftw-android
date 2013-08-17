@@ -16,7 +16,6 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     public SilkCacheManagerBase(String cacheName, File cacheDir) {
         if (cacheName == null || cacheName.trim().isEmpty())
             cacheName = "default";
-        mHandler = new Handler();
         if (cacheDir == null)
             cacheDir = new File(Environment.getExternalStorageDirectory(), "Silk");
         if (!cacheDir.exists())
@@ -39,8 +38,14 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         t.start();
     }
 
+    protected final Handler getHandler() {
+        if(mHandler == null)
+            mHandler = new Handler();
+        return mHandler;
+    }
+
     protected void runOnUiThread(Runnable runnable) {
-        mHandler.post(runnable);
+        getHandler().post(runnable);
     }
 
     protected File getCacheFile() {
@@ -124,7 +129,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
                 try {
                     final boolean result = commit();
                     if (callback != null) {
-                        mHandler.post(new Runnable() {
+                        getHandler().post(new Runnable() {
                             @Override
                             public void run() {
                                 if (callback instanceof SilkCacheManager.CommitCallback)
@@ -136,7 +141,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
                     e.printStackTrace();
                     log("Cache find error: " + e.getMessage());
                     if (callback != null) {
-                        mHandler.post(new Runnable() {
+                        getHandler().post(new Runnable() {
                             @Override
                             public void run() {
                                 callback.onError(e);

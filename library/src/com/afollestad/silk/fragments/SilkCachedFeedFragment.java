@@ -51,7 +51,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
      * Performs the action done when the fragment wants to try loading itself from the cache, can be overridden to change behavior.
      */
     protected boolean onPerformCacheRead() {
-        if (!isLoading()) {
+        if (!isLoading() && cache != null) {
             cache.readAsync(getAdapter(), this);
             return true;
         }
@@ -67,7 +67,8 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir);
+        if (mCacheTitle != null)
+            cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir);
     }
 
     @Override
@@ -87,10 +88,12 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     protected void onPostLoad(T[] results) {
         super.onPostLoad(results);
-        try {
-            cache.set(getAdapter()).commit();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (cache != null) {
+            try {
+                cache.set(getAdapter()).commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -108,7 +111,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
 
     @Override
     public void onVisibilityChange(boolean visible) {
-        if (!visible) {
+        if (!visible && cache != null) {
             cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
                 @Override
                 public void onError(Exception e) {
