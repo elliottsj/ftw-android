@@ -143,7 +143,7 @@ public class CardAdapter extends SilkAdapter<Card> {
         }
         int menuRes = mPopupMenu;
         if (card.getPopupMenu() != 0) menuRes = card.getPopupMenu();
-        if (menuRes == 0) {
+        if (menuRes < 0) {
             // No menu for the adapter or the card
             view.setVisibility(View.INVISIBLE);
             view.setOnClickListener(null);
