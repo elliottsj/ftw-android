@@ -39,13 +39,9 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     }
 
     protected final Handler getHandler() {
-        if(mHandler == null)
+        if (mHandler == null)
             mHandler = new Handler();
         return mHandler;
-    }
-
-    protected void runOnUiThread(Runnable runnable) {
-        getHandler().post(runnable);
     }
 
     protected File getCacheFile() {
@@ -123,13 +119,14 @@ class SilkCacheManagerBase<T extends SilkComparable> {
      * Commits all changes to the cache file. This is run on a separate thread and the results are posted to a callback.
      */
     public void commitAsync(final SilkCacheManager.SimpleCommitCallback callback) {
+        final Handler handler = new Handler();
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     final boolean result = commit();
                     if (callback != null) {
-                        getHandler().post(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 if (callback instanceof SilkCacheManager.CommitCallback)
