@@ -190,6 +190,15 @@ public class CardAdapter extends SilkAdapter<Card> {
         view.setImageDrawable(card.getThumbnail());
     }
 
+    private void invalidatePadding(int index, View view) {
+        int top = index == 0 ? R.dimen.card_outer_padding_firstlast : R.dimen.card_outer_padding_top;
+        int bottom = index == (getCount() - 1) ? R.dimen.card_outer_padding_firstlast : R.dimen.card_outer_padding_top;
+        view.setPadding(view.getPaddingLeft(),
+                getContext().getResources().getDimensionPixelSize(top),
+                view.getPaddingRight(),
+                getContext().getResources().getDimensionPixelSize(bottom));
+    }
+
     @Override
     public View onViewCreated(int index, View recycled, Card item) {
         if (item.isHeader()) {
@@ -197,6 +206,7 @@ public class CardAdapter extends SilkAdapter<Card> {
             setupHeader(header, recycled);
             return recycled;
         }
+        invalidatePadding(index, recycled);
         TextView title = (TextView) recycled.findViewById(android.R.id.title);
         if (title == null)
             throw new RuntimeException("The card layout must contain a TextView with the ID @android:id/title.");
