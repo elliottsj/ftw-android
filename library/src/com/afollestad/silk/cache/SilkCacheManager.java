@@ -307,12 +307,13 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
         if (adapter == null) throw new IllegalArgumentException("The adapter parameter cannot be null.");
         else if (fragment != null && fragment.isLoading()) return;
         if (fragment != null) fragment.setLoading(false);
+        final Handler handler = getHandler();
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (buffer.isEmpty()) {
-                        runOnUiThread(new Runnable() {
+                        handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 adapter.clear();
@@ -325,7 +326,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
                         });
                         return;
                     }
-                    runOnUiThread(new Runnable() {
+                    handler.post(new Runnable() {
                         @Override
                         public void run() {
                             adapter.set(buffer);
@@ -335,7 +336,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
                     });
                 } catch (RuntimeException e) {
                     e.printStackTrace();
-                    runOnUiThread(new Runnable() {
+                    handler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (fragment != null) {
@@ -358,12 +359,13 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      */
     public void findAsync(final T query, final FindCallback<T> callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
+        final Handler handler = getHandler();
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     final T result = find(query);
-                    mHandler.post(new Runnable() {
+                    handler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (result == null) callback.onNothing();
@@ -373,7 +375,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
                 } catch (final Exception e) {
                     e.printStackTrace();
                     log("Cache find error: " + e.getMessage());
-                    mHandler.post(new Runnable() {
+                    handler.post(new Runnable() {
                         @Override
                         public void run() {
                             callback.onError(e);

@@ -119,7 +119,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
      * Commits all changes to the cache file. This is run on a separate thread and the results are posted to a callback.
      */
     public void commitAsync(final SilkCacheManager.SimpleCommitCallback callback) {
-        final Handler handler = new Handler();
+        final Handler handler = getHandler();
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
