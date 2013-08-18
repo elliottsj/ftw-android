@@ -19,7 +19,7 @@
     <dimen name="card_header">21sp</dimen>
     <dimen name="card_subheader">15sp</dimen>
     <dimen name="card_header_padding_top">20dp</dimen>
-    <dimen name="card_header_padding_horizontal">17dp</dimen>
+    <dimen name="card_header_padding_horizontal">20dp</dimen>
     <dimen name="card_header_button_text">13sp</dimen>
     <dimen name="card_header_button_padding_side">8dp</dimen>
     <dimen name="card_header_button_padding_top">5dp</dimen>
