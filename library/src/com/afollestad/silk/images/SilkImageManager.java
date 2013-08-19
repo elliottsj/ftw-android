@@ -261,11 +261,8 @@ public class SilkImageManager {
         });
     }
 
-    /**
-     * Gets the path to a locally cached file based on the original source and view dimensions used to load it.
-     */
-    public String getCachedPath(String originalSource, Dimension dimen) {
-        return mDiskCache.getFilePath(Utils.getKey(originalSource, dimen));
+    public File getCacheFile(String originalSource, Dimension dimen) {
+        return mDiskCache.getFile(Utils.getKey(originalSource, dimen));
     }
 
     private void postCallback(final ImageListener callback, final String source, final Bitmap bitmap) {

@@ -30,6 +30,10 @@ public class SilkImageView extends ImageView {
         super(context, attrs, defStyle);
     }
 
+    private void log(String message) {
+        if (aimage != null && !aimage.isDebugEnabled()) return;
+        Log.d("SilkImageView", message);
+    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -44,9 +48,8 @@ public class SilkImageView extends ImageView {
 
 
     public void setImageURL(SilkImageManager manager, String url) {
-        if (manager == null) {
+        if (manager == null)
             throw new IllegalArgumentException("The SilkImageManager cannot be null.");
-        }
         this.aimage = manager;
         this.source = url;
         loadFromSource();
@@ -76,8 +79,7 @@ public class SilkImageView extends ImageView {
     public void showFallback() {
         if (aimage == null)
             throw new IllegalStateException("You cannot load the fallback image until you have set a SilkImageManager via setManager().");
-        if (aimage.isDebugEnabled())
-            Log.i("SilkImageView", "Loading fallback image for view...");
+        log("Loading fallback image for view...");
         aimage.get(SilkImageManager.SOURCE_FALLBACK, new SilkImageManager.ImageListener() {
             @Override
             public void onImageReceived(final String source, final Bitmap bitmap) {
@@ -86,8 +88,7 @@ public class SilkImageView extends ImageView {
                     requestLayout();
                     invalidate();
                 }
-                if (aimage.isDebugEnabled())
-                    Log.i("SilkImageView", "Fallback image set to view.");
+                log("Fallback image set to view.");
             }
         }, new Dimension(this));
     }
@@ -100,8 +101,7 @@ public class SilkImageView extends ImageView {
             showFallback();
             return;
         } else if (getMeasuredWidth() == 0 && getMeasuredHeight() == 0) {
-            if (aimage.isDebugEnabled())
-                Log.i("SilkImageView", "View not measured yet, waiting...");
+            log("View not measured yet, waiting...");
             return;
         }
 
@@ -115,8 +115,7 @@ public class SilkImageView extends ImageView {
             @Override
             public void onImageReceived(final String source, final Bitmap bitmap) {
                 if (lastSource != null && !lastSource.equals(source)) {
-                    if (aimage.isDebugEnabled())
-                        Log.i("SilkImageView", "View source changed since download started, not setting " + source + " to view.");
+                    log("View source changed since download started, not setting " + source + " to view.");
                     return;
                 }
 
@@ -133,8 +132,7 @@ public class SilkImageView extends ImageView {
                             loadingView.setVisibility(View.GONE);
                             SilkImageView.this.setVisibility(View.VISIBLE);
                         }
-                        if (aimage.isDebugEnabled())
-                            Log.i("SilkImageView", source + " set to view " + SilkImageManager.Utils.getKey(source, dimen));
+                        log(source + " set to view " + SilkImageManager.Utils.getKey(source, dimen));
                     }
                 });
             }
