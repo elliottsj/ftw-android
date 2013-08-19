@@ -20,7 +20,7 @@ public class DiskCache {
         setCacheDirectory(null);
     }
 
-    private Context context;
+    private final Context context;
     private static File CACHE_DIR;
 
     public void put(String key, Bitmap image) throws Exception {
@@ -30,7 +30,7 @@ public class DiskCache {
         image.compress(Bitmap.CompressFormat.JPEG, 100, os);
     }
 
-    public Bitmap get(String key) throws Exception {
+    public Bitmap get(String key) {
         File fi = getFile(key);
         if (!fi.exists()) return null;
         return BitmapFactory.decodeFile(fi.getAbsolutePath());

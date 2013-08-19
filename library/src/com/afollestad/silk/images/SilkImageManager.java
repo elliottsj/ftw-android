@@ -120,7 +120,7 @@ public class SilkImageManager {
         private static long copyLarge(InputStream input, OutputStream output) throws IOException {
             byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
             long count = 0;
-            int n = 0;
+            int n;
             while (-1 != (n = input.read(buffer))) {
                 output.write(buffer, 0, n);
                 count += n;
@@ -143,12 +143,12 @@ public class SilkImageManager {
 
     private int fallbackImageId;
     private boolean DEBUG = false;
-    private Context context;
-    private DiskCache mDiskCache;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Context context;
+    private final DiskCache mDiskCache;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     private LruCache<String, Bitmap> mLruCache = newConfiguredLruCache();
-    private ExecutorService mNetworkExecutorService = newConfiguredThreadPool();
-    private ExecutorService mDiskExecutorService = Executors.newCachedThreadPool(new LowPriorityThreadFactory());
+    private final ExecutorService mNetworkExecutorService = newConfiguredThreadPool();
+    private final ExecutorService mDiskExecutorService = Executors.newCachedThreadPool(new LowPriorityThreadFactory());
 
     protected static final int MEM_CACHE_SIZE_KB = (int) (Runtime.getRuntime().maxMemory() / 2 / 1024);
     protected static final int ASYNC_THREAD_COUNT = (Runtime.getRuntime().availableProcessors() * 4);

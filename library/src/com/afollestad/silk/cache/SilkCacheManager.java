@@ -220,7 +220,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     /**
      * Removes a single item from the cache, uses isSameAs() from the {@link SilkComparable} to find the item.
      */
-    public SilkCacheManager<T> remove(final T toRemove) throws Exception {
+    public SilkCacheManager<T> remove(final T toRemove) {
         if (toRemove == null) {
             log("Item passed to remove() was null.");
             return this;

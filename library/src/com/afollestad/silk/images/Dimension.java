@@ -58,9 +58,8 @@ public class Dimension {
         height = dpToPx(context, heightDp);
     }
 
-    private int width;
-    private int height;
-
+    private final int width;
+    private final int height;
 
     /**
      * Gets the width of the Dimension in pixels.
