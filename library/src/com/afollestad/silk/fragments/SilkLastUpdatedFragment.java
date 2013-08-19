@@ -7,8 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.silk.R;
-import com.afollestad.silk.utilities.TimeUtils;
 import com.afollestad.silk.cache.SilkComparable;
+import com.afollestad.silk.utilities.TimeUtils;
 
 import java.io.File;
 import java.util.Calendar;
@@ -44,6 +44,7 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
     private ImageView mLastUpdateAction;
 
     private SharedPreferences getPrefs() {
+        if (getActivity() == null) return null;
         return getActivity().getSharedPreferences("feed_last_update", 0);
     }
 
@@ -62,7 +63,8 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
      */
     public final Calendar getLastUpdatedTime() {
         SharedPreferences prefs = getPrefs();
-        if (prefs.contains(mCacheTitle)) {
+        if (prefs == null) return Calendar.getInstance();
+        else if (prefs.contains(mCacheTitle)) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(prefs.getLong(mCacheTitle, 0));
             return cal;
