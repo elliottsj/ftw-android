@@ -38,6 +38,8 @@ public abstract class SilkFragment extends Fragment {
     private void notifyVisibility(boolean visible) {
         if (visible == mAttached) {
             // Don't allow multiple notifications
+            if (getActivity() != null && getTitle() != null)
+                getActivity().setTitle(getTitle());
             return;
         }
         mAttached = visible;
@@ -58,8 +60,6 @@ public abstract class SilkFragment extends Fragment {
             notifyVisibility(true);
         else if (mAttached)
             notifyVisibility(true);
-        if (getTitle() != null)
-            getActivity().setTitle(getTitle());
     }
 
     @Override

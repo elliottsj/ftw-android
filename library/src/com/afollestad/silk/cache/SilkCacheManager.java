@@ -339,7 +339,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (fragment != null) {
+                            if (fragment != null && fragment.getActivity() != null) {
                                 fragment.setLoadFromCacheComplete(true);
                                 if (adapter.getCount() == 0) fragment.onCacheEmpty();
                             }

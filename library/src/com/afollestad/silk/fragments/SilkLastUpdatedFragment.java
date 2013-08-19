@@ -94,8 +94,9 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
         boolean shouldShow = getShouldShowLastUpdated();
         setLastUpdatedVisibile(shouldShow);
         if (shouldShow) {
+            Calendar lastUpdated = getLastUpdatedTime();
             mLastUpdateLabel.setText(getString(R.string.last_updated).replace("{date}",
-                    TimeUtils.toString(getLastUpdatedTime(), false, true)));
+                    TimeUtils.toString(lastUpdated, false, true)));
         }
         return shouldShow;
     }
