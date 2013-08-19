@@ -32,6 +32,22 @@ Whenever you stop scrolling/flinging the list and the scroll state becomes idle,
 You can use `SilkAdapter.getScrollState()` to get the current scroll state from within the adapter. This is useful for
 only loading images when the list is not being scrolled.
 
+###### SilkImageView
+
+Has a `setImageURL()` method, uses the `SilkImageManager` to quickly load images from various source types into the view. Images are automatically cached in memory and on disk for quick loading later.
+
+###### SilkAspectImageView
+
+A `SilkImageView` that automatically adjusts its height to keep aspect ratio with the width (even in a `RelativeLayout` where `MATCH_CONTENT/WRAP_CONTENT` type dimensions are used).
+
+###### SilkSquareImageView
+
+A `SilkImageView` that automatically adjusts its height to match the width of the view.
+
+###### SilkSquareHeightImageView
+
+A `SilkImageView` that automatically adjusts its width to match the height of the view.
+
 ###### SilkTextView
 
 A `TextView` that automatically sets its typeface to Roboto Light. It loads
@@ -67,6 +83,10 @@ its own.
 
 This class is used by the `SilkCachedFeedFragment` to cache items in the fragment's adapter, it allows you to easily manage your own
 cache files using a class similar to the stock `SharedPreferences` class. You can write/read any class that implements `SilkComparable<T>` to/from a cache file (but remember to mark any fields of non-serializable types as `transient`, so they're ignored during serialization).
+
+###### SilkImageManager
+
+Allows you to easily load images from the disk, web, content provider, etc. and automatically cache them in memory (and on disk if necessary). Used by all variations of the `SilkImageView`.
 
 ###### TimeUtils
 
