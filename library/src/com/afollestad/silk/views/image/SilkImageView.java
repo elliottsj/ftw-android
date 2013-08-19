@@ -134,7 +134,7 @@ public class SilkImageView extends ImageView {
                             SilkImageView.this.setVisibility(View.VISIBLE);
                         }
                         if (aimage.isDebugEnabled())
-                            Log.i("SilkImageView", source + " set to view " + SilkImageUtils.getKey(source, dimen));
+                            Log.i("SilkImageView", source + " set to view " + SilkImageManager.Utils.getKey(source, dimen));
                     }
                 });
             }
