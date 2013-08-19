@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 import com.afollestad.silk.images.Dimension;
 import com.afollestad.silk.images.SilkImageManager;
-import com.afollestad.silk.images.SilkImageUtils;
 
 public class SilkImageView extends ImageView {
 

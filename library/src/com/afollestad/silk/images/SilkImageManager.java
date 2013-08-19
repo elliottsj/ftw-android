@@ -2,6 +2,7 @@ package com.afollestad.silk.images;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +13,7 @@ import com.afollestad.silk.cache.DiskCache;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.concurrent.*;
 
 /**
@@ -25,6 +27,106 @@ public class SilkImageManager {
 
     public interface ImageListener {
         public abstract void onImageReceived(String source, Bitmap bitmap);
+    }
+
+    public static class Utils {
+
+        public static int calculateInSampleSize(BitmapFactory.Options options, Dimension dimension) {
+            // Raw height and width of image
+            final int height = options.outHeight;
+            final int width = options.outWidth;
+            int inSampleSize = 1;
+
+            if (height > dimension.getHeight() || width > dimension.getWidth()) {
+
+                // Calculate ratios of height and width to requested height and width
+                final int heightRatio = Math.round((float) height / (float) dimension.getHeight());
+                final int widthRatio = Math.round((float) width / (float) dimension.getWidth());
+
+                // Choose the smallest ratio as inSampleSize value, this will guarantee
+                // a final image with both dimensions larger than or equal to the
+                // requested height and width.
+                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+            }
+
+            return inSampleSize;
+        }
+
+        public static BitmapFactory.Options getBitmapFactoryOptions(Dimension dimension) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPurgeable = true;
+            options.inInputShareable = true;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            if (dimension != null)
+                options.inSampleSize = calculateInSampleSize(options, dimension);
+            return options;
+        }
+
+        public static Bitmap decodeByteArray(byte[] byteArray, Dimension dimension) {
+            try {
+                BitmapFactory.Options bitmapFactoryOptions = getBitmapFactoryOptions(dimension);
+                return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, bitmapFactoryOptions);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            return null;
+        }
+
+        public static String getKey(String source, Dimension dimension) {
+            if (source == null) {
+                return null;
+            }
+            if (dimension != null)
+                source += "_" + dimension.toString();
+            try {
+                return URLEncoder.encode(source, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public static class IOUtils {
+
+        public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+
+        public static void closeQuietly(InputStream input) {
+            closeQuietly((Closeable) input);
+        }
+
+        public static void closeQuietly(OutputStream output) {
+            closeQuietly((Closeable) output);
+        }
+
+        public static void closeQuietly(Closeable closeable) {
+            try {
+                if (closeable != null) {
+                    closeable.close();
+                }
+            } catch (IOException ioe) {
+                // ignore
+            }
+        }
+
+        public static int copy(InputStream input, OutputStream output) throws IOException {
+            long count = copyLarge(input, output);
+            if (count > Integer.MAX_VALUE) {
+                return -1;
+            }
+            return (int) count;
+        }
+
+        private static long copyLarge(InputStream input, OutputStream output) throws IOException {
+            byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+            long count = 0;
+            int n = 0;
+            while (-1 != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+                count += n;
+            }
+            return count;
+        }
     }
 
     public SilkImageManager(Context context) {
@@ -93,7 +195,7 @@ public class SilkImageManager {
         if (source == null) {
             return null;
         }
-        String key = SilkImageUtils.getKey(source, dimension);
+        String key = Utils.getKey(source, dimension);
         Bitmap bitmap = mLruCache.get(key);
         if (bitmap == null) {
             bitmap = getBitmapFromDisk(key);
@@ -122,7 +224,7 @@ public class SilkImageManager {
             return;
         }
 
-        final String key = SilkImageUtils.getKey(source, dimension);
+        final String key = Utils.getKey(source, dimension);
         Bitmap bitmap = mLruCache.get(key);
         if (bitmap != null) {
             log("Got " + source + " from the memory cache.");
@@ -163,7 +265,7 @@ public class SilkImageManager {
      * Gets the path to a locally cached file based on the original source and view dimensions used to load it.
      */
     public String getCachedPath(String originalSource, Dimension dimen) {
-        return mDiskCache.getFilePath(SilkImageUtils.getKey(originalSource, dimen));
+        return mDiskCache.getFilePath(Utils.getKey(originalSource, dimen));
     }
 
     private void postCallback(final ImageListener callback, final String source, final Bitmap bitmap) {
@@ -191,7 +293,7 @@ public class SilkImageManager {
     private Bitmap getBitmapFromExternal(String key, String source, Dimension dimension) {
         byte[] byteArray = sourceToBytes(source);
         if (byteArray != null) {
-            Bitmap bitmap = SilkImageUtils.decodeByteArray(byteArray, dimension);
+            Bitmap bitmap = Utils.decodeByteArray(byteArray, dimension);
             if (bitmap != null) {
                 if (!source.startsWith("content") && !source.startsWith("file")) {
                     // If the source is already from the local disk, don't cache it locally again.
