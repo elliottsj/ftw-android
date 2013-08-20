@@ -5,7 +5,7 @@ This project is being implemented with one of my apps, but I decided to make it 
 
 ### Importing
 
-To use this library with your Android apps, you have to reference this project as a library (from Eclipse) or add it as a module (from IntelliJ). It now has Gradle support, too. It cannot be compiled as a JAR because this library contains resources such as layouts that are needed.
+To use this library with your Android apps, you have to reference this project as a library (from Eclipse) or add it as a module (from IntelliJ). It now has Gradle support,t oo. It cannot be compiled as a JAR because this library contains resources such as layouts that are needed.
 
 Classes
 =============
