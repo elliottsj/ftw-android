@@ -52,6 +52,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
      */
     protected boolean onPerformCacheRead() {
         if (!isLoading() && cache != null) {
+            if (cache.isCommitted()) cache.forceReload();
             cache.readAsync(getAdapter(), this);
             return true;
         }
@@ -88,7 +89,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     protected void onPostLoad(T[] results) {
         super.onPostLoad(results);
-        if (cache != null) {
+        if (cache != null && !cache.isCommitted()) {
             try {
                 cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
                     @Override

@@ -32,6 +32,16 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         Log.d("SilkCacheManager", getCacheFile().getName() + ": " + message);
     }
 
+    /**
+     * Checks whether or not the manager has been commited.
+     * <p/>
+     * If it has, you cannot commit again until you re-initialize the manager
+     * or make a call to {@link com.afollestad.silk.cache.SilkCacheManager#forceReload()}.
+     */
+    public boolean isCommitted() {
+        return buffer == null;
+    }
+
     protected void runPriorityThread(Runnable runnable) {
         Thread t = new Thread(runnable);
         t.setPriority(Thread.MAX_PRIORITY);
@@ -90,7 +100,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
      * Commits all changes to the cache file. This is from the calling thread.
      */
     public boolean commit() throws Exception {
-        if (buffer == null)
+        if (isCommitted())
             throw new IllegalStateException("The SilkCacheManager has already committed, you must re-initialize the manager or call forceReload().");
         else if (buffer.size() == 0) {
             if (cacheFile.exists()) {
