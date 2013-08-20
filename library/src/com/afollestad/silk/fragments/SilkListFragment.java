@@ -80,6 +80,10 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
         return mAdapter;
     }
 
+    public final void recreateAdapter() {
+        mAdapter = initializeAdapter();
+    }
+
     /**
      * Only called once to cause inheriting classes to create a new SilkAdapter that can later be retrieved using
      * {#getAdapter}.

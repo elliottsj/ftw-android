@@ -91,6 +91,7 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
      * the return value of {#getShouldShowLastUpdated}, and updates the label if it's shown.
      */
     public final boolean invalidateLastUpdated() {
+        if (getActivity() == null) return false;
         boolean shouldShow = getShouldShowLastUpdated();
         setLastUpdatedVisibile(shouldShow);
         if (shouldShow) {
