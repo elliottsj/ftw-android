@@ -312,7 +312,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             @Override
             public void run() {
                 try {
-                    if (buffer.isEmpty()) {
+                    if (buffer == null || buffer.isEmpty()) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
