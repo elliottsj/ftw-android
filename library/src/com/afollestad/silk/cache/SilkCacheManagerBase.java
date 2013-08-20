@@ -13,7 +13,7 @@ import java.util.List;
  */
 class SilkCacheManagerBase<T extends SilkComparable> {
 
-    public SilkCacheManagerBase(String cacheName, File cacheDir) {
+    protected SilkCacheManagerBase(String cacheName, File cacheDir, SilkCacheManager.InitializedCallback callback) {
         if (cacheName == null || cacheName.trim().isEmpty())
             cacheName = "default";
         if (cacheDir == null)
@@ -21,12 +21,41 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         if (!cacheDir.exists())
             cacheDir.mkdirs();
         cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
-        reloadIfNecessary();
+        initialize(callback);
     }
 
     protected List<T> buffer;
     private final File cacheFile;
     protected Handler mHandler;
+    private boolean isInitialized;
+
+    private void initialize(final SilkCacheManager.InitializedCallback callback) {
+        if (callback == null)
+            throw new IllegalArgumentException("The initialization callback cannot be null.");
+        log("Initializing " + cacheFile.getName() + "...");
+        final Handler mHandler = new Handler();
+        runPriorityThread(new Runnable() {
+            @Override
+            public void run() {
+                reloadIfNecessary();
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        isInitialized = true;
+                        callback.onInitialized();
+                        log(cacheFile.getName() + " successfully initialized!");
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Gets whether or not the manager has finished the initialization process.
+     */
+    public final boolean isInitialized() {
+        return isInitialized;
+    }
 
     protected void log(String message) {
         Log.d("SilkCacheManager", getCacheFile().getName() + ": " + message);

@@ -34,7 +34,20 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
     /**
      * Called when an error occurs while refreshing.
      */
-    public abstract void onError(String message);
+    protected abstract void onError(String message);
+
+    /**
+     * Stuff that's done right before refresh() starts, return false here to cancel refreshing.
+     */
+    protected boolean onPreLoad() {
+        if (isLoading()) return false;
+        else if (!Silk.isOnline(getActivity())) {
+            onError(getString(R.string.offline_error));
+            setLoadComplete(true);
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Called from a separate thread (not the UI thread) when refresh() has returned results. Can
@@ -53,13 +66,7 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
      * Causes sub-fragments to pull from the network, and adds the results to the list.
      */
     public void performRefresh(boolean progress) {
-        if (isLoading()) return;
-        else if (!Silk.isOnline(getActivity())) {
-            onError(getString(R.string.offline_error));
-            setLoadComplete(true);
-            return;
-        }
-
+        if (!onPreLoad()) return;
         setLoading(progress);
         new Thread(new Runnable() {
             @Override

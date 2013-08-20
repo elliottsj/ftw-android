@@ -16,6 +16,10 @@ import java.util.List;
  */
 public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheManagerBase<T> {
 
+    public interface InitializedCallback {
+        public void onInitialized();
+    }
+
     public interface RemoveFilter<T> {
         public boolean shouldRemove(T item);
     }
@@ -40,8 +44,8 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     /**
      * Initializes a new SilkCacheManager, using the default cache file and default cache directory.
      */
-    public SilkCacheManager() {
-        super(null, null);
+    public SilkCacheManager(InitializedCallback callback) {
+        super(null, null, callback);
     }
 
     /**
@@ -49,8 +53,8 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      *
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      */
-    public SilkCacheManager(String cacheName) {
-        super(cacheName, null);
+    public SilkCacheManager(String cacheName, InitializedCallback callback) {
+        super(cacheName, null, callback);
     }
 
     /**
@@ -59,8 +63,8 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      * @param cacheDir  The directory that the cache file will be stored in, defaults to a folder called "Silk" in your external storage directory.
      */
-    public SilkCacheManager(String cacheName, File cacheDir) {
-        super(cacheName, cacheDir);
+    public SilkCacheManager(String cacheName, File cacheDir, InitializedCallback callback) {
+        super(cacheName, cacheDir, callback);
     }
 
     /**

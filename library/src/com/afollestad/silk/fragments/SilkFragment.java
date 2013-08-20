@@ -19,7 +19,7 @@ public abstract class SilkFragment extends Fragment {
     /**
      * Gets the fragment layout to be inflated.
      */
-    public abstract int getLayout();
+    protected abstract int getLayout();
 
     /**
      * Gets the title set to the activity when the Fragment is attached.
@@ -33,7 +33,7 @@ public abstract class SilkFragment extends Fragment {
      * <p/>
      * Sometimes {#getUserVisibleHint}, {#isVisible}, {#setUserVisibleHint}, etc. can be deceiving. This is the answer.
      */
-    public abstract void onVisibilityChange(boolean visible);
+    protected abstract void onVisibilityChange(boolean visible);
 
     private void notifyVisibility(boolean visible) {
         if (visible) {
@@ -89,7 +89,7 @@ public abstract class SilkFragment extends Fragment {
         return inflater.inflate(getLayout(), null);
     }
 
-    public final void runOnUiThread(Runnable runnable) {
+    protected final void runOnUiThread(Runnable runnable) {
         if (getActivity() == null)
             return;
         getActivity().runOnUiThread(runnable);

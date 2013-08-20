@@ -49,7 +49,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
      * the returned layout must have the same views with the same IDs in addition to whatever you add or change.
      */
     @Override
-    public int getLayout() {
+    protected int getLayout() {
         return R.layout.fragment_list;
     }
 
@@ -64,7 +64,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
      * <p/>
      * The text will be shown when the list is not loading and the list is empty.
      */
-    public abstract int getEmptyText();
+    protected abstract int getEmptyText();
 
     /**
      * Updates the edit text that was initially set to the value of {@link #getEmptyText()}.
@@ -80,6 +80,9 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
         return mAdapter;
     }
 
+    /**
+     * Causes the fragment's adapter to be recreated.
+     */
     public final void recreateAdapter() {
         mAdapter = initializeAdapter();
     }
@@ -97,7 +100,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
      * @param item  The actual tapped item from the adapter.
      * @param view  The view in the list that was tapped.
      */
-    public abstract void onItemTapped(int index, T item, View view);
+    protected abstract void onItemTapped(int index, T item, View view);
 
     /**
      * Called when an item in the list is long-tapped by the user.
@@ -107,7 +110,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
      * @param view  The view in the list that was long-tapped.
      * @return Whether or not the event was handled.
      */
-    public abstract boolean onItemLongTapped(int index, T item, View view);
+    protected abstract boolean onItemLongTapped(int index, T item, View view);
 
     /**
      * Gets whether or not the list is currently loading.
