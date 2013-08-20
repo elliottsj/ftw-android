@@ -115,6 +115,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     }
 
     private void setListShown(boolean shown) {
+        mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
         if (!shown) {
             if (mEmpty != null) mEmpty.setVisibility(View.GONE);
         } else {

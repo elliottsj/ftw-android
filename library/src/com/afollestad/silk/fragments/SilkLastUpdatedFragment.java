@@ -169,6 +169,6 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
      * Called when the user presses the button in the last updated frame; invokes performRefresh() by default.
      */
     public void onUserRefresh() {
-        performRefresh(true);
+        performRefresh(false);
     }
 }

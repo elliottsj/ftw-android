@@ -233,6 +233,13 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     }
 
     /**
+     * Marks the adapter as changed.
+     */
+    public void markChanged() {
+        isChanged = true;
+    }
+
+    /**
      * Gets whether or not the adapter has been changed since the last time {#resetChanged} was called.
      */
     public boolean isChanged() {
