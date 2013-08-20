@@ -68,13 +68,14 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mCacheTitle != null)
-            cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir, new SilkCacheManager.InitializedCallback() {
+        if (mCacheTitle != null) {
+            cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir, new SilkCacheManager.InitializedCallback<T>() {
                 @Override
-                public void onInitialized() {
-                    cache.readAsync(getAdapter(), SilkCachedFeedFragment.this);
+                public void onInitialized(SilkCacheManager<T> manager) {
+                    manager.readAsync(getAdapter(), SilkCachedFeedFragment.this);
                 }
             });
+        }
     }
 
     @Override
@@ -122,7 +123,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
 
     @Override
     protected void onVisibilityChange(boolean visible) {
-        if (!visible && cache != null) {
+        if (!visible && cache != null && !cache.isCommitted()) {
             cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
                 @Override
                 public void onError(Exception e) {

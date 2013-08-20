@@ -16,8 +16,8 @@ import java.util.List;
  */
 public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheManagerBase<T> {
 
-    public interface InitializedCallback {
-        public void onInitialized();
+    public interface InitializedCallback<T extends SilkComparable> {
+        public void onInitialized(SilkCacheManager<T> manager);
     }
 
     public interface RemoveFilter<T> {
@@ -43,18 +43,23 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
 
     /**
      * Initializes a new SilkCacheManager, using the default cache file and default cache directory.
+     *
+     * @param callback An optional callback that will cause the cache to initialize itself off the current thread, and post to a callback when it's ready.
      */
-    public SilkCacheManager(InitializedCallback callback) {
-        super(null, null, callback);
+    public SilkCacheManager(InitializedCallback<T> callback) {
+        super(null, null);
+        initialize(callback);
     }
 
     /**
      * Initializes a new SilkCacheManager, using the default cache directory.
      *
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
+     * @param callback  An optional callback that will cause the cache to initialize itself off the current thread, and post to a callback when it's ready.
      */
-    public SilkCacheManager(String cacheName, InitializedCallback callback) {
-        super(cacheName, null, callback);
+    public SilkCacheManager(String cacheName, InitializedCallback<T> callback) {
+        super(cacheName, null);
+        initialize(callback);
     }
 
     /**
@@ -62,9 +67,43 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      *
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      * @param cacheDir  The directory that the cache file will be stored in, defaults to a folder called "Silk" in your external storage directory.
+     * @param callback  An optional callback that will cause the cache to initialize itself off the current thread, and post to a callback when it's ready.
      */
-    public SilkCacheManager(String cacheName, File cacheDir, InitializedCallback callback) {
-        super(cacheName, cacheDir, callback);
+    public SilkCacheManager(String cacheName, File cacheDir, InitializedCallback<T> callback) {
+        super(cacheName, cacheDir);
+        initialize(callback);
+    }
+
+    private boolean isInitialized;
+
+    private void initialize(final SilkCacheManager.InitializedCallback<T> callback) {
+        if (callback == null) {
+            reloadIfNecessary();
+            return;
+        }
+        log("Initializing " + getCacheFile().getName() + "...");
+        final Handler mHandler = new Handler();
+        runPriorityThread(new Runnable() {
+            @Override
+            public void run() {
+                reloadIfNecessary();
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        isInitialized = true;
+                        callback.onInitialized(SilkCacheManager.this);
+                        log(getCacheFile().getName() + " successfully initialized!");
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Gets whether or not the manager has finished the initialization process.
+     */
+    public final boolean isInitialized() {
+        return isInitialized;
     }
 
     /**
