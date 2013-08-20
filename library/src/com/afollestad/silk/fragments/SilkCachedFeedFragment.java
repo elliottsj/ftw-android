@@ -90,7 +90,12 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         super.onPostLoad(results);
         if (cache != null) {
             try {
-                cache.set(getAdapter()).commit();
+                cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }
