@@ -51,7 +51,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
      * Performs the action done when the fragment wants to try loading itself from the cache, can be overridden to change behavior.
      */
     protected boolean onPerformCacheRead() {
-        if (!isLoading() && cache != null && cache.isInitialized()) {
+        if (cache != null && cache.isInitialized()) {
             setLoading(true);
             if (cache.isCommitted()) cache.forceReload();
             cache.readAsync(getAdapter(), this);
@@ -67,9 +67,11 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.mCacheEnabled = true;
+        super.onViewCreated(view, savedInstanceState);
         if (mCacheTitle != null) {
+            setLoading(true);
             cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir, new SilkCacheManager.InitializedCallback<T>() {
                 @Override
                 public void onInitialized(SilkCacheManager<T> manager) {
@@ -77,12 +79,6 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
                 }
             });
         }
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.mCacheEnabled = true;
-        super.onViewCreated(view, savedInstanceState);
     }
 
     /**

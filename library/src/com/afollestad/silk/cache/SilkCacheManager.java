@@ -348,7 +348,6 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      */
     public void readAsync(final SilkAdapter<T> adapter, final SilkCachedFeedFragment fragment) {
         if (adapter == null) throw new IllegalArgumentException("The adapter parameter cannot be null.");
-        else if (fragment != null && fragment.isLoading()) return;
         if (fragment != null) fragment.setLoading(false);
         final Handler handler = getHandler();
         runPriorityThread(new Runnable() {
@@ -382,7 +381,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (fragment != null && fragment.getActivity() != null) {
+                            if (fragment != null) {
                                 fragment.setLoadFromCacheComplete(true);
                                 if (adapter.getCount() == 0) fragment.onCacheEmpty();
                             }
