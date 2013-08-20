@@ -73,7 +73,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
             cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir, new SilkCacheManager.InitializedCallback<T>() {
                 @Override
                 public void onInitialized(SilkCacheManager<T> manager) {
-                    manager.readAsync(getAdapter(), SilkCachedFeedFragment.this);
+                    onPerformCacheRead();
                 }
             });
         }
