@@ -91,8 +91,10 @@ class SilkCacheManagerBase<T extends SilkComparable> {
             log("Read " + results.size() + " items from " + cacheFile.getName());
             return results;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            log("Error loading items: " + e.getMessage());
         }
+        return null;
     }
 
     /**
