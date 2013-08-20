@@ -52,6 +52,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
      */
     protected boolean onPerformCacheRead() {
         if (!isLoading() && cache != null && cache.isInitialized()) {
+            setLoading(true);
             if (cache.isCommitted()) cache.forceReload();
             cache.readAsync(getAdapter(), this);
             return true;
