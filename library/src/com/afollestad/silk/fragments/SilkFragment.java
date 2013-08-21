@@ -89,7 +89,7 @@ public abstract class SilkFragment extends Fragment {
         return inflater.inflate(getLayout(), null);
     }
 
-    protected final void runOnUiThread(Runnable runnable) {
+    public final void runOnUiThread(Runnable runnable) {
         if (getActivity() == null)
             return;
         getActivity().runOnUiThread(runnable);
