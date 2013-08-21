@@ -4,19 +4,19 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
-public class AspectSilkImageView extends SilkImageView {
+public class SilkAspectImageView extends SilkImageView {
 
-    public AspectSilkImageView(Context context) {
+    public SilkAspectImageView(Context context) {
         super(context);
         super.invalidateOnLoad = true;
     }
 
-    public AspectSilkImageView(Context context, AttributeSet attrs) {
+    public SilkAspectImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         super.invalidateOnLoad = true;
     }
 
-    public AspectSilkImageView(Context context, AttributeSet attrs, int defStyle) {
+    public SilkAspectImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         super.invalidateOnLoad = true;
     }
