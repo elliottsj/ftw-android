@@ -6,6 +6,8 @@ import com.afollestad.silk.R;
 import com.afollestad.silk.Silk;
 import com.afollestad.silk.cache.SilkComparable;
 
+import java.util.List;
+
 /**
  * A {@link com.afollestad.silk.fragments.SilkListFragment} that pulls data from the network, and automatically puts the retrieved data in its list.
  *
@@ -29,7 +31,7 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
      * Called when inheriting classes must load their feed. This is called from a separate thread so you don't
      * need to worry about threading on your own.
      */
-    protected abstract T[] refresh() throws Exception;
+    protected abstract List<T> refresh() throws Exception;
 
     /**
      * Called when an error occurs while refreshing.
@@ -53,7 +55,7 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
      * Called from a separate thread (not the UI thread) when refresh() has returned results. Can
      * be overridden to do something with the results before being added to the adapter.
      */
-    protected void onPostLoad(final T[] results) {
+    protected void onPostLoad(final List<T> results) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -72,7 +74,7 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
             @Override
             public void run() {
                 try {
-                    final T[] results = refresh();
+                    final List<T> results = refresh();
                     if (results != null) {
                         runOnUiThread(new Runnable() {
                             @Override
