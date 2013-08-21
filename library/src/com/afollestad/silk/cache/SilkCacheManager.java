@@ -33,7 +33,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     }
 
     public interface CommitCallback extends SimpleCommitCallback {
-        public void onCommitted(boolean returnValue);
+        public void onCommitted();
     }
 
     public interface SimpleCommitCallback {
@@ -91,6 +91,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
                     @Override
                     public void run() {
                         isInitialized = true;
+                        isChanged = false;
                         callback.onInitialized(SilkCacheManager.this);
                         log(getCacheFile().getName() + " successfully initialized!");
                     }
@@ -120,6 +121,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      */
     public SilkCacheManager<T> forceReload() {
         super.buffer = null;
+        super.isChanged = false;
         reloadIfNecessary();
         return this;
     }
@@ -133,6 +135,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             return this;
         }
         super.buffer.add(toAdd);
+        isChanged = true;
         log("Appended 1 item to the cache.");
         return this;
     }
@@ -151,6 +154,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             super.buffer.add(item);
             count++;
         }
+        isChanged = true;
         log("Appended " + count + " items to the cache.");
         return this;
     }
@@ -163,6 +167,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("Array passed to append() was null or empty.");
             return this;
         }
+        isChanged = true;
         append(new ArrayList<T>(Arrays.asList(toAppend)));
         return this;
     }
@@ -180,6 +185,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("The adapter has not been changed, skipped writing to " + super.getCacheFile().getName());
             return this;
         }
+        isChanged = true;
         adapter.resetChanged();
         append(adapter.getItems());
         return this;
@@ -209,8 +215,10 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
         }
         if (found) {
             log("Updated 1 item in the cache.");
+            isChanged = true;
         } else if (appendIfNotFound) {
             append(toUpdate);
+            isChanged = true;
         }
         return this;
     }
@@ -256,6 +264,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      */
     public SilkCacheManager<T> remove(int index) {
         super.buffer.remove(index);
+        isChanged = true;
         log("Removed item at index " + index + " from " + super.getCacheFile().getName());
         return this;
     }
@@ -297,6 +306,8 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
         }
         for (Integer i : removeIndexes)
             super.buffer.remove(i.intValue());
+        if (removeIndexes.size() > 0)
+            isChanged = true;
         log("Removed " + removeIndexes.size() + " items from the cache.");
         return this;
     }
@@ -330,6 +341,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
         if (super.buffer == null)
             super.buffer = new ArrayList<T>();
         else super.buffer.clear();
+        isChanged = true;
         return this;
     }
 

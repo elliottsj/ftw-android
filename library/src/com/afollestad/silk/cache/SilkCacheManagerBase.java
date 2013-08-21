@@ -26,6 +26,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     protected List<T> buffer;
     private final File cacheFile;
     protected Handler mHandler;
+    protected boolean isChanged;
 
     protected void log(String message) {
         Log.d("SilkCacheManager", getCacheFile().getName() + ": " + message);
@@ -37,8 +38,15 @@ class SilkCacheManagerBase<T extends SilkComparable> {
      * If it has, you cannot commit again until you re-initialize the manager
      * or make a call to {@link com.afollestad.silk.cache.SilkCacheManager#forceReload()}.
      */
-    public boolean isCommitted() {
+    public final boolean isCommitted() {
         return buffer == null;
+    }
+
+    /**
+     * Gets whether or not the cache has been changed since it was initialized.
+     */
+    public final boolean isChanged() {
+        return isChanged;
     }
 
     protected void runPriorityThread(Runnable runnable) {
@@ -100,15 +108,17 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     /**
      * Commits all changes to the cache file. This is from the calling thread.
      */
-    public boolean commit() throws Exception {
-        if (isCommitted())
+    public void commit() throws Exception {
+        if (isCommitted()) {
             throw new IllegalStateException("The SilkCacheManager has already committed, you must re-initialize the manager or call forceReload().");
-        else if (buffer.size() == 0) {
+        } else if (!isChanged()) {
+            throw new IllegalStateException("The SilkCacheManager has not been modified since initialization.");
+        } else if (buffer.size() == 0) {
             if (cacheFile.exists()) {
                 log("Deleting: " + cacheFile.getName());
-                return cacheFile.delete();
+                cacheFile.delete();
             }
-            return true;
+            return;
         }
         int subtraction = 0;
         FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
@@ -123,7 +133,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         objectOutputStream.close();
         log("Committed " + (buffer.size() - subtraction) + " items to " + cacheFile.getName());
         buffer = null;
-        return true;
+        isChanged = false;
     }
 
     /**
@@ -135,19 +145,19 @@ class SilkCacheManagerBase<T extends SilkComparable> {
             @Override
             public void run() {
                 try {
-                    final boolean result = commit();
+                    commit();
                     if (callback != null) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 if (callback instanceof SilkCacheManager.CommitCallback)
-                                    ((SilkCacheManager.CommitCallback) callback).onCommitted(result);
+                                    ((SilkCacheManager.CommitCallback) callback).onCommitted();
                             }
                         });
                     }
                 } catch (final Exception e) {
                     e.printStackTrace();
-                    log("Cache find error: " + e.getMessage());
+                    log("Cache commit error: " + e.getMessage());
                     if (callback != null) {
                         getHandler().post(new Runnable() {
                             @Override
