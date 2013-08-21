@@ -85,7 +85,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
                     onPerformCacheRead();
                 }
             });
-        }
+        } else onCacheEmpty();
     }
 
     /**
