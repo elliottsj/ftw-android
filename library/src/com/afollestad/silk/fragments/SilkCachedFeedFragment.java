@@ -92,16 +92,34 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     protected void onPostLoad(T[] results) {
         super.onPostLoad(results);
-        if (cache != null && !cache.isCommitted()) {
-            try {
-                cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
+        if (cache != null) {
+            if (cache.isCommitted()) {
+                cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir, new SilkCacheManager.InitializedCallback<T>() {
                     @Override
-                    public void onError(Exception e) {
-                        e.printStackTrace();
+                    public void onInitialized(SilkCacheManager<T> manager) {
+                        try {
+                            manager.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
+                                @Override
+                                public void onError(Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                try {
+                    cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
+                        @Override
+                        public void onError(Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
