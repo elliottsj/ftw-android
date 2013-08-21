@@ -145,7 +145,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
 
     @Override
     protected void onVisibilityChange(boolean visible) {
-        if (!visible && cache != null && !cache.isCommitted()) {
+        if (!visible && cache != null && !cache.isCommitted() && cache.isChanged()) {
             cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
                 @Override
                 public void onError(Exception e) {
