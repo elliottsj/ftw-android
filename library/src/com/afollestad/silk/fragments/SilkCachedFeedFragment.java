@@ -41,6 +41,13 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     private SilkCacheManager<T> cache;
 
     /**
+     * Gets the cache name passed in the constructor.
+     */
+    public String getCacheTitle() {
+        return mCacheTitle;
+    }
+
+    /**
      * Gets the cache manager used by the fragment to read and write its cache.
      */
     protected final SilkCacheManager<T> getCacheManager() {
