@@ -36,7 +36,7 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
     /**
      * Called when an error occurs while refreshing.
      */
-    protected abstract void onError(String message);
+    protected abstract void onError(Exception message);
 
     /**
      * Stuff that's done right before refresh() starts, return false here to cancel refreshing.
@@ -44,7 +44,7 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
     protected boolean onPreLoad() {
         if (isLoading()) return false;
         else if (!Silk.isOnline(getActivity())) {
-            onError(getString(R.string.offline_error));
+            onError(new Exception(getString(R.string.offline_error)));
             setLoadComplete(true);
             return false;
         }
@@ -90,9 +90,9 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
                         public void run() {
                             setLoadComplete(true);
                             if (!Silk.isOnline(getActivity())) {
-                                onError(getString(R.string.offline_error));
+                                onError(new Exception(getString(R.string.offline_error)));
                             } else {
-                                onError(e.getMessage());
+                                onError(e);
                             }
                         }
                     });
