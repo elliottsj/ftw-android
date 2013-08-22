@@ -14,7 +14,7 @@ import com.afollestad.silk.adapters.SilkAdapter;
  *
  * @author Aidan Follestad (afollestad)
  */
-public class CardAdapter extends SilkAdapter<CardBase> {
+public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
 
     public CardAdapter(Context context) {
         super(context);
@@ -26,6 +26,7 @@ public class CardAdapter extends SilkAdapter<CardBase> {
     private Card.CardMenuListener mPopupListener;
     private boolean mCardsClickable = true;
     private int mLayout = R.layout.list_item_card;
+    private int mLayoutNoContent = R.layout.list_item_card_nocontent;
 
     /**
      * @deprecated Not supported for the card adapter.
@@ -98,13 +99,24 @@ public class CardAdapter extends SilkAdapter<CardBase> {
         return this;
     }
 
+    /**
+     * Sets a custom layout to be used for all cards (not including headers) in the adapter with null content. Must be called before
+     * adding cards. This <b>does not</b> override layouts set to individual cards.
+     */
+    public final CardAdapter setCardLayoutNoContent(int layoutRes) {
+        mLayoutNoContent = layoutRes;
+        return this;
+    }
+
     @Override
     public int getLayout(int index, int type) {
-        if (type == 1)
+        if (type == 2)
             return R.layout.list_item_header;
-        int layout = getItem(index).getLayout();
-        if (layout == 0)
-            layout = mLayout;
+        else if (type == 1)
+            return mLayoutNoContent;
+        CardBase card = getItem(index);
+        int layout = card.getLayout();
+        if (layout == 0) layout = mLayout;
         return layout;
     }
 
@@ -179,17 +191,6 @@ public class CardAdapter extends SilkAdapter<CardBase> {
         });
     }
 
-    private void setupThumbnail(CardBase card, ImageView view) {
-        if (view == null)
-            throw new RuntimeException("The card layout must contain an ImageView with the ID @android:id/icon.");
-        if (card.getThumbnail() == null) {
-            view.setVisibility(View.GONE);
-            return;
-        }
-        view.setVisibility(View.VISIBLE);
-        view.setImageDrawable(card.getThumbnail());
-    }
-
     private void invalidatePadding(int index, View view) {
         int top = index == 0 ? R.dimen.card_outer_padding_firstlast : R.dimen.card_outer_padding_top;
         int bottom = index == (getCount() - 1) ? R.dimen.card_outer_padding_firstlast : R.dimen.card_outer_padding_top;
@@ -200,7 +201,7 @@ public class CardAdapter extends SilkAdapter<CardBase> {
     }
 
     @Override
-    public View onViewCreated(int index, View recycled, CardBase item) {
+    public View onViewCreated(int index, View recycled, T item) {
         if (item.isHeader()) {
             final CardHeader header = (CardHeader) item;
             setupHeader(header, recycled);
@@ -213,22 +214,43 @@ public class CardAdapter extends SilkAdapter<CardBase> {
         title.setText(item.getTitle());
         title.setTextColor(mAccentColor);
         TextView content = (TextView) recycled.findViewById(android.R.id.content);
-        if (content == null)
-            throw new RuntimeException("The card layout must contain a TextView with the ID @android:id/content.");
-        content.setText(item.getContent());
+        if (content != null) {
+            if (!onProcessContent(content, item))
+                content.setText(item.getContent());
+        }
         setupMenu(item, recycled.findViewById(android.R.id.button1));
-        setupThumbnail(item, (ImageView) recycled.findViewById(android.R.id.icon));
+        ImageView icon = (ImageView) recycled.findViewById(android.R.id.icon);
+        if (onProcessThumbnail(icon, item)) {
+            icon.setVisibility(View.VISIBLE);
+        } else {
+            icon.setVisibility(View.GONE);
+        }
         return recycled;
     }
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 3;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (getItem(position).isHeader()) return 1;
+        CardBase item = getItem(position);
+        if (item.isHeader()) return 2;
+        else if (item.getContent() == null) return 1;
         return 0;
+    }
+
+    protected boolean onProcessThumbnail(ImageView icon, T card) {
+        if (icon == null)
+            throw new RuntimeException("The card layout must contain an ImageView with the ID @android:id/icon.");
+        if (card.getThumbnail() == null) return false;
+        icon.setImageDrawable(card.getThumbnail());
+        return true;
+    }
+
+    protected boolean onProcessContent(TextView content, T card) {
+        // do nothing by default
+        return false;
     }
 }

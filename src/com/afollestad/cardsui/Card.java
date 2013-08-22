@@ -5,14 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.MenuItem;
-import com.afollestad.silk.cache.SilkComparable;
 
 /**
  * Represents a single card displayed in a {@link CardAdapter}.
  *
  * @author Aidan Follestad (afollestad)
  */
-public class Card implements CardBase {
+public class Card implements CardBase<Card> {
 
     protected Card() {
     }
@@ -22,9 +21,13 @@ public class Card implements CardBase {
         this.isHeader = isHeader;
     }
 
-    public Card(String title, String content) {
+    public Card(String title) {
         this.isClickable = true;
         this.title = title;
+    }
+
+    public Card(String title, String content) {
+        this(title);
         this.content = content;
     }
 
@@ -40,8 +43,8 @@ public class Card implements CardBase {
         this(context.getString(titleRes), context.getString(contentRes));
     }
 
-    public interface CardMenuListener {
-        public void onMenuItemClick(CardBase card, MenuItem item);
+    public interface CardMenuListener<T> {
+        public void onMenuItemClick(T card, MenuItem item);
     }
 
     private String title;
@@ -160,7 +163,7 @@ public class Card implements CardBase {
      * @param menuRes  The menu resource ID to use for the card's popup menu.
      * @param listener A listener invoked when an option in the popup menu is tapped by the user.
      */
-    public Card setPopupMenu(int menuRes, CardMenuListener listener) {
+    public Card setPopupMenu(int menuRes, CardMenuListener<Card> listener) {
         mPopupMenu = menuRes;
         mPopupListener = listener;
         return this;
@@ -177,7 +180,7 @@ public class Card implements CardBase {
     }
 
     @Override
-    public boolean isSameAs(CardBase another) {
+    public boolean isSameAs(Card another) {
         boolean equal = getTitle().equals(another.getTitle()) &&
                 isHeader() == another.isHeader();
         if (getContent() != null) equal = equal && getContent().equals(another.getContent());

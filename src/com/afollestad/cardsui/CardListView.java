@@ -1,6 +1,7 @@
 package com.afollestad.cardsui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,27 +18,30 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
 
     public CardListView(Context context) {
         super(context);
-        init();
+        init(null);
     }
 
     public CardListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs);
     }
 
     public CardListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(attrs);
     }
 
     private OnItemClickListener mItemClickListener;
 
-    private void init() {
+    private void init(AttributeSet attrs) {
         setDivider(null);
         setDividerHeight(0);
         int gray = getResources().getColor(R.color.card_gray);
-        setBackgroundColor(gray);
-        setCacheColorHint(gray);
+        TypedArray ta = getContext().obtainStyledAttributes(attrs, new int[]{android.R.attr.background});
+        if (ta.length() == 0) {
+            setBackgroundColor(gray);
+            setCacheColorHint(gray);
+        }
         setSelector(android.R.color.transparent);
         super.setOnItemClickListener(this);
     }
@@ -68,7 +72,7 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        CardBase item = ((CardAdapter) getAdapter()).getItem(position);
+        CardBase item = (CardBase) ((CardAdapter) getAdapter()).getItem(position);
         if (item.isHeader()) {
             CardHeader header = (CardHeader) item;
             if (header.getActionCallback() != null)

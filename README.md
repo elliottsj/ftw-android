@@ -28,7 +28,7 @@ Next, you get a reference to the `CardListView` from your code, create a `CardAd
 
 ```java
 CardListView cardsList = (CardListView) findViewById(R.id.cardsList);
-CardAdapter cardsAdapter = new CardAdapter(this);
+CardAdapter<Card> cardsAdapter = new CardAdapter<Card>(this);
 cardsList.setAdapter(cardsAdapter);
 
 // You can still use the regular OnItemClickListener for the list
@@ -63,7 +63,7 @@ You can set a popup menu for every card at once through the adapter, this **must
 the adapter:
 
 ```java
-cardsAdapter.setPopupMenu(R.menu.card_popup, new Card.CardMenuListener() {
+cardsAdapter.setPopupMenu(R.menu.card_popup, new Card.CardMenuListener<Card>() {
     @Override
     public void onMenuItemClick(Card card, MenuItem item) {
         Toast.makeText(getApplicationContext(), card.getTitle() + ": " + item.getTitle(), Toast.LENGTH_SHORT).show();
@@ -125,7 +125,7 @@ to have in your layout:
 
 1. An `ImageView` with the ID `@android:id/icon`, this is used to display card thumbnails.
 2. A `TextView` with the ID `@android:id/title`, this is used to display card titles.
-3. A `TextView` with the ID `@android:id/content`, this is used to display card content.
+3. An **optional** `TextView` with the ID `@android:id/content`, this is used to display card content.
 4. A `View` of any type with the ID `@android:id/button1`, this is used as the anchor for card popup menus.
 5. And any other customizations that you want, even additional views (**see the bottom of this section for more details on this**).
 
@@ -142,7 +142,8 @@ cardsAdapter.add(new Card("Title", "Content")
                 .setLayout(R.layout.list_item_card_larger));
 ```
 
-If you add additional views to your card layout, you will have to override `CardAdapter` like this:
+If you add additional views to your card layout, you will have to override `CardAdapter` like what's shown below. You can also
+override `onProcessContent()` and `onProcessThumbnail()` for other quick customization.
 
 ```java
 public class CustomCardAdapter extends CardAdapter {
@@ -157,6 +158,18 @@ public class CustomCardAdapter extends CardAdapter {
         View customView = recycled.findViewById(R.id.customView);
         // Let the CardAdapter handle the rest, it will recycle list views and everything for you
         return super.onViewCreated(index, recycled, item);
+    }
+
+    @Override
+    protected boolean onProcessThumbnail(ImageView icon, Status card) {
+        ((SilkImageView) icon).setImageURL(BoidApp.get(getContext()).getImageLoader(), card.getUser().getProfileImageURL());
+        return true;
+    }
+
+    @Override
+    protected boolean onProcessContent(TextView content, Status card) {
+        TextUtils.linkifyText(getContext(), content, card, false, false);
+        return true;
     }
 }
 ```
