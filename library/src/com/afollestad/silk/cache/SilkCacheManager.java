@@ -113,6 +113,7 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * @param limit The number of items that can fit in the cache before older ones are trimmed.
      */
     public final SilkCacheManager<T> setSizeLimit(int limit) {
+        if(limit < 1) throw new IllegalArgumentException("The size limit cannot be less than 1.");
         setSizeLimit(limit, TrimMode.BOTTOM);
         return this;
     }

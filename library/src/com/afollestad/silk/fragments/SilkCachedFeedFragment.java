@@ -93,16 +93,16 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onResume() {
         super.onResume();
-        if (shouldRecreateCacheOnResume()) cache = null;
-        onPerformCacheRead();
+        if (getCacheTitle() != null) {
+            if (shouldRecreateCacheOnResume()) cache = null;
+            onPerformCacheRead();
+        } else onCacheEmpty();
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
-        if (getCacheTitle() != null) onPerformCacheRead();
-        else onCacheEmpty();
     }
 
     /**
