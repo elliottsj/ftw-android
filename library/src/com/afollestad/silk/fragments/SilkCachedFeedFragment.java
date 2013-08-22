@@ -41,14 +41,24 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         return cache;
     }
 
+    private void recreateCache(SilkCacheManager.InitializedCallback<T> callback) {
+        new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), callback);
+    }
+
     /**
      * Performs the action done when the fragment wants to try loading itself from the cache, can be overridden to change behavior.
      */
     protected boolean onPerformCacheRead() {
         if (cache != null && cache.isInitialized()) {
             setLoading(true);
-            if (cache.isCommitted()) cache.forceReload();
-            cache.readAsync(getAdapter(), this);
+            if (cache.isCommitted()) {
+                recreateCache(new SilkCacheManager.InitializedCallback<T>() {
+                    @Override
+                    public void onInitialized(SilkCacheManager<T> manager) {
+                        manager.readAsync(getAdapter(), SilkCachedFeedFragment.this);
+                    }
+                });
+            } else cache.readAsync(getAdapter(), this);
             return true;
         }
         return false;
@@ -66,7 +76,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         super.onViewCreated(view, savedInstanceState);
         if (getCacheTitle() != null) {
             setLoading(true);
-            cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), new SilkCacheManager.InitializedCallback<T>() {
+            recreateCache(new SilkCacheManager.InitializedCallback<T>() {
                 @Override
                 public void onInitialized(SilkCacheManager<T> manager) {
                     onPerformCacheRead();
@@ -88,33 +98,23 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         super.onPostLoad(results);
         if (cache != null) {
             if (cache.isCommitted()) {
-                cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), new SilkCacheManager.InitializedCallback<T>() {
+                recreateCache(new SilkCacheManager.InitializedCallback<T>() {
                     @Override
                     public void onInitialized(SilkCacheManager<T> manager) {
-                        try {
-                            manager.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
-                                @Override
-                                public void onError(Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        manager.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
+                            @Override
+                            public void onError(Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
                     }
                 });
-            } else {
-                try {
-                    cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
-                        @Override
-                        public void onError(Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                } catch (Exception e) {
+            } else cache.set(getAdapter()).commitAsync(new SilkCacheManager.SimpleCommitCallback() {
+                @Override
+                public void onError(Exception e) {
                     e.printStackTrace();
                 }
-            }
+            });
         }
     }
 
