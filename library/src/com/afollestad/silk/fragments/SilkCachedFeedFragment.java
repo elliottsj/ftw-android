@@ -17,35 +17,21 @@ import java.util.List;
  */
 public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends SilkFeedFragment<T> {
 
-    /**
-     * Initializes a new SilkCachedFeedFragment.
-     *
-     * @param cacheTitle The title to use for the Fragment's {@link SilkCacheManager}.
-     */
-    public SilkCachedFeedFragment(String cacheTitle) {
-        mCacheTitle = cacheTitle;
+    public SilkCachedFeedFragment() {
     }
 
-    /**
-     * Initializes a new SilkCachedFeedFragment.
-     *
-     * @param cacheTitle     The title to use for the Fragment's {@link SilkCacheManager}.
-     * @param cacheDirectory The directory set to the Fragment's {@link SilkCacheManager}, will be '/sdcard/Silk' by default.
-     */
-    public SilkCachedFeedFragment(String cacheTitle, File cacheDirectory) {
-        this(cacheTitle);
-        mCacheDir = cacheDirectory;
-    }
-
-    protected final String mCacheTitle;
-    private File mCacheDir;
     private SilkCacheManager<T> cache;
 
     /**
-     * Gets the cache name passed in the constructor.
+     * Gets the cache name.
      */
-    public String getCacheTitle() {
-        return mCacheTitle;
+    public abstract String getCacheTitle();
+
+    /**
+     * The directory set to the Fragment's {@link SilkCacheManager}, will be '/sdcard/Silk' by default.
+     */
+    protected File getCacheDirectory() {
+        return null;
     }
 
     /**
@@ -78,9 +64,9 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
-        if (mCacheTitle != null) {
+        if (getCacheTitle() != null) {
             setLoading(true);
-            cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir, new SilkCacheManager.InitializedCallback<T>() {
+            cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), new SilkCacheManager.InitializedCallback<T>() {
                 @Override
                 public void onInitialized(SilkCacheManager<T> manager) {
                     onPerformCacheRead();
@@ -102,7 +88,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         super.onPostLoad(results);
         if (cache != null) {
             if (cache.isCommitted()) {
-                cache = new SilkCacheManager<T>(mCacheTitle, mCacheDir, new SilkCacheManager.InitializedCallback<T>() {
+                cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), new SilkCacheManager.InitializedCallback<T>() {
                     @Override
                     public void onInitialized(SilkCacheManager<T> manager) {
                         try {

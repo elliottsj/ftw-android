@@ -10,7 +10,6 @@ import com.afollestad.silk.R;
 import com.afollestad.silk.cache.SilkComparable;
 import com.afollestad.silk.utilities.TimeUtils;
 
-import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -21,23 +20,7 @@ import java.util.Calendar;
  */
 public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends SilkCachedFeedFragment<T> {
 
-    /**
-     * Initializes a new SilkLastUpdatedFragment.
-     *
-     * @param cacheTitle The title to use for the Fragment's {@link com.afollestad.silk.cache.SilkCacheManager}.
-     */
-    public SilkLastUpdatedFragment(String cacheTitle) {
-        super(cacheTitle);
-    }
-
-    /**
-     * Initializes a new SilkLastUpdatedFragment.
-     *
-     * @param cacheTitle     The title to use for the Fragment's {@link com.afollestad.silk.cache.SilkCacheManager}.
-     * @param cacheDirectory The directory set to the Fragment's {@link com.afollestad.silk.cache.SilkCacheManager}, will be '/sdcard/Silk' by default.
-     */
-    public SilkLastUpdatedFragment(String cacheTitle, File cacheDirectory) {
-        super(cacheTitle, cacheDirectory);
+    public SilkLastUpdatedFragment() {
     }
 
     private TextView mLastUpdateLabel;
@@ -64,9 +47,9 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
     public final Calendar getLastUpdatedTime() {
         SharedPreferences prefs = getPrefs();
         if (prefs == null) return Calendar.getInstance();
-        else if (prefs.contains(mCacheTitle)) {
+        else if (prefs.contains(getCacheTitle())) {
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(prefs.getLong(mCacheTitle, 0));
+            cal.setTimeInMillis(prefs.getLong(getCacheTitle(), 0));
             return cal;
         }
         return null;
@@ -140,7 +123,7 @@ public abstract class SilkLastUpdatedFragment<T extends SilkComparable> extends 
      */
     public final void setLastUpdatedTime() {
         Calendar now = Calendar.getInstance();
-        getPrefs().edit().putLong(mCacheTitle, now.getTimeInMillis()).commit();
+        getPrefs().edit().putLong(getCacheTitle(), now.getTimeInMillis()).commit();
         invalidateLastUpdated();
     }
 
