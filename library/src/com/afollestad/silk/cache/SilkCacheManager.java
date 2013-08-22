@@ -108,6 +108,28 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     }
 
     /**
+     * Sets a size limit for the cache, defaults to 500 items.
+     *
+     * @param limit The number of items that can fit in the cache before older ones are trimmed.
+     */
+    public final SilkCacheManager<T> setSizeLimit(int limit) {
+        setSizeLimit(limit, TrimMode.BOTTOM);
+        return this;
+    }
+
+    /**
+     * Sets a size limit for the cache, defaults to 500 items.
+     *
+     * @param limit The number of items that can fit in the cache before older ones are trimmed.
+     * @param mode  How items are trimmed when the cache becomes too big.
+     */
+    public final SilkCacheManager<T> setSizeLimit(int limit, TrimMode mode) {
+        super.mSizeLimit = limit;
+        super.mTrimMode = mode;
+        return this;
+    }
+
+    /**
      * Sets the handler used when making callbacks from separate threads. This should be used if you didn't
      * instantiate the cache manager from the UI thread.
      */

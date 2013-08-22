@@ -27,6 +27,8 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     private final File cacheFile;
     protected Handler mHandler;
     protected boolean isChanged;
+    protected int mSizeLimit = 500;
+    protected TrimMode mTrimMode = TrimMode.BOTTOM;
 
     protected void log(String message) {
         Log.d("SilkCacheManager", getCacheFile().getName() + ": " + message);
@@ -120,6 +122,15 @@ class SilkCacheManagerBase<T extends SilkComparable> {
             }
             return;
         }
+
+        // Trim off older items
+        if (buffer.size() > mSizeLimit) {
+            while (buffer.size() > mSizeLimit) {
+                if (mTrimMode == TrimMode.TOP) buffer.remove(0);
+                else buffer.remove(buffer.size() - 1);
+            }
+        }
+
         int subtraction = 0;
         FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
