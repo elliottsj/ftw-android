@@ -28,7 +28,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     protected Handler mHandler;
     protected boolean isChanged;
     protected int mSizeLimit = 500;
-    protected TrimMode mTrimMode = TrimMode.BOTTOM;
+    protected TrimMode mTrimMode = TrimMode.TOP;
 
     protected void log(String message) {
         Log.d("SilkCacheManager", getCacheFile().getName() + ": " + message);

@@ -42,6 +42,10 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         return false;
     }
 
+    protected SilkCacheManager<T> onCacheInitialized(SilkCacheManager<T> cache) {
+        return cache;
+    }
+
     /**
      * Gets the cache manager used by the fragment to read and write its cache.
      */
@@ -49,8 +53,14 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         return cache;
     }
 
-    private void recreateCache(SilkCacheManager.InitializedCallback<T> callback) {
-        cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), callback);
+    private void recreateCache(final SilkCacheManager.InitializedCallback<T> callback) {
+        cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), new SilkCacheManager.InitializedCallback<T>() {
+            @Override
+            public void onInitialized(SilkCacheManager<T> manager) {
+                manager = onCacheInitialized(manager);
+                callback.onInitialized(manager);
+            }
+        });
     }
 
     /**
