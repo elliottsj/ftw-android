@@ -42,15 +42,23 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     }
 
     private void recreateCache(SilkCacheManager.InitializedCallback<T> callback) {
-        new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), callback);
+        cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), callback);
     }
 
     /**
      * Performs the action done when the fragment wants to try loading itself from the cache, can be overridden to change behavior.
      */
     protected boolean onPerformCacheRead() {
-        if (cache != null && cache.isInitialized()) {
-            setLoading(true);
+        setLoading(true);
+        if (cache == null) {
+            recreateCache(new SilkCacheManager.InitializedCallback<T>() {
+                @Override
+                public void onInitialized(SilkCacheManager<T> manager) {
+                    manager.readAsync(getAdapter(), SilkCachedFeedFragment.this);
+                }
+            });
+            return true;
+        } else if (cache.isInitialized()) {
             if (cache.isCommitted()) {
                 recreateCache(new SilkCacheManager.InitializedCallback<T>() {
                     @Override
@@ -74,15 +82,8 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.mCacheEnabled = true;
         super.onViewCreated(view, savedInstanceState);
-        if (getCacheTitle() != null) {
-            setLoading(true);
-            recreateCache(new SilkCacheManager.InitializedCallback<T>() {
-                @Override
-                public void onInitialized(SilkCacheManager<T> manager) {
-                    onPerformCacheRead();
-                }
-            });
-        } else onCacheEmpty();
+        if (getCacheTitle() != null) onPerformCacheRead();
+        else onCacheEmpty();
     }
 
     /**
