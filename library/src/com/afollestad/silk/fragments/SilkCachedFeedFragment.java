@@ -35,6 +35,14 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     }
 
     /**
+     * Gets whether or not the fragment should re-create its cache when it resumes, causing a reload from the disk cache.
+     * Defaults to false.
+     */
+    protected boolean shouldRecreateCacheOnResume() {
+        return false;
+    }
+
+    /**
      * Gets the cache manager used by the fragment to read and write its cache.
      */
     protected final SilkCacheManager<T> getCacheManager() {
@@ -75,6 +83,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     @Override
     public void onResume() {
         super.onResume();
+        if (shouldRecreateCacheOnResume()) cache = null;
         onPerformCacheRead();
     }
 
