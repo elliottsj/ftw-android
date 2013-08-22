@@ -108,25 +108,10 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     }
 
     /**
-     * Sets a size limit for the cache, defaults to 500 items.
-     *
-     * @param limit The number of items that can fit in the cache before older ones are trimmed.
+     * Sets a size limiter to the cache.
      */
-    public final SilkCacheManager<T> setSizeLimit(int limit) {
-        if(limit < 1) throw new IllegalArgumentException("The size limit cannot be less than 1.");
-        setSizeLimit(limit, TrimMode.BOTTOM);
-        return this;
-    }
-
-    /**
-     * Sets a size limit for the cache, defaults to 500 items.
-     *
-     * @param limit The number of items that can fit in the cache before older ones are trimmed.
-     * @param mode  How items are trimmed when the cache becomes too big.
-     */
-    public final SilkCacheManager<T> setSizeLimit(int limit, TrimMode mode) {
-        super.mSizeLimit = limit;
-        super.mTrimMode = mode;
+    public final SilkCacheManager<T> setLimiter(CacheLimiter limiter) {
+        super.mLimiter = limiter;
         return this;
     }
 

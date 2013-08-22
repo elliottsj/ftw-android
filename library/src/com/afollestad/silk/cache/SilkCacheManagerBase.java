@@ -27,11 +27,14 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     private final File cacheFile;
     protected Handler mHandler;
     protected boolean isChanged;
-    protected int mSizeLimit = 500;
-    protected TrimMode mTrimMode = TrimMode.TOP;
+    protected CacheLimiter mLimiter;
 
     protected void log(String message) {
         Log.d("SilkCacheManager", getCacheFile().getName() + ": " + message);
+    }
+
+    public final CacheLimiter getLimiter() {
+        return mLimiter;
     }
 
     /**
@@ -124,10 +127,10 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         }
 
         // Trim off older items
-        if (buffer.size() > mSizeLimit) {
-            log("Cache is larger than size limit (" + mSizeLimit + "), trimming...");
-            while (buffer.size() > mSizeLimit) {
-                if (mTrimMode == TrimMode.TOP) buffer.remove(0);
+        if (mLimiter != null && buffer.size() > mLimiter.getSize()) {
+            log("Cache (" + buffer.size() + ") is larger than size limit (" + mLimiter.getSize() + "), trimming...");
+            while (buffer.size() > mLimiter.getSize()) {
+                if (mLimiter.getMode() == CacheLimiter.TrimMode.TOP) buffer.remove(0);
                 else buffer.remove(buffer.size() - 1);
             }
         }

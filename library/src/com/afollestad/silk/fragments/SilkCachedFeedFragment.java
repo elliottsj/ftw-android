@@ -2,6 +2,7 @@ package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
 import android.view.View;
+import com.afollestad.silk.cache.CacheLimiter;
 import com.afollestad.silk.cache.SilkCacheManager;
 import com.afollestad.silk.cache.SilkComparable;
 
@@ -54,13 +55,15 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     }
 
     private void recreateCache(final SilkCacheManager.InitializedCallback<T> callback) {
+        CacheLimiter limiter = null;
+        if (cache != null) limiter = cache.getLimiter();
         cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), new SilkCacheManager.InitializedCallback<T>() {
             @Override
             public void onInitialized(SilkCacheManager<T> manager) {
-                manager = onCacheInitialized(manager);
-                callback.onInitialized(manager);
+                cache = onCacheInitialized(manager);
+                callback.onInitialized(cache);
             }
-        });
+        }).setLimiter(limiter);
     }
 
     /**
