@@ -125,6 +125,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
 
         // Trim off older items
         if (buffer.size() > mSizeLimit) {
+            log("Cache is larger than size limit (" + mSizeLimit + "), trimming...");
             while (buffer.size() > mSizeLimit) {
                 if (mTrimMode == TrimMode.TOP) buffer.remove(0);
                 else buffer.remove(buffer.size() - 1);
