@@ -41,9 +41,10 @@ public class DiskCache {
     }
 
     public void setCacheDirectory(File dir) {
-        if (dir == null)
+        if (dir == null) {
             CACHE_DIR = context.getExternalCacheDir();
-        else CACHE_DIR = dir;
+            if (CACHE_DIR == null) CACHE_DIR = context.getCacheDir();
+        } else CACHE_DIR = dir;
         CACHE_DIR.mkdirs();
     }
 }
