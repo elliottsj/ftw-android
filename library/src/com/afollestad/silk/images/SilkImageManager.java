@@ -12,6 +12,7 @@ import com.afollestad.silk.Silk;
 import com.afollestad.silk.cache.DiskCache;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.*;
@@ -216,6 +217,30 @@ public class SilkImageManager {
      *
      * @param source   The URI to get the image from.
      * @param callback The callback that the result will be posted to.
+     * @param cache    Whether or not to load from the cache and save to the cache.
+     */
+    public void get(final String source, final ImageListener callback, final Dimension dimension, boolean cache) {
+        if (cache) {
+            get(source, callback, dimension);
+            return;
+        }
+        // Caching disabled, load from external immediately
+        final String key = Utils.getKey(source, dimension);
+        mNetworkExecutorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                final Bitmap bitmap = getBitmapFromExternal(key, source, dimension);
+                log("Got " + source + " from external source.");
+                postCallback(callback, source, bitmap);
+            }
+        });
+    }
+
+    /**
+     * Gets an image from a URI on a separate thread and posts the results to a callback.
+     *
+     * @param source   The URI to get the image from.
+     * @param callback The callback that the result will be posted to.
      */
     public void get(final String source, final ImageListener callback, final Dimension dimension) {
         if (!Looper.getMainLooper().equals(Looper.myLooper())) {
@@ -289,20 +314,22 @@ public class SilkImageManager {
 
     private Bitmap getBitmapFromExternal(String key, String source, Dimension dimension) {
         byte[] byteArray = sourceToBytes(source);
-        if (byteArray != null) {
-            Bitmap bitmap = Utils.decodeByteArray(byteArray, dimension);
-            if (bitmap != null) {
-                if (!source.startsWith("content") && !source.startsWith("file")) {
-                    // If the source is already from the local disk, don't cache it locally again.
-                    try {
-                        mDiskCache.put(key, bitmap);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        if (byteArray == null) {
+            source = SilkImageManager.SOURCE_FALLBACK;
+            byteArray = sourceToBytes(source);
+        }
+        Bitmap bitmap = Utils.decodeByteArray(byteArray, dimension);
+        if (bitmap != null) {
+            if (!source.startsWith("content") && !source.startsWith("file")) {
+                // If the source is already from the local disk, don't cache it locally again.
+                try {
+                    mDiskCache.put(key, bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                mLruCache.put(key, bitmap);
-                return bitmap;
             }
+            mLruCache.put(key, bitmap);
+            return bitmap;
         }
         return null;
     }
@@ -321,10 +348,9 @@ public class SilkImageManager {
     private byte[] sourceToBytes(String source) {
         InputStream inputStream = null;
         byte[] toreturn = null;
-        boolean shouldGetFallback = false;
-
         try {
             if (source.equals(SilkImageManager.SOURCE_FALLBACK)) {
+                log("Loading fallback image...");
                 if (fallbackImageId > 0)
                     inputStream = context.getResources().openRawResource(fallbackImageId);
                 else return null;
@@ -334,27 +360,18 @@ public class SilkImageManager {
                 Uri uri = Uri.parse(source);
                 inputStream = new FileInputStream(new File(uri.getPath()));
             } else {
-                inputStream = new URL(source).openConnection().getInputStream();
+                HttpURLConnection con = (HttpURLConnection) (new URL(source)).openConnection();
+                con.setRequestMethod("GET");
+                inputStream = con.getInputStream();
             }
             toreturn = inputStreamToBytes(inputStream);
         } catch (Exception e) {
+            log("Error: " + e.getMessage());
             e.printStackTrace();
-            shouldGetFallback = true;
+            return null;
         } finally {
             IOUtils.closeQuietly(inputStream);
         }
-
-        if (shouldGetFallback && !source.equals(SilkImageManager.SOURCE_FALLBACK) && fallbackImageId > 0) {
-            try {
-                inputStream = context.getResources().openRawResource(fallbackImageId);
-                toreturn = inputStreamToBytes(inputStream);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                IOUtils.closeQuietly(inputStream);
-            }
-        }
-
         return toreturn;
     }
 

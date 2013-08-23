@@ -17,6 +17,7 @@ public class SilkImageView extends ImageView {
     private boolean fitView = true;
     protected String lastSource;
     private View loadingView;
+    private boolean mCacheEnabled = true;
 
     public SilkImageView(Context context) {
         super(context);
@@ -46,13 +47,17 @@ public class SilkImageView extends ImageView {
         loadFromSource();
     }
 
-
-    public void setImageURL(SilkImageManager manager, String url) {
+    public void setImageURL(SilkImageManager manager, String url, boolean cache) {
         if (manager == null)
             throw new IllegalArgumentException("The SilkImageManager cannot be null.");
         this.aimage = manager;
         this.source = url;
+        this.mCacheEnabled = cache;
         loadFromSource();
+    }
+
+    public void setImageURL(SilkImageManager manager, String url) {
+        setImageURL(manager, url, true);
     }
 
     /**
@@ -136,6 +141,6 @@ public class SilkImageView extends ImageView {
                     }
                 });
             }
-        }, dimen);
+        }, dimen, mCacheEnabled);
     }
 }
