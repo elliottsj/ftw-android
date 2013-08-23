@@ -74,9 +74,8 @@ public class SilkImageManager {
         }
 
         public static String getKey(String source, Dimension dimension) {
-            if (source == null) {
-                return null;
-            }
+            if (source == null) return null;
+            source = source.replace("http://", "").replace("https://", "");
             if (dimension != null)
                 source += "_" + dimension.toString();
             try {
