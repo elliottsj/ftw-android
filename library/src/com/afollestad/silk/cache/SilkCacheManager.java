@@ -79,6 +79,9 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     private void initialize(final SilkCacheManager.InitializedCallback<T> callback) {
         if (callback == null) {
             reloadIfNecessary();
+            isInitialized = true;
+            isChanged = false;
+            log(getCacheFile().getName() + " successfully initialized!");
             return;
         }
         log("Initializing " + getCacheFile().getName() + "...");
