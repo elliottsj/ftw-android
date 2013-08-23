@@ -43,6 +43,12 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
         return false;
     }
 
+    /**
+     * Called every time the cache is initialized or re-initialized. Allows you to modify properties of the fragment's cache,
+     * such as a cache limiter.
+     * <p/>
+     * You must return the cache parameter.
+     */
     protected SilkCacheManager<T> onCacheInitialized(SilkCacheManager<T> cache) {
         return cache;
     }
