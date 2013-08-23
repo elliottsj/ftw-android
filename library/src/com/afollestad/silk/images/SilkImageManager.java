@@ -317,7 +317,11 @@ public class SilkImageManager {
             source = SilkImageManager.SOURCE_FALLBACK;
             byteArray = sourceToBytes(source);
         }
+
         Bitmap bitmap = Utils.decodeByteArray(byteArray, dimension);
+        if (source.equals(SilkImageManager.SOURCE_FALLBACK))
+            return bitmap;
+
         if (bitmap != null) {
             if (!source.startsWith("content") && !source.startsWith("file")) {
                 // If the source is already from the local disk, don't cache it locally again.
