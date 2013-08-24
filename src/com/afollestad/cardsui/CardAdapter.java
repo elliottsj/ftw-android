@@ -221,7 +221,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
         ImageView icon = (ImageView) recycled.findViewById(android.R.id.icon);
         if (onProcessThumbnail(icon, item)) {
             icon.setVisibility(View.VISIBLE);
-        } else {
+        } else if (icon != null) {
             icon.setVisibility(View.GONE);
         }
         return recycled;
