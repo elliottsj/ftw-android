@@ -51,7 +51,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      *
      * @param color The resolved color to use as an accent.
      */
-    public final CardAdapter setAccentColor(int color) {
+    public final CardAdapter<T> setAccentColor(int color) {
         mAccentColor = color;
         return this;
     }
@@ -62,7 +62,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      *
      * @param colorRes The color resource ID to use as an accent.
      */
-    public final CardAdapter setAccentColorRes(int colorRes) {
+    public final CardAdapter<T> setAccentColorRes(int colorRes) {
         setAccentColor(getContext().getResources().getColor(colorRes));
         return this;
     }
@@ -74,7 +74,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      * @param menuRes  The menu resource ID to use for the card's popup menu.
      * @param listener A listener invoked when an option in the popup menu is tapped by the user.
      */
-    public final CardAdapter setPopupMenu(int menuRes, Card.CardMenuListener listener) {
+    public final CardAdapter<T> setPopupMenu(int menuRes, Card.CardMenuListener listener) {
         mPopupMenu = menuRes;
         mPopupListener = listener;
         return this;
@@ -85,7 +85,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      * and the list's OnItemClickListener will not be called. This <b>will</b> override individual isClickable values
      * set to {@link Card}s.
      */
-    public final CardAdapter setCardsClickable(boolean clickable) {
+    public final CardAdapter<T> setCardsClickable(boolean clickable) {
         mCardsClickable = clickable;
         return this;
     }
@@ -94,7 +94,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      * Sets a custom layout to be used for all cards (not including headers) in the adapter. Must be called before
      * adding cards. This <b>does not</b> override layouts set to individual cards.
      */
-    public final CardAdapter setCardLayout(int layoutRes) {
+    public final CardAdapter<T> setCardLayout(int layoutRes) {
         mLayout = layoutRes;
         return this;
     }
@@ -103,7 +103,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      * Sets a custom layout to be used for all cards (not including headers) in the adapter with null content. Must be called before
      * adding cards. This <b>does not</b> override layouts set to individual cards.
      */
-    public final CardAdapter setCardLayoutNoContent(int layoutRes) {
+    public final CardAdapter<T> setCardLayoutNoContent(int layoutRes) {
         mLayoutNoContent = layoutRes;
         return this;
     }
