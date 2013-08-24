@@ -237,13 +237,13 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
     public int getItemViewType(int position) {
         CardBase item = getItem(position);
         if (item.isHeader()) return 2;
-        else if (item.getContent() == null) return 1;
+        else if (item.getContent() == null && item.getLayout() <= 0) return 1;
         return 0;
     }
 
     protected boolean onProcessThumbnail(ImageView icon, T card) {
         if (icon == null)
-            throw new RuntimeException("The card layout must contain an ImageView with the ID @android:id/icon.");
+            return false;
         if (card.getThumbnail() == null) return false;
         icon.setImageDrawable(card.getThumbnail());
         return true;
