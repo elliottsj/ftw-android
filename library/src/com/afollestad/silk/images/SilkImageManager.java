@@ -10,10 +10,12 @@ import android.util.Log;
 import android.util.LruCache;
 import com.afollestad.silk.Silk;
 import com.afollestad.silk.cache.DiskCache;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.*;
 
@@ -363,9 +365,12 @@ public class SilkImageManager {
                 Uri uri = Uri.parse(source);
                 inputStream = new FileInputStream(new File(uri.getPath()));
             } else {
-                HttpURLConnection con = (HttpURLConnection) (new URL(source)).openConnection();
-                con.setRequestMethod("GET");
-                inputStream = con.getInputStream();
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpResponse response = httpClient.execute(new HttpGet(source));
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200)
+                    inputStream = response.getEntity().getContent();
+                else throw new Exception("HTTP error code " + status);
             }
             toreturn = inputStreamToBytes(inputStream);
         } catch (Exception e) {
