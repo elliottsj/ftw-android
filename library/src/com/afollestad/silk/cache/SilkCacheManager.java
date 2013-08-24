@@ -1,5 +1,7 @@
 package com.afollestad.silk.cache;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.fragments.SilkCachedFeedFragment;
@@ -7,6 +9,7 @@ import com.afollestad.silk.fragments.SilkCachedFeedFragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -116,6 +119,25 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     public final SilkCacheManager<T> setLimiter(CacheLimiter limiter) {
         super.mLimiter = limiter;
         return this;
+    }
+
+    /**
+     * Sets an expiration date for the cache, which can be checked via {@link #isExpired(android.content.Context)} .
+     */
+    public final void setExpiration(Context context, long dateTime) {
+        SharedPreferences prefs = context.getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
+        prefs.edit().putLong(getCacheFile().getName(), dateTime).commit();
+    }
+
+    /**
+     * Checks whether or not this cache has expired based on a value set via {@link #setExpiration(android.content.Context, long)}.
+     */
+    public final boolean isExpired(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
+        if (!prefs.contains(getCacheFile().getName())) return false;
+        long dateTime = prefs.getLong(getCacheFile().getName(), 0);
+        long now = Calendar.getInstance().getTimeInMillis();
+        return dateTime <= now;
     }
 
     /**
