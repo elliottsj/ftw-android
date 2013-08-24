@@ -48,8 +48,9 @@ public class Silk {
      * Clears out preferences and files persisted for Silk.
      */
     public static void clearPersistence(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("feed_last_update", 0);
-        prefs.edit().clear().commit();
+        context.getSharedPreferences("feed_last_update", 0).edit().clear().commit();
+        context.getSharedPreferences("[silk-cache-expirations]", 0).edit().clear().commit();
+        context.getSharedPreferences("[silk-cache-limiters]", 0).edit().clear().commit();
         new File(Environment.getExternalStorageDirectory(), "Silk").delete();
     }
 }
