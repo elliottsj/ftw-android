@@ -206,24 +206,22 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
             setupHeader(header, recycled);
             return recycled;
         }
-        invalidatePadding(index, recycled);
+
         TextView title = (TextView) recycled.findViewById(android.R.id.title);
-        if (title == null)
-            throw new RuntimeException("The card layout must contain a TextView with the ID @android:id/title.");
-        title.setText(item.getTitle());
-        title.setTextColor(mAccentColor);
+        if (title != null) onProcessTitle(title, item, mAccentColor);
         TextView content = (TextView) recycled.findViewById(android.R.id.content);
-        if (content != null) {
-            if (!onProcessContent(content, item))
-                content.setText(item.getContent());
-        }
-        setupMenu(item, recycled.findViewById(android.R.id.button1));
+        if (content != null) onProcessContent(content, item);
         ImageView icon = (ImageView) recycled.findViewById(android.R.id.icon);
-        if (onProcessThumbnail(icon, item)) {
-            icon.setVisibility(View.VISIBLE);
-        } else if (icon != null) {
-            icon.setVisibility(View.GONE);
+        if (icon != null) {
+            if (onProcessThumbnail(icon, item)) {
+                icon.setVisibility(View.VISIBLE);
+            } else {
+                icon.setVisibility(View.GONE);
+            }
         }
+
+        invalidatePadding(index, recycled);
+        setupMenu(item, recycled.findViewById(android.R.id.button1));
         return recycled;
     }
 
@@ -240,16 +238,22 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
         return 0;
     }
 
+    protected boolean onProcessTitle(TextView title, T card, int accentColor) {
+        if (title == null) return false;
+        title.setText(card.getTitle());
+        title.setTextColor(accentColor);
+        return true;
+    }
+
     protected boolean onProcessThumbnail(ImageView icon, T card) {
-        if (icon == null)
-            return false;
+        if (icon == null) return false;
         if (card.getThumbnail() == null) return false;
         icon.setImageDrawable(card.getThumbnail());
         return true;
     }
 
     protected boolean onProcessContent(TextView content, T card) {
-        // do nothing by default
+        content.setText(card.getContent());
         return false;
     }
 }
