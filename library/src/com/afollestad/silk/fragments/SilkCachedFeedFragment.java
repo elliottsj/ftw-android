@@ -63,7 +63,7 @@ public abstract class SilkCachedFeedFragment<T extends SilkComparable> extends S
     private void recreateCache(final SilkCacheManager.InitializedCallback<T> callback) {
         CacheLimiter limiter = null;
         if (cache != null) limiter = cache.getLimiter();
-        cache = new SilkCacheManager<T>(getCacheTitle(), getCacheDirectory(), new SilkCacheManager.InitializedCallback<T>() {
+        cache = new SilkCacheManager<T>(getActivity(), getCacheTitle(), getCacheDirectory(), new SilkCacheManager.InitializedCallback<T>() {
             @Override
             public void onInitialized(SilkCacheManager<T> manager) {
                 cache = onCacheInitialized(manager);
