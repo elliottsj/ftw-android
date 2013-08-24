@@ -9,7 +9,6 @@ import com.afollestad.silk.fragments.SilkCachedFeedFragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -49,8 +48,8 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      *
      * @param callback An optional callback that will cause the cache to initialize itself off the current thread, and post to a callback when it's ready.
      */
-    public SilkCacheManager(InitializedCallback<T> callback) {
-        super(null, null);
+    public SilkCacheManager(Context context, InitializedCallback<T> callback) {
+        super(context, null, null);
         initialize(callback);
     }
 
@@ -60,8 +59,8 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * @param cacheName The name of the cache, must be unique from other feed caches, but must also be valid for being in a file name.
      * @param callback  An optional callback that will cause the cache to initialize itself off the current thread, and post to a callback when it's ready.
      */
-    public SilkCacheManager(String cacheName, InitializedCallback<T> callback) {
-        super(cacheName, null);
+    public SilkCacheManager(Context context, String cacheName, InitializedCallback<T> callback) {
+        super(context, cacheName, null);
         initialize(callback);
     }
 
@@ -72,8 +71,8 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * @param cacheDir  The directory that the cache file will be stored in, defaults to a folder called "Silk" in your external storage directory.
      * @param callback  An optional callback that will cause the cache to initialize itself off the current thread, and post to a callback when it's ready.
      */
-    public SilkCacheManager(String cacheName, File cacheDir, InitializedCallback<T> callback) {
-        super(cacheName, cacheDir);
+    public SilkCacheManager(Context context, String cacheName, File cacheDir, InitializedCallback<T> callback) {
+        super(context, cacheName, cacheDir);
         initialize(callback);
     }
 
@@ -109,35 +108,26 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     /**
      * Gets whether or not the manager has finished the initialization process.
      */
-    public final boolean isInitialized() {
+    public boolean isInitialized() {
         return isInitialized;
     }
 
     /**
      * Sets a size limiter to the cache.
      */
-    public final SilkCacheManager<T> setLimiter(CacheLimiter limiter) {
+    public SilkCacheManager<T> setLimiter(CacheLimiter limiter) {
         super.mLimiter = limiter;
         return this;
     }
 
     /**
-     * Sets an expiration date for the cache, which can be checked via {@link #isExpired(android.content.Context)} .
+     * Sets an expiration date for the cache; once the expiration is reached, the cache is automatically wiped.
      */
-    public final void setExpiration(Context context, long dateTime) {
-        SharedPreferences prefs = context.getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
-        prefs.edit().putLong(getCacheFile().getName(), dateTime).commit();
-    }
-
-    /**
-     * Checks whether or not this cache has expired based on a value set via {@link #setExpiration(android.content.Context, long)}.
-     */
-    public final boolean isExpired(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
-        if (!prefs.contains(getCacheFile().getName())) return false;
-        long dateTime = prefs.getLong(getCacheFile().getName(), 0);
-        long now = Calendar.getInstance().getTimeInMillis();
-        return dateTime <= now;
+    public SilkCacheManager<T> setExpiration(long dateTime) {
+        SharedPreferences prefs = getContext().getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
+        if (dateTime <= 0) prefs.edit().remove(getCacheFile().getName()).commit();
+        else prefs.edit().putLong(getCacheFile().getName(), dateTime).commit();
+        return this;
     }
 
     /**

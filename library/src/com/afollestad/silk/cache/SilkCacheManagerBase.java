@@ -1,11 +1,14 @@
 package com.afollestad.silk.cache;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -13,7 +16,8 @@ import java.util.List;
  */
 class SilkCacheManagerBase<T extends SilkComparable> {
 
-    protected SilkCacheManagerBase(String cacheName, File cacheDir) {
+    protected SilkCacheManagerBase(Context context, String cacheName, File cacheDir) {
+        mContext = context;
         if (cacheName == null || cacheName.trim().isEmpty())
             cacheName = "default";
         if (cacheDir == null)
@@ -23,6 +27,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         cacheFile = new File(cacheDir, cacheName.toLowerCase() + ".cache");
     }
 
+    private Context mContext;
     protected List<T> buffer;
     private final File cacheFile;
     protected Handler mHandler;
@@ -35,6 +40,10 @@ class SilkCacheManagerBase<T extends SilkComparable> {
 
     public final CacheLimiter getLimiter() {
         return mLimiter;
+    }
+
+    protected Context getContext() {
+        return mContext;
     }
 
     /**
@@ -71,7 +80,14 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     }
 
     protected void reloadIfNecessary() {
-        if (buffer != null) return;
+        if (isExpired()) {
+            log("The cache has expired, wiping...");
+            buffer = new ArrayList<T>();
+            getContext().getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE)
+                    .edit().remove(getCacheFile().getName()).commit();
+            getCacheFile().delete();
+            return;
+        } else if (buffer != null) return;
         buffer = loadItems();
     }
 
@@ -84,8 +100,15 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         return buffer;
     }
 
+    private boolean isExpired() {
+        SharedPreferences prefs = mContext.getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
+        if (!prefs.contains(getCacheFile().getName())) return false;
+        long dateTime = prefs.getLong(getCacheFile().getName(), 0);
+        long now = Calendar.getInstance().getTimeInMillis();
+        return dateTime <= now;
+    }
+
     private List<T> loadItems() {
-        log("Reloading cache items to buffer.");
         try {
             final List<T> results = new ArrayList<T>();
             if (cacheFile.exists()) {
