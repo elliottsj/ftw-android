@@ -13,14 +13,30 @@ public class CacheLimiter {
      * @author Aidan Follestad (afollestad)
      */
     public enum TrimMode {
+
         /**
          * Items are trimmed from the top of the cache list when the size limit is reached (index 0).
          */
-        TOP,
+        TOP(0),
         /**
          * Items are trimmed from the bottom of the cache list when the size limit is reached (index size - 1).
          */
-        BOTTOM
+        BOTTOM(1);
+
+        TrimMode(int value) {
+            mValue = value;
+        }
+
+        private int mValue;
+
+        public int intValue() {
+            return mValue;
+        }
+
+        public static TrimMode valueOf(int value) {
+            if (value == 0) return TrimMode.TOP;
+            return TrimMode.BOTTOM;
+        }
     }
 
     /**
@@ -43,6 +59,12 @@ public class CacheLimiter {
     public CacheLimiter(int size, TrimMode mode) {
         this(size);
         mMode = mode;
+    }
+
+    CacheLimiter(String preference) {
+        String[] split = preference.split(":");
+        mSize = Integer.parseInt(split[0]);
+        mMode = TrimMode.valueOf(Integer.parseInt(split[1]));
     }
 
     private int mSize;

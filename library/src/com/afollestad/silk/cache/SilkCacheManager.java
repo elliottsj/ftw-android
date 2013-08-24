@@ -113,15 +113,21 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
     }
 
     /**
-     * Sets a size limiter to the cache.
+     * Sets a size limiter to the cache, this only has to be done once as it gets saved in persistence.
      */
     public SilkCacheManager<T> setLimiter(CacheLimiter limiter) {
-        super.mLimiter = limiter;
+        SharedPreferences prefs = getContext().getSharedPreferences("[silk-cache-limiters]", Context.MODE_PRIVATE);
+        if (limiter == null) {
+            prefs.edit().remove(getCacheFile().getName()).commit();
+        } else {
+            prefs.edit().putString(getCacheFile().getName(), limiter.getSize() + ":" + limiter.getMode().intValue()).commit();
+        }
         return this;
     }
 
     /**
-     * Sets an expiration date for the cache; once the expiration is reached, the cache is automatically wiped.
+     * Sets an expiration date for the cache; once the expiration is reached, the cache is automatically wiped. This only
+     * has to be done once until the cache expires, as the expiration gets saved in persistence.
      */
     public SilkCacheManager<T> setExpiration(long dateTime) {
         SharedPreferences prefs = getContext().getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);

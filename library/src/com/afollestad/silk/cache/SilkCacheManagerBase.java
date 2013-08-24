@@ -32,14 +32,9 @@ class SilkCacheManagerBase<T extends SilkComparable> {
     private final File cacheFile;
     protected Handler mHandler;
     protected boolean isChanged;
-    protected CacheLimiter mLimiter;
 
     protected void log(String message) {
         Log.d("SilkCacheManager", getCacheFile().getName() + ": " + message);
-    }
-
-    public final CacheLimiter getLimiter() {
-        return mLimiter;
     }
 
     protected Context getContext() {
@@ -102,10 +97,16 @@ class SilkCacheManagerBase<T extends SilkComparable> {
 
     private boolean isExpired() {
         SharedPreferences prefs = mContext.getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
-        if (!prefs.contains(getCacheFile().getName())) return false;
+        if (!hasExpiration()) return false;
         long dateTime = prefs.getLong(getCacheFile().getName(), 0);
         long now = Calendar.getInstance().getTimeInMillis();
         return dateTime <= now;
+    }
+
+    public final CacheLimiter getLimiter() {
+        SharedPreferences prefs = mContext.getSharedPreferences("[silk-cache-limiters]", Context.MODE_PRIVATE);
+        if (!hasLimiter()) return null;
+        return new CacheLimiter(prefs.getString(getCacheFile().getName(), null));
     }
 
     /**
@@ -113,6 +114,14 @@ class SilkCacheManagerBase<T extends SilkComparable> {
      */
     public final boolean hasExpiration() {
         SharedPreferences prefs = mContext.getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
+        return prefs.contains(getCacheFile().getName());
+    }
+
+    /**
+     * Checks whether or not an limiter has been set to the cache.
+     */
+    public final boolean hasLimiter() {
+        SharedPreferences prefs = mContext.getSharedPreferences("[silk-cache-limiters]", Context.MODE_PRIVATE);
         return prefs.contains(getCacheFile().getName());
     }
 
@@ -158,6 +167,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         }
 
         // Trim off older items
+        CacheLimiter mLimiter = getLimiter();
         if (mLimiter != null && buffer.size() > mLimiter.getSize()) {
             log("Cache (" + buffer.size() + ") is larger than size limit (" + mLimiter.getSize() + "), trimming...");
             while (buffer.size() > mLimiter.getSize()) {
