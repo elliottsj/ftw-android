@@ -103,6 +103,9 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         return dateTime <= now;
     }
 
+    /**
+     * Gets the {@link CacheLimiter} for the cache, if any has been set in the past.
+     */
     public final CacheLimiter getLimiter() {
         SharedPreferences prefs = mContext.getSharedPreferences("[silk-cache-limiters]", Context.MODE_PRIVATE);
         if (!hasLimiter()) return null;
