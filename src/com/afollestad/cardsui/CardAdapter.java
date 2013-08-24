@@ -146,8 +146,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
     }
 
     private void setupMenu(final CardBase card, final View view) {
-        if (view == null)
-            throw new RuntimeException("The card layout must contain a view with the ID @android:id/button1.");
+        if (view == null) return;
         if (card.getPopupMenu() < 0) {
             // Menu for this card is disabled
             view.setVisibility(View.INVISIBLE);
