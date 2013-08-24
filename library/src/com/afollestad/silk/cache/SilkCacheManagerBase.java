@@ -108,6 +108,14 @@ class SilkCacheManagerBase<T extends SilkComparable> {
         return dateTime <= now;
     }
 
+    /**
+     * Checks whether or not an expiration has been set to the cache.
+     */
+    public final boolean hasExpiration() {
+        SharedPreferences prefs = mContext.getSharedPreferences("[silk-cache-expirations]", Context.MODE_PRIVATE);
+        return prefs.contains(getCacheFile().getName());
+    }
+
     private List<T> loadItems() {
         try {
             final List<T> results = new ArrayList<T>();
