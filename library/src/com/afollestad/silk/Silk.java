@@ -5,8 +5,9 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.util.Base64;
 
-import java.io.File;
+import java.io.*;
 
 /**
  * Various convenience methods.
@@ -51,5 +52,31 @@ public class Silk {
         context.getSharedPreferences("[silk-cache-expirations]", 0).edit().clear().commit();
         context.getSharedPreferences("[silk-cache-limiters]", 0).edit().clear().commit();
         new File(Environment.getExternalStorageDirectory(), "Silk").delete();
+    }
+
+    public static Object deserializeObject(String input) {
+        try {
+            byte[] data = Base64.decode(input, Base64.DEFAULT);
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+            Object o = ois.readObject();
+            ois.close();
+            return o;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String serializeObject(Serializable tweet) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(tweet);
+            oos.close();
+            return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }
