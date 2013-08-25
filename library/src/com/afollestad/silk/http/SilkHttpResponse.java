@@ -20,6 +20,7 @@ public class SilkHttpResponse {
         mHeaders = new ArrayList<SilkHttpHeader>();
         for (Header header : response.getAllHeaders())
             mHeaders.add(new SilkHttpHeader(header));
+        mEntity = response.getEntity();
     }
 
     private List<SilkHttpHeader> mHeaders;
@@ -55,6 +56,7 @@ public class SilkHttpResponse {
      * Gets the response content as a string.
      */
     public String getContentString() throws Exception {
+        if (mEntity == null) return null;
         return EntityUtils.toString(mEntity);
     }
 
