@@ -17,13 +17,20 @@ public abstract class SilkFeedFragment<T extends SilkComparable> extends SilkLis
 
     protected boolean mCacheEnabled = false;
 
+    /**
+     * Returns whether or not loading progress is displayed when the fragment refreshes from the web.
+     */
+    protected boolean shouldShowLoadingProgress() {
+        return true;
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // If caching is enabled, the SilkCachedFeedFragment will handle this instead. super.onViewCreated() still must be called though.
         if (!mCacheEnabled) {
             // Immediately load the fragment's feed
-            performRefresh(true);
+            performRefresh(shouldShowLoadingProgress());
         }
     }
 
