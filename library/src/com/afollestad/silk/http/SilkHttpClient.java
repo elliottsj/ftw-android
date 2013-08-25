@@ -1,4 +1,4 @@
-package com.afollestad.silk.networking;
+package com.afollestad.silk.http;
 
 import android.os.Handler;
 import org.apache.http.client.methods.HttpDelete;
@@ -7,7 +7,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 
 /**
- * A Apache HTTP Client wrapper that makes networking faster and easier.
+ * A Apache HTTP Client wrapper that makes http faster and easier.
  *
  * @author Aidan Follestad (afollestad)
  */

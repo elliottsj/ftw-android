@@ -1,4 +1,4 @@
-package com.afollestad.silk.networking;
+package com.afollestad.silk.http;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;

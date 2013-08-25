@@ -1,4 +1,4 @@
-package com.afollestad.silk.networking;
+package com.afollestad.silk.http;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
