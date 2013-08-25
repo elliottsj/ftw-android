@@ -13,6 +13,8 @@ import android.view.MenuItem;
  */
 public class Card implements CardBase<Card> {
 
+    private static final long serialVersionUID = 7548618898682727465L;
+
     protected Card() {
     }
 
