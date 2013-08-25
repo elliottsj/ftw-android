@@ -29,6 +29,29 @@ public class SilkHttpClient extends SilkHttpBase {
         super(handler);
     }
 
+    private String mHost;
+
+    private String getUrl(String url) {
+        if (mHost != null) {
+            if (!url.startsWith("/")) url = "/" + url;
+            return mHost + url;
+        }
+        return url;
+    }
+
+    /**
+     * Sets a host that is automatically put before every request's URL.
+     */
+    public SilkHttpClient setHost(String host) {
+        if (host != null) {
+            host = host.trim();
+            if (host.isEmpty()) host = null;
+            else if (host.endsWith("/")) host = host.substring(0, host.length() - 1);
+        }
+        mHost = host;
+        return this;
+    }
+
     /**
      * Adds an HTTP header to the client, which will be used for the next request. Headers are cleared after a request is performed.
      */
@@ -50,7 +73,7 @@ public class SilkHttpClient extends SilkHttpBase {
      * Makes a GET request on the calling thread.
      */
     public SilkHttpResponse get(String url) throws SilkHttpException {
-        return performRequest(new HttpGet(url));
+        return performRequest(new HttpGet(getUrl(url)));
     }
 
     /**
@@ -64,7 +87,7 @@ public class SilkHttpClient extends SilkHttpBase {
      * Makes a POST request on the calling thread, with a POST entity (body).
      */
     public SilkHttpResponse post(String url, SilkHttpBody body) throws SilkHttpException {
-        HttpPost post = new HttpPost(url);
+        HttpPost post = new HttpPost(getUrl(url));
         if (body != null) post.setEntity(body.getEntity());
         return performRequest(post);
     }
@@ -80,7 +103,7 @@ public class SilkHttpClient extends SilkHttpBase {
      * Makes a GET request on the calling thread, with a PUT entity (body).
      */
     public SilkHttpResponse put(String url, SilkHttpBody body) throws SilkHttpException {
-        HttpPut post = new HttpPut(url);
+        HttpPut post = new HttpPut(getUrl(url));
         if (body != null) post.setEntity(body.getEntity());
         return performRequest(post);
     }
@@ -89,7 +112,7 @@ public class SilkHttpClient extends SilkHttpBase {
      * Makes a DELETE request on the calling thread.
      */
     public SilkHttpResponse delete(String url) throws SilkHttpException {
-        return performRequest(new HttpDelete(url));
+        return performRequest(new HttpDelete(getUrl(url)));
     }
 
     // Async methods
