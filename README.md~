@@ -18,8 +18,7 @@ much easier and more consistent to create list adapters, and it handles things l
 Views
 =============
 
-### 
-DatePicker
+### SilkDatePicker
 
 A small, more compact version of the stock `DatePicker`. Made up of 3 horizontally-orientated spinners that represent the month,
 day, and year.
@@ -79,10 +78,6 @@ its own.
 
 Utilities
 =============
-
-### Silk
-
-A misc. utility class.
 
 ### SilkCacheManager
 
