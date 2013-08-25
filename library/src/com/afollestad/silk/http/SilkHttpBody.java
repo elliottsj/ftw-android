@@ -31,6 +31,14 @@ public class SilkHttpBody {
         mEntity = new SerializableEntity(serializable, bufferize);
     }
 
+    public SilkHttpBody(String body) {
+        try {
+            mEntity = new StringEntity(body, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public SilkHttpBody(String body, String charset) throws Exception {
         mEntity = new StringEntity(body, charset);
     }
