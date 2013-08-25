@@ -38,6 +38,7 @@
         <com.afollestad.silk.views.text.SilkTextView android:id="@android:id/empty" android:layout_width="wrap_content"
                                                      android:layout_height="wrap_content"
                                                      android:textSize="@dimen/empty_text_size"
+                                                     android:gravity="center"
                                                      android:layout_centerInParent="true"/>
 
         <ProgressBar android:id="@android:id/progress"
