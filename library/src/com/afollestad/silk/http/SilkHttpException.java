@@ -47,4 +47,11 @@ public class SilkHttpException extends Exception {
     public boolean isServerResponse() {
         return mIsResponse;
     }
+
+    @Override
+    public String getMessage() {
+        if (isServerResponse())
+            return getStatusCode() + " " + getReasonPhrase();
+        return super.getMessage();
+    }
 }
