@@ -4,6 +4,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -75,10 +76,24 @@ public class SilkHttpResponse {
     }
 
     /**
+     * Gets the response content as a JSONArray.
+     */
+    public JSONArray getContentJSONArray() throws Exception {
+        return new JSONArray(getContentString());
+    }
+
+    /**
      * Gets the response content as a JSONObject using the specified charset.
      */
     public JSONObject getContentJSON(String defaultCharset) throws Exception {
         return new JSONObject(getContentString(defaultCharset));
+    }
+
+    /**
+     * Gets the response content as a JSONArray using the specified charset.
+     */
+    public JSONArray getContentJSONArray(String defauktCharset) throws Exception {
+        return new JSONArray(getContentString());
     }
 
     /**

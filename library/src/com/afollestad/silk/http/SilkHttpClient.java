@@ -46,7 +46,12 @@ public class SilkHttpClient extends SilkHttpBase {
         if (host != null) {
             host = host.trim();
             if (host.isEmpty()) host = null;
-            else if (host.endsWith("/")) host = host.substring(0, host.length() - 1);
+            else {
+                if (host.endsWith("/"))
+                    host = host.substring(0, host.length() - 1);
+                if (!host.startsWith("http://") && !host.startsWith("https://"))
+                    host = "http://" + host;
+            }
         }
         mHost = host;
         return this;
