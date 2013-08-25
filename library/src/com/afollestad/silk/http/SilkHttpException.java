@@ -14,10 +14,10 @@ public class SilkHttpException extends Exception {
 
     SilkHttpException(Exception e) {
         super(e);
-        mIsResponse = true;
     }
 
     SilkHttpException(HttpResponse response) {
+        mIsResponse = true;
         StatusLine stat = response.getStatusLine();
         mStatus = stat.getStatusCode();
         mReason = stat.getReasonPhrase();
