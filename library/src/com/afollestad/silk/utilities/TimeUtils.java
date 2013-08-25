@@ -10,7 +10,33 @@ import java.util.Calendar;
 public class TimeUtils {
 
     /**
-     * Gets a human-readable long time string (includes both the time and date, excluded certain parts if possible).
+     * Gets a human-readable long time string (includes both the time and date, always).
+     */
+    public static String toStringLong(Calendar date) {
+        Calendar now = Calendar.getInstance();
+        int hourInt = date.get(Calendar.HOUR);
+        int minuteInt = date.get(Calendar.MINUTE);
+        String dayStr = getNumberWithSuffix(date.get(Calendar.DAY_OF_MONTH));
+
+        String timeStr = "";
+        if (hourInt == 0) timeStr += "12";
+        else timeStr += "" + hourInt;
+        if (minuteInt < 10) timeStr += ":0" + minuteInt;
+        else timeStr += ":" + minuteInt;
+        if (date.get(Calendar.AM_PM) == Calendar.AM) timeStr += "AM";
+        else timeStr += "PM";
+
+        if (now.get(Calendar.YEAR) == date.get(Calendar.YEAR)) {
+            // Same year
+            return timeStr + " " + convertMonth(date.get(Calendar.MONTH), false) + " " + dayStr;
+        } else {
+            // Different year
+            return timeStr + " " + convertMonth(date.get(Calendar.MONTH), false) + " " + dayStr + ", " + date.get(Calendar.YEAR);
+        }
+    }
+
+    /**
+     * Gets a human-readable time string (includes both the time and date, excluded certain parts if possible).
      *
      * @param shortMonth Whether or display a long or short month string (e.g. 'January' or 'Jan').
      */
