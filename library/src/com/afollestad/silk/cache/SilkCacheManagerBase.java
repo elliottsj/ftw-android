@@ -150,7 +150,7 @@ class SilkCacheManagerBase<T extends SilkComparable> {
             e.printStackTrace();
             log("Error loading items: " + e.getMessage());
         }
-        return null;
+        return new ArrayList<T>();
     }
 
     /**
