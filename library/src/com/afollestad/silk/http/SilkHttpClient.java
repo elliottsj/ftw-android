@@ -193,7 +193,6 @@ public class SilkHttpClient extends SilkHttpBase {
                         }
                     });
                 }
-
             }
         });
     }
@@ -223,7 +222,6 @@ public class SilkHttpClient extends SilkHttpBase {
                         }
                     });
                 }
-
             }
         });
     }
