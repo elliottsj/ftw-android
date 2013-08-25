@@ -38,6 +38,13 @@ public class SilkHttpResponse {
     }
 
     /**
+     * Gets all response headers.
+     */
+    public SilkHttpHeader[] getHeaders() {
+        return mHeaders.toArray(new SilkHttpHeader[mHeaders.size()]);
+    }
+
+    /**
      * Gets the response entity.
      */
     public HttpEntity getContent() {
