@@ -3,20 +3,21 @@ Introduction
 Welcome! This library contains a collection of utility and convenience classes that make various things easier to do on Android.
 This project is being implemented with one of my apps, but I decided to make it public as it would be useful to others.
 
-##### Importing
+### Importing
 
 To use this library with your Android apps, you have to reference this project as a library (from Eclipse) or add it as a module (from IntelliJ). It now has Gradle support, too. It cannot be compiled as a JAR because this library contains resources such as layouts that are needed.
 
-Adapters
+Classes
 =============
+
+### Adapters
 
 ##### SilkAdapter
 
 A class that you can extend to create customizable list adapters without extending `BaseAdapter`. This class makes it
 much easier and more consistent to create list adapters, and it handles things like recycling views on its own.
 
-Views
-=============
+### Views
 
 ##### SilkDatePicker
 
@@ -68,16 +69,14 @@ Same as the `SilkTextView` but it's an `EditText`.
 NOTE: You MUST copy the `assets` folder from this library to your application. The assets folder does not get compiled
 in your app when it's only in the library
 
-Activities
-=============
+### Activities
 
 ##### SilkDrawerActivity
 
 Makes interacting with a `DrawerLayout` in your Activity's layout easier, handles mostly everything related to it on
 its own.
 
-Utilities
-=============
+### Utilities
 
 ##### SilkCacheManager
 
@@ -93,15 +92,13 @@ Allows you to easily load images from the disk, web, content provider, etc. and 
 Provides convenience methods for converting Calendar/milliseconds into human readable strings. This is useful for almost any
 app that needs to display a time to the user, but is especially useful for Twitter clients (see `TimeUtils.toStringShort()`).
 
-Networking
-=============
+### Networking
 
 ##### SilkHttpClient
 
 Basically a wrapper of the Apache `HttpClient` that makes HTTP networking much easier, supports ayncronous methods with callbacks.
 
-Fragments
-=============
+### Fragments
 
 ##### SilkFragment
 
