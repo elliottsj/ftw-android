@@ -215,7 +215,6 @@ class SilkCacheManagerBase<T extends SilkComparable> {
                         });
                     }
                 } catch (final Exception e) {
-                    e.printStackTrace();
                     log("Cache commit error: " + e.getMessage());
                     if (callback != null) {
                         getHandler().post(new Runnable() {
