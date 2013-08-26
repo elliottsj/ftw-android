@@ -230,16 +230,14 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("Item passed to update() was null or marked for ignoring.");
             return this;
         }
-        if (super.buffer.size() == 0) {
-            log("Cache buffer is empty.");
-            return this;
-        }
         boolean found = false;
-        for (int i = 0; i < buffer.size(); i++) {
-            if (buffer.get(i).isSameAs(toUpdate)) {
-                buffer.set(i, toUpdate);
-                found = true;
-                break;
+        if (super.buffer.size() > 0) {
+            for (int i = 0; i < buffer.size(); i++) {
+                if (buffer.get(i).isSameAs(toUpdate)) {
+                    buffer.set(i, toUpdate);
+                    found = true;
+                    break;
+                }
             }
         }
         if (found) {
