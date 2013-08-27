@@ -3,7 +3,7 @@ apply plugin: 'android-library'
 dependencies {
 //	compile 'com.android.support:support-v4:18.0.+'
     compile 'com.android.support:support-v13:18.0.+'
-    compile 'org.apache.httpcomponents:httpclient:4.2.5+'
+    compile 'ch.boye.httpclientandroidlib:4.2.5+'
 }
 
 android {
