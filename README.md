@@ -3,6 +3,10 @@ Introduction
 Welcome! This library contains a collection of utility and convenience classes that make various things easier to do on Android.
 This project is being implemented with one of my apps, but I decided to make it public as it would be useful to others.
 
+#### Dependencies
+
+The JARs in the `libs` folder are the only dependency. The HTTP JAR was generated using [this][https://github.com/afollestad/httpclientandroidlib].
+
 #### Importing
 
 To use this library with your Android apps, you have to reference this project as a library (from Eclipse) or add it as a module (from IntelliJ). It now has Gradle support, too. It cannot be compiled as a JAR because this library contains resources such as layouts that are needed.
