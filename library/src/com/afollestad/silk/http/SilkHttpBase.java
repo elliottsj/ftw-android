@@ -4,7 +4,12 @@ import android.os.Handler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +20,20 @@ import java.util.List;
 class SilkHttpBase {
 
     public SilkHttpBase(Handler handler) {
-        mClient = new DefaultHttpClient();
         mHeaders = new ArrayList<SilkHttpHeader>();
         mHandler = handler;
+        init();
     }
 
     public SilkHttpBase() {
         this(new Handler());
+    }
+
+    private void init() {
+        SchemeRegistry registry = new SchemeRegistry();
+        registry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+        ClientConnectionManager cm = new PoolingClientConnectionManager(registry);
+        mClient = new DefaultHttpClient(cm);
     }
 
     private HttpClient mClient;
