@@ -51,6 +51,10 @@ A `SilkImageView` that automatically adjusts its height to match the width of th
 
 A `SilkImageView` that automatically adjusts its width to match the height of the view.
 
+### `SilkRoundedImageView`
+
+A `SilkImageView` that displays an image in a circle instead of a square, similar to what Google+ does.
+
 ### SilkTextView
 
 A `TextView` that automatically sets its typeface to Roboto Light. It loads
