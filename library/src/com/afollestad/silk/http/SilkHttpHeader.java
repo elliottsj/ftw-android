@@ -1,6 +1,6 @@
 package com.afollestad.silk.http;
 
-import org.apache.http.Header;
+import ch.boye.httpclientandroidlib.Header;
 
 /**
  * Represents a header for an HTTP request.

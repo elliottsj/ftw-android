@@ -1,9 +1,9 @@
 package com.afollestad.silk.http;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
+import ch.boye.httpclientandroidlib.Header;
+import ch.boye.httpclientandroidlib.HttpEntity;
+import ch.boye.httpclientandroidlib.HttpResponse;
+import ch.boye.httpclientandroidlib.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

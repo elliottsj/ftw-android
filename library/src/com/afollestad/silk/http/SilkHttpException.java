@@ -1,7 +1,7 @@
 package com.afollestad.silk.http;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
+import ch.boye.httpclientandroidlib.HttpResponse;
+import ch.boye.httpclientandroidlib.StatusLine;
 
 /**
  * @author Aidan Follestad (afollestad)
