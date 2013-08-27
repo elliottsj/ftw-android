@@ -1,10 +1,10 @@
 package com.afollestad.silk.http;
 
 import android.os.Handler;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import ch.boye.httpclientandroidlib.client.methods.HttpDelete;
+import ch.boye.httpclientandroidlib.client.methods.HttpGet;
+import ch.boye.httpclientandroidlib.client.methods.HttpPost;
+import ch.boye.httpclientandroidlib.client.methods.HttpPut;
 
 /**
  * A Apache HTTP Client wrapper that makes http faster and easier.
