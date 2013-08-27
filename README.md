@@ -5,7 +5,7 @@ This project is being implemented with one of my apps, but I decided to make it 
 
 #### Dependencies
 
-The JARs in the `libs` folder are the only dependency. The HTTP JAR was generated using [this][https://github.com/afollestad/httpclientandroidlib].
+The JARs in the `libs` folder are the only dependency. The HTTP JAR was generated using [this](https://github.com/afollestad/httpclientandroidlib).
 
 #### Importing
 
