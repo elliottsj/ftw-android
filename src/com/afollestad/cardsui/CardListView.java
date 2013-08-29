@@ -16,6 +16,14 @@ import android.widget.ListView;
  */
 public class CardListView extends ListView implements AdapterView.OnItemClickListener {
 
+    public interface CardClickListener {
+        public void onCardClick(int index, CardBase card, View view);
+    }
+
+    public interface CardLongClickListener {
+        public void onCardLongClick(int index, CardBase card, View view);
+    }
+
     public CardListView(Context context) {
         super(context);
         init(null);
@@ -32,6 +40,8 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
     }
 
     private OnItemClickListener mItemClickListener;
+    private CardClickListener mCardClickListener;
+    private CardLongClickListener mCardLongClickListener;
 
     private void init(AttributeSet attrs) {
         setDivider(null);
@@ -65,9 +75,26 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
         super.setAdapter(adapter);
     }
 
+    /**
+     * @deprecated Use setOnCardClickListener instead.
+     */
     @Override
     public void setOnItemClickListener(OnItemClickListener listener) {
         mItemClickListener = listener;
+    }
+
+    /**
+     * Sets a click listener for cards (doesn't include card headers).
+     */
+    public final void setOnCardClickListener(CardClickListener listener) {
+        mCardClickListener = listener;
+    }
+
+    /**
+     * Sets a long click listener for cards (doesn't include card headers).
+     */
+    public final void setOnCardLongClickListener(CardLongClickListener listener) {
+        mCardLongClickListener = listener;
     }
 
     @Override
@@ -78,6 +105,10 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
             if (header.getActionCallback() != null)
                 header.getActionCallback().onClick(header);
             else if (mItemClickListener != null) mItemClickListener.onItemClick(parent, view, position, id);
-        } else if (mItemClickListener != null) mItemClickListener.onItemClick(parent, view, position, id);
+        } else {
+            if (mItemClickListener != null) mItemClickListener.onItemClick(parent, view, position, id);
+            if (mCardClickListener != null) mCardClickListener.onCardClick(position, item, view);
+            if (mCardLongClickListener != null) mCardLongClickListener.onCardLongClick(position, item, view);
+        }
     }
 }
