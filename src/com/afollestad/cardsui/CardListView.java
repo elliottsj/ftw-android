@@ -55,6 +55,7 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
         }
         setSelector(android.R.color.transparent);
         super.setOnItemClickListener(this);
+        super.setOnItemLongClickListener(this);
     }
 
     /**
