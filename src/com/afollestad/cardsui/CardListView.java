@@ -14,14 +14,14 @@ import android.widget.ListView;
  *
  * @author Aidan Follestad (afollestad)
  */
-public class CardListView extends ListView implements AdapterView.OnItemClickListener {
+public class CardListView extends ListView implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     public interface CardClickListener {
         public void onCardClick(int index, CardBase card, View view);
     }
 
     public interface CardLongClickListener {
-        public void onCardLongClick(int index, CardBase card, View view);
+        public boolean onCardLongClick(int index, CardBase card, View view);
     }
 
     public CardListView(Context context) {
@@ -40,6 +40,7 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
     }
 
     private OnItemClickListener mItemClickListener;
+    private OnItemLongClickListener mItemLongClickListener;
     private CardClickListener mCardClickListener;
     private CardLongClickListener mCardLongClickListener;
 
@@ -76,29 +77,37 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
     }
 
     /**
-     * @deprecated Use setOnCardClickListener instead.
+     * @deprecated Use {@link #setOnCardClickListener(com.afollestad.cardsui.CardListView.CardClickListener)} instead.
      */
     @Override
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public final void setOnItemClickListener(OnItemClickListener listener) {
         mItemClickListener = listener;
+    }
+
+    /**
+     * @deprecated Use {@link #setOnCardLongClickListener(com.afollestad.cardsui.CardListView.CardLongClickListener)} instead.
+     */
+    @Override
+    public final void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        mItemLongClickListener = listener;
     }
 
     /**
      * Sets a click listener for cards (doesn't include card headers).
      */
-    public final void setOnCardClickListener(CardClickListener listener) {
+    public void setOnCardClickListener(CardClickListener listener) {
         mCardClickListener = listener;
     }
 
     /**
      * Sets a long click listener for cards (doesn't include card headers).
      */
-    public final void setOnCardLongClickListener(CardLongClickListener listener) {
+    public void setOnCardLongClickListener(CardLongClickListener listener) {
         mCardLongClickListener = listener;
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public final void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         CardBase item = (CardBase) ((CardAdapter) getAdapter()).getItem(position);
         if (item.isHeader()) {
             CardHeader header = (CardHeader) item;
@@ -110,5 +119,13 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
             if (mCardClickListener != null) mCardClickListener.onCardClick(position, item, view);
             if (mCardLongClickListener != null) mCardLongClickListener.onCardLongClick(position, item, view);
         }
+    }
+
+    @Override
+    public final boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        CardBase item = (CardBase) ((CardAdapter) getAdapter()).getItem(position);
+        if (mCardLongClickListener != null)
+            return mCardLongClickListener.onCardLongClick(position, item, view);
+        return mItemLongClickListener.onItemLongClick(parent, view, position, id);
     }
 }
