@@ -42,6 +42,17 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
         public void onError(Exception e);
     }
 
+    public enum StartingPoint {
+        /**
+         * Start at index 0, and go up.
+         */
+        ZERO,
+        /**
+         * Start at index count-1 and go down.
+         */
+        END
+    }
+
 
     /**
      * Initializes a new SilkCacheManager, using the default cache file and default cache directory.
@@ -224,29 +235,46 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * Updates an item in the cache, using isSameAs() from SilkComparable to find the item.
      *
      * @param appendIfNotFound Whether or not the item will be appended to the end of the cache if it's not found.
+     * @param point            The point to start searching from, can increase performance.
      */
-    public SilkCacheManager<T> update(T toUpdate, boolean appendIfNotFound) {
+    public SilkCacheManager<T> update(T toUpdate, StartingPoint point, boolean appendIfNotFound) {
         if (toUpdate == null || toUpdate.shouldIgnore()) {
             log("Item passed to update() was null or marked for ignoring.");
             return this;
         }
         boolean found = false;
         if (super.buffer.size() > 0) {
-            for (int i = 0; i < buffer.size(); i++) {
-                if (buffer.get(i).isSameAs(toUpdate)) {
-                    buffer.set(i, toUpdate);
-                    found = true;
-                    break;
+            if (point == StartingPoint.ZERO) {
+                for (int i = 0; i < buffer.size(); i++) {
+                    if (buffer.get(i).isSameAs(toUpdate)) {
+                        buffer.set(i, toUpdate);
+                        found = true;
+                        break;
+                    }
+                }
+            } else if (point == StartingPoint.END) {
+                for (int i = super.buffer.size() - 1; i >= 0; i--) {
+                    if (buffer.get(i).isSameAs(toUpdate)) {
+                        buffer.set(i, toUpdate);
+                        found = true;
+                        break;
+                    }
                 }
             }
         }
-        if (found) {
+
+        if (found)
+
+        {
             log("Updated 1 item in the cache.");
             isChanged = true;
-        } else if (appendIfNotFound) {
+        } else if (appendIfNotFound)
+
+        {
             append(toUpdate);
             isChanged = true;
         }
+
         return this;
     }
 
@@ -343,8 +371,10 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * Finds an item in the cache using isSameAs() from SilkComparable.
      *
      * @param query An item that will match up with another item using SilkComparable.isSameAs().
+     * @param point The point to start searching from, can increase performance.
      */
-    public T find(T query) {
+
+    public T find(T query, StartingPoint point) {
         if (query == null) {
             log("Item passed to find() was null.");
             return null;
@@ -354,8 +384,14 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
             log("Cache buffer is empty.");
             return null;
         }
-        for (T item : super.buffer) {
-            if (item.isSameAs(query)) return item;
+        if (point == StartingPoint.ZERO) {
+            for (int i = 0; i < super.buffer.size(); i++) {
+                if (super.buffer.get(i).isSameAs(query)) return super.buffer.get(i);
+            }
+        } else if (point == StartingPoint.END) {
+            for (int i = super.buffer.size() - 1; i >= 0; i--) {
+                if (super.buffer.get(i).isSameAs(query)) return super.buffer.get(i);
+            }
         }
         return null;
     }
@@ -437,15 +473,16 @@ public final class SilkCacheManager<T extends SilkComparable> extends SilkCacheM
      * results to a callback.
      *
      * @param query An item that will match up with another item via isSameAs().
+     * @param point The point to start searching from, can increase performance.
      */
-    public void findAsync(final T query, final FindCallback<T> callback) {
+    public void findAsync(final T query, final StartingPoint point, final FindCallback<T> callback) {
         if (callback == null) throw new IllegalArgumentException("You must specify a callback");
         final Handler handler = getHandler();
         runPriorityThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final T result = find(query);
+                    final T result = find(query, point);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
