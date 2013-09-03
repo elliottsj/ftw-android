@@ -109,48 +109,41 @@ public class TimeUtils {
         }
     }
 
+    private static final int SECONDS_IN_MINUTE = 60;
+    private static final int MINUTES_IN_HOUR = 60;
+    private static final int HOURS_IN_DAY = 24;
+    private static final int DAYS_IN_YEAR = 365;
+
+    private static final int MILLIS_IN_SECOND = 1000;
+    private static final long MILLISECONDS_IN_MINUTE = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE;
+    private static final long MILLISECONDS_IN_HOUR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR;
+    private static final long MILLISECONDS_IN_DAY = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY;
+    private static final long MILLISECONDS_IN_YEAR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR;
+
     public static String toStringShort(Calendar time) {
         Calendar now = Calendar.getInstance();
-        if (now.get(Calendar.YEAR) == time.get(Calendar.YEAR)) {
-            // Same year
-            if (now.get(Calendar.MONTH) == time.get(Calendar.MONTH)) {
-                // Same year, same month
-                if (now.get(Calendar.DAY_OF_YEAR) == time.get(Calendar.DAY_OF_YEAR)) {
-                    // Same month, same day
-                    if (now.get(Calendar.HOUR) == time.get(Calendar.HOUR)) {
-                        // Same day, same hour
-                        if (now.get(Calendar.MINUTE) == time.get(Calendar.MINUTE)) {
-                            // Same hour, same minute
-                            return (now.get(Calendar.SECOND) - time.get(Calendar.SECOND)) + "s";
-                        } else {
-                            // Different minute
-                            return (now.get(Calendar.MINUTE) - time.get(Calendar.MINUTE)) + "m";
-                        }
+        long diff = now.getTimeInMillis() - time.getTimeInMillis();
+        long years = diff / MILLISECONDS_IN_YEAR;
+        if (years == 0) {
+            long days = diff / MILLISECONDS_IN_DAY;
+            if (days == 0) {
+                long hours = diff / MILLISECONDS_IN_HOUR;
+                if (hours == 0) {
+                    long minutes = diff / MILLISECONDS_IN_MINUTE;
+                    if (minutes == 0) {
+                        long seconds = diff / MILLIS_IN_SECOND;
+                        return seconds + "s";
                     } else {
-                        // Same month, different hour
-                        return (now.get(Calendar.HOUR_OF_DAY) - time.get(Calendar.HOUR_OF_DAY)) + "h";
+                        return minutes + "m";
                     }
                 } else {
-                    // Same year, same month, different day
-                    int totalDays = now.get(Calendar.DAY_OF_YEAR) - time.get(Calendar.DAY_OF_YEAR);
-                    if (totalDays < 7) {
-                        // Less than a week ago, return days
-                        return totalDays + "d";
-                    } else if ((totalDays % 7) == 0) {
-                        return (totalDays / 7) + "w";
-                    }
-                    // Return both weeks and days
-                    int weeks = totalDays / 7;
-                    int days = totalDays % 7;
-                    return weeks + "w" + days + "d";
+                    return hours + "h";
                 }
             } else {
-                // Different month, same year
-                return (now.get(Calendar.MONTH) - time.get(Calendar.MONTH)) + "m";
+                return days + "d";
             }
         } else {
-            // Different year
-            return (now.get(Calendar.YEAR) - time.get(Calendar.YEAR)) + "y";
+            return years + "y";
         }
     }
 
