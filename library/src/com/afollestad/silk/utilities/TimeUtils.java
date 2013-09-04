@@ -2,6 +2,7 @@ package com.afollestad.silk.utilities;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Utilities for getting human readable time strings.
@@ -11,7 +12,9 @@ import java.util.Date;
 public class TimeUtils {
 
     public static String toStringLong(Date date) {
-        return toStringLong(date);
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        return toStringLong(cal);
     }
 
     /**
@@ -41,7 +44,9 @@ public class TimeUtils {
     }
 
     public static String toString(Date date, boolean includeTime, boolean shortMonth) {
-        return toString(date, includeTime, shortMonth);
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        return toString(cal, includeTime, shortMonth);
     }
 
     /**
@@ -94,8 +99,10 @@ public class TimeUtils {
         }
     }
 
-    public static String toStringDate(Date time, boolean shortMonth) {
-        return toStringDate(time, shortMonth);
+    public static String toStringDate(Date date, boolean shortMonth) {
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        return toStringDate(cal, shortMonth);
     }
 
     /**
@@ -133,8 +140,10 @@ public class TimeUtils {
     private static final long MILLISECONDS_IN_DAY = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY;
     private static final long MILLISECONDS_IN_YEAR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR;
 
-    public static String toStringShort(Date time) {
-        return toStringShort(time);
+    public static String toStringShort(Date date) {
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        return toStringShort(cal);
     }
 
     public static String toStringShort(Calendar time) {
