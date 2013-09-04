@@ -1,6 +1,7 @@
 package com.afollestad.silk.utilities;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Utilities for getting human readable time strings.
@@ -8,6 +9,10 @@ import java.util.Calendar;
  * @author Aidan Follestad (afollestad)
  */
 public class TimeUtils {
+
+    public static String toStringLong(Date date) {
+        return toStringLong(date);
+    }
 
     /**
      * Gets a human-readable long time string (includes both the time and date, always).
@@ -33,6 +38,10 @@ public class TimeUtils {
             // Different year
             return timeStr + " " + convertMonth(date.get(Calendar.MONTH), false) + " " + dayStr + ", " + date.get(Calendar.YEAR);
         }
+    }
+
+    public static String toString(Date date, boolean includeTime, boolean shortMonth) {
+        return toString(date, includeTime, shortMonth);
     }
 
     /**
@@ -85,6 +94,10 @@ public class TimeUtils {
         }
     }
 
+    public static String toStringDate(Date time, boolean shortMonth) {
+        return toStringDate(time, shortMonth);
+    }
+
     /**
      * Gets a human-readable date string (month, day, and year).
      *
@@ -119,6 +132,10 @@ public class TimeUtils {
     private static final long MILLISECONDS_IN_HOUR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR;
     private static final long MILLISECONDS_IN_DAY = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY;
     private static final long MILLISECONDS_IN_YEAR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR;
+
+    public static String toStringShort(Date time) {
+        return toStringShort(time);
+    }
 
     public static String toStringShort(Calendar time) {
         Calendar now = Calendar.getInstance();
