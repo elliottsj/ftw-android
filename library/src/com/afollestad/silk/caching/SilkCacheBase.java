@@ -52,6 +52,7 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
                     // Cache is expired
                     cacheFile.delete();
                     log("Cache has expired, re-creating...");
+                    setExpiration(-1);
                 }
             }
             mBuffer = new ArrayList<Item>();
