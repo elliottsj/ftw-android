@@ -22,12 +22,12 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
     }
 
     protected int getAddIndex() {
-        return 0;
+        return -1;
     }
 
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
         if (results != null) {
-            if (paginated || getAddIndex() <= 0)
+            if (paginated || getAddIndex() < 0)
                 getAdapter().add(results);
             else getAdapter().add(getAddIndex(), results);
         }
@@ -88,7 +88,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                         public void run() {
                             int beforeCount = getAdapter().getCount();
                             onPostLoad(items, true);
-                            if(items != null)
+                            if (items != null)
                                 getListView().smoothScrollToPosition(beforeCount);
                         }
                     });

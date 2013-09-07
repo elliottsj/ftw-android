@@ -217,6 +217,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable<ItemType>> ext
 
     @Override
     public long getItemId(int i) {
+        if (i < 0) i = 0;
         return getItemId(getItem(i));
     }
 
