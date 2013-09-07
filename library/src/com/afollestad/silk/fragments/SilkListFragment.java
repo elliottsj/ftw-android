@@ -137,7 +137,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable<ItemType>
      *
      * @param progress Whether or not the progress view will be shown and the list will be hidden.
      */
-    public final void setLoading(boolean progress) {
+    public void setLoading(boolean progress) {
         if (progress)
             setListShown(false);
         mLoading = true;

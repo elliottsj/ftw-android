@@ -112,7 +112,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
 
             @Override
             public void onScrollToBottom() {
-                performPaginate(true);
+                performPaginate(false);
             }
         });
     }
