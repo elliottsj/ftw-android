@@ -40,7 +40,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     @Override
     protected void onVisibilityChanged(boolean visible) {
         super.onVisibilityChanged(visible);
-        if (!visible && mCache.isChanged()) {
+        if (!visible && mCache != null && mCache.isChanged()) {
             mCache.commit(new SilkCache.SimpleCommitCallback() {
                 @Override
                 public void onError(Exception e) {

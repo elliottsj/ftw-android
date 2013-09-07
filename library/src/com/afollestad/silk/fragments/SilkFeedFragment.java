@@ -31,13 +31,13 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
     protected abstract void onError(Exception e);
 
     public void performRefresh(boolean showProgress) {
+        if (onPreLoad()) return;
         if (showProgress) setLoading(true);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (!Silk.isOnline(getActivity())) throw new OfflineException();
-                    if (onPreLoad()) return;
                     final List<ItemType> items = refresh();
                     runOnUiThread(new Runnable() {
                         @Override
