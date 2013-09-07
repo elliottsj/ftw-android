@@ -83,7 +83,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                 try {
                     if (!Silk.isOnline(getActivity())) throw new OfflineException();
                     final List<ItemType> items = paginate();
-                    if (items == null)
+                    if (items == null || items.size() == 0)
                         mBlockPaginate = true;
                     runOnUiThread(new Runnable() {
                         @Override
