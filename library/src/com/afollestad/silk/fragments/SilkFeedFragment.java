@@ -20,6 +20,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
 
     protected void onPostLoad(List<ItemType> results) {
         getAdapter().set(results);
+        setLoadComplete(false);
     }
 
     protected abstract List<ItemType> refresh() throws Exception;
@@ -38,7 +39,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                         @Override
                         public void run() {
                             onPostLoad(items);
-                            setLoadComplete(false);
                         }
                     });
                 } catch (final Exception e) {

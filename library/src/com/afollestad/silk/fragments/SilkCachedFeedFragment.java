@@ -36,6 +36,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
 
     @Override
     public void performRefresh(boolean showProgress) {
+        setLoading(showProgress);
         new SilkCache<ItemType>(getActivity(), getCacheName(), new OnReadyCallback<ItemType>() {
             @Override
             public void onReady(SilkCache<ItemType> cache) {
