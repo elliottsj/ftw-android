@@ -92,7 +92,7 @@ Utilities
 
 A misc. utility class.
 
-### SilkCacheManager
+### SilkCache
 
 This class is used by the `SilkCachedFeedFragment` to cache items in the fragment's adapter, it allows you to easily manage your own
 cache files using a class similar to the stock `SharedPreferences` class. You can write/read any class that implements `SilkComparable<T>` to/from a cache file (but remember to mark any fields of non-serializable types as `transient`, so they're ignored during serialization).
