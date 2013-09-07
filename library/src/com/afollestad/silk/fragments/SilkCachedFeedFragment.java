@@ -1,8 +1,11 @@
 package com.afollestad.silk.fragments;
 
+import android.util.Log;
 import com.afollestad.silk.caching.OnReadyCallback;
 import com.afollestad.silk.caching.SilkCache;
 import com.afollestad.silk.caching.SilkComparable;
+
+import java.util.List;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -21,6 +24,12 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
         super.performRefresh(true);
     }
 
+    @Override
+    protected void onPostLoad(List<ItemType> results) {
+        super.onPostLoad(results);
+        mCache.addAll(0, results);
+    }
+
     protected SilkCache<ItemType> onCacheInitialized(SilkCache<ItemType> cache) {
         return cache;
     }
@@ -31,11 +40,13 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
             @Override
             public void onReady(SilkCache<ItemType> cache) {
                 mCache = onCacheInitialized(cache);
-                if (cache.size() == 0) {
+                if (mCache == null)
+                    throw new RuntimeException("onCacheInitialized() cannot return null.");
+                if (mCache.size() == 0) {
                     onCacheEmpty();
                     return;
                 }
-                onPostLoad(cache.read());
+                onPostLoad(mCache.read());
             }
         });
     }
@@ -43,6 +54,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     @Override
     protected void onVisibilityChanged(boolean visible) {
         super.onVisibilityChanged(visible);
+        Log.d(getCacheName() + "-fragment", "onVisibilityChanged(" + visible + ")");
         if (!visible && mCache != null && mCache.isChanged()) {
             mCache.commit(new SilkCache.SimpleCommitCallback() {
                 @Override

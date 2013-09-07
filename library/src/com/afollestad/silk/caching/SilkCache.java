@@ -2,6 +2,8 @@ package com.afollestad.silk.caching;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCacheBase<ItemType> {
@@ -33,10 +35,41 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
     }
 
     public final SilkCache<ItemType> add(ItemType item) {
+        add(0, item);
+        return this;
+    }
+
+    public final SilkCache<ItemType> add(int index, ItemType item) {
         if (item == null) throw new IllegalArgumentException("You cannot add a null item.");
         log("Item " + item.getSilkId() + " added to the cache.");
         getBuffer().add(item);
         markChanged();
+        return this;
+    }
+
+    public final SilkCache<ItemType> addAll(int startIndex, ItemType[] items) {
+        addAll(startIndex, new ArrayList<ItemType>(Arrays.asList(items)));
+        return this;
+    }
+
+    public final SilkCache<ItemType> addAll(int startIndex, List<ItemType> items) {
+        int index = startIndex;
+        for (ItemType item : items) {
+            add(index, item);
+            index++;
+        }
+        return this;
+    }
+
+    public final SilkCache<ItemType> set(ItemType[] items) {
+        set(new ArrayList<ItemType>(Arrays.asList(items)));
+        return this;
+    }
+
+    public final SilkCache<ItemType> set(List<ItemType> items) {
+        getBuffer().clear();
+        getBuffer().addAll(items);
+        log("Cache overwritten with " + items.size() + " items");
         return this;
     }
 
