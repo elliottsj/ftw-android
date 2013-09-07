@@ -9,7 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.util.LruCache;
 import com.afollestad.silk.Silk;
-import com.afollestad.silk.cache.DiskCache;
+import com.afollestad.silk.utilities.DiskCache;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;

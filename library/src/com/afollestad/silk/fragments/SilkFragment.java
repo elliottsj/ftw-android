@@ -33,7 +33,9 @@ public abstract class SilkFragment extends Fragment {
      * <p/>
      * Sometimes {#getUserVisibleHint}, {#isVisible}, {#setUserVisibleHint}, etc. can be deceiving. This is the answer.
      */
-    protected abstract void onVisibilityChange(boolean visible);
+    protected void onVisibilityChanged(boolean visible) {
+        // Nothing is done by default
+    }
 
     private void notifyVisibility(boolean visible) {
         if (visible) {
@@ -45,7 +47,7 @@ public abstract class SilkFragment extends Fragment {
             }
         }
         mAttached = visible;
-        onVisibilityChange(visible);
+        onVisibilityChanged(visible);
     }
 
     /**

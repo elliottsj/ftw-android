@@ -1,4 +1,4 @@
-package com.afollestad.silk.cache;
+package com.afollestad.silk.utilities;
 
 import android.content.Context;
 import android.graphics.Bitmap;

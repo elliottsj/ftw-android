@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="offline_error">You are currently offline.</string>
-    <string name="last_updated">Last updated: {date}</string>
-    <string name="reload">Reload</string>
     <string-array name="months">
         <item>Jan</item>
         <item>Feb</item>

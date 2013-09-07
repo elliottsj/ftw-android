@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import com.afollestad.silk.cache.SilkComparable;
+import com.afollestad.silk.caching.SilkComparable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,7 +113,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     public boolean update(T toUpdate, boolean addIfNotFound) {
         boolean found = false;
         for (int i = 0; i < items.size(); i++) {
-            if (toUpdate.isSameAs(items.get(i))) {
+            if (toUpdate.equalTo(items.get(i))) {
                 items.set(i, toUpdate);
                 found = true;
                 break;
@@ -150,7 +150,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
     public final boolean contains(T item) {
         for (int i = 0; i < getCount(); i++) {
             T curItem = getItem(i);
-            if (item.isSameAs(curItem)) return true;
+            if (item.equalTo(curItem)) return true;
         }
         return false;
     }
@@ -170,7 +170,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
      */
     public void remove(T toRemove) {
         for (int i = 0; i < items.size(); i++) {
-            if (toRemove.isSameAs(items.get(i))) {
+            if (toRemove.equalTo(items.get(i))) {
                 this.remove(i);
                 break;
             }

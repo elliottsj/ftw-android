@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkAdapter;
-import com.afollestad.silk.cache.SilkComparable;
+import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.views.list.SilkGridView;
 import com.afollestad.silk.views.list.SilkListView;
 
@@ -17,17 +17,17 @@ import com.afollestad.silk.views.list.SilkListView;
  * A {@link com.afollestad.silk.fragments.SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
  * convenience methods and handles a lot of things on its own to make things easy.
  * <p/>
- * The fragment uses a {@link com.afollestad.silk.adapters.SilkAdapter} to display items of type T.
+ * The fragment uses a {@link com.afollestad.silk.adapters.SilkAdapter} to display items of type ItemType.
  *
- * @param <T> The type of items held in the fragment's list.
+ * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkListFragment<T extends SilkComparable> extends SilkFragment {
+public abstract class SilkListFragment<ItemType extends SilkComparable> extends SilkFragment {
 
     private AbsListView mListView;
     private TextView mEmpty;
     private ProgressBar mProgress;
-    private SilkAdapter<T> mAdapter;
+    private SilkAdapter<ItemType> mAdapter;
     private boolean mLoading;
 
     /**
@@ -76,7 +76,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
     /**
      * Gets the SilkAdapter used to add and remove items from the list.
      */
-    public final SilkAdapter<T> getAdapter() {
+    public final SilkAdapter<ItemType> getAdapter() {
         return mAdapter;
     }
 
@@ -91,7 +91,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
      * Only called once to cause inheriting classes to create a new SilkAdapter that can later be retrieved using
      * {#getAdapter}.
      */
-    protected abstract SilkAdapter<T> initializeAdapter();
+    protected abstract SilkAdapter<ItemType> initializeAdapter();
 
     /**
      * Called when an item in the list is tapped by the user.
@@ -100,7 +100,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
      * @param item  The actual tapped item from the adapter.
      * @param view  The view in the list that was tapped.
      */
-    protected abstract void onItemTapped(int index, T item, View view);
+    protected abstract void onItemTapped(int index, ItemType item, View view);
 
     /**
      * Called when an item in the list is long-tapped by the user.
@@ -110,7 +110,7 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
      * @param view  The view in the list that was long-tapped.
      * @return Whether or not the event was handled.
      */
-    protected abstract boolean onItemLongTapped(int index, T item, View view);
+    protected abstract boolean onItemLongTapped(int index, ItemType item, View view);
 
     /**
      * Gets whether or not the list is currently loading.
@@ -187,14 +187,14 @@ public abstract class SilkListFragment<T extends SilkComparable> extends SilkFra
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int index, long id) {
-                T item = getAdapter().getItem(index);
+                ItemType item = getAdapter().getItem(index);
                 onItemTapped(index, item, view);
             }
         });
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int index, long id) {
-                T item = getAdapter().getItem(index);
+                ItemType item = getAdapter().getItem(index);
                 return onItemLongTapped(index, item, view);
             }
         });
