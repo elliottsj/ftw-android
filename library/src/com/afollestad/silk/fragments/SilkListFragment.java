@@ -3,14 +3,12 @@ package com.afollestad.silk.fragments;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.caching.SilkComparable;
-import com.afollestad.silk.views.list.SilkGridView;
 import com.afollestad.silk.views.list.SilkListView;
 
 /**
@@ -24,7 +22,7 @@ import com.afollestad.silk.views.list.SilkListView;
  */
 public abstract class SilkListFragment<ItemType extends SilkComparable<ItemType>> extends SilkFragment {
 
-    private AbsListView mListView;
+    private SilkListView mListView;
     private TextView mEmpty;
     private ProgressBar mProgress;
     private SilkAdapter<ItemType> mAdapter;
@@ -33,7 +31,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable<ItemType>
     /**
      * Gets the ListView contained in the Fragment's layout.
      */
-    public final AbsListView getListView() {
+    public final SilkListView getListView() {
         return mListView;
     }
 
@@ -164,7 +162,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable<ItemType>
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mListView = (SilkListView) view.findViewById(android.R.id.list);
         mEmpty = (TextView) view.findViewById(android.R.id.empty);
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
         if (mListView == null)
@@ -174,11 +172,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable<ItemType>
         if (mProgress == null)
             Log.w(getClass().getName(), "Warning: no progress view with ID @android:id/progress found in list fragment layout.");
 
-        if (mListView instanceof SilkListView)
-            ((SilkListView) mListView).setAdapter(mAdapter);
-        else if (mListView instanceof SilkGridView)
-            ((SilkGridView) mListView).setSilkAdapter(mAdapter);
-        else mListView.setAdapter(mAdapter);
+        mListView.setAdapter(mAdapter);
         mListView.setEmptyView(mEmpty);
 
         if (mEmpty != null && getEmptyText() > 0)

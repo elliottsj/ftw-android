@@ -58,7 +58,7 @@ public class SilkListView extends ListView {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (mScrollListener != null) {
+                if (mScrollListener != null && visibleItemCount < totalItemCount) {
                     if (firstVisibleItem == 0)
                         mScrollListener.onScrollToTop();
                     else if (firstVisibleItem == (totalItemCount - visibleItemCount))

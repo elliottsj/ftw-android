@@ -47,6 +47,17 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
         return this;
     }
 
+    public final SilkCache<ItemType> addAll(ItemType[] items) {
+        addAll(new ArrayList<ItemType>(Arrays.asList(items)));
+        return this;
+    }
+
+    public final SilkCache<ItemType> addAll(List<ItemType> items) {
+        for (int i = 0; i < items.size(); i++)
+            add(items.get(i));
+        return this;
+    }
+
     public final SilkCache<ItemType> addAll(int startIndex, ItemType[] items) {
         addAll(startIndex, new ArrayList<ItemType>(Arrays.asList(items)));
         return this;

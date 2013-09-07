@@ -24,9 +24,12 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     }
 
     @Override
-    protected void onPostLoad(List<ItemType> results) {
-        super.onPostLoad(results);
-        if (mCache != null) mCache.addAll(0, results);
+    protected void onPostLoad(List<ItemType> results, boolean paginated) {
+        super.onPostLoad(results, paginated);
+        if (mCache != null) {
+            if (paginated) mCache.addAll(results);
+            else mCache.addAll(0, results);
+        }
     }
 
     protected SilkCache<ItemType> onCacheInitialized(SilkCache<ItemType> cache) {
@@ -50,7 +53,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
                     onCacheEmpty();
                     return;
                 }
-                SilkCachedFeedFragment.super.onPostLoad(mCache.read());
+                SilkCachedFeedFragment.super.onPostLoad(mCache.read(), false);
             }
         });
     }
