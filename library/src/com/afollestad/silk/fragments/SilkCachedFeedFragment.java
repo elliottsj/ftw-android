@@ -27,7 +27,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     @Override
     protected void onPostLoad(List<ItemType> results) {
         super.onPostLoad(results);
-        mCache.addAll(0, results);
+        if (mCache != null) mCache.addAll(0, results);
     }
 
     protected SilkCache<ItemType> onCacheInitialized(SilkCache<ItemType> cache) {
@@ -36,6 +36,10 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
 
     @Override
     public void performRefresh(boolean showProgress) {
+        if (mCache == null) {
+            super.performRefresh(showProgress);
+            return;
+        }
         setLoading(showProgress);
         new SilkCache<ItemType>(getActivity(), getCacheName(), new OnReadyCallback<ItemType>() {
             @Override
