@@ -50,6 +50,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
                 if (mCache == null)
                     throw new RuntimeException("onCacheInitialized() cannot return null.");
                 if (mCache.size() == 0) {
+                    SilkCachedFeedFragment.super.setLoadComplete(false);
                     onCacheEmpty();
                     return;
                 }
