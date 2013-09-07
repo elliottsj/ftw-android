@@ -46,7 +46,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
                     onCacheEmpty();
                     return;
                 }
-                onPostLoad(mCache.read());
+                SilkCachedFeedFragment.super.onPostLoad(mCache.read());
             }
         });
     }
