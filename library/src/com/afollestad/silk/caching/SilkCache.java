@@ -54,8 +54,8 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
 
     public final SilkCache<ItemType> addAll(int startIndex, List<ItemType> items) {
         int index = startIndex;
-        for (ItemType item : items) {
-            add(index, item);
+        for (int i = 0; i < items.size(); i++) {
+            add(index, items.get(i));
             index++;
         }
         return this;
