@@ -18,10 +18,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
         }
     }
 
-    protected boolean onPreLoad() {
-        return false;
-    }
-
     protected void onPostLoad(List<ItemType> results) {
         getAdapter().set(results);
     }
@@ -31,7 +27,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
     protected abstract void onError(Exception e);
 
     public void performRefresh(boolean showProgress) {
-        if (onPreLoad()) return;
         if (showProgress) setLoading(true);
         Thread t = new Thread(new Runnable() {
             @Override
