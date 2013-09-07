@@ -19,11 +19,11 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
     }
 
     protected int getAddIndex() {
-        return -1;
+        return 0;
     }
 
     protected void onPostLoad(List<ItemType> results) {
-        if (getAddIndex() == -1)
+        if (getAddIndex() <= 0)
             getAdapter().add(results);
         else getAdapter().add(getAddIndex(), results);
         setLoadComplete(false);

@@ -16,18 +16,18 @@ import java.util.List;
  * A BaseAdapter wrapper that makes creating list adapters easier. Contains various convenience methods and handles
  * recycling views on its own.
  *
- * @param <T> The type of items held in the adapter.
+ * @param <ItemType> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapter {
+public abstract class SilkAdapter<ItemType extends SilkComparable<ItemType>> extends BaseAdapter {
 
     public SilkAdapter(Context context) {
         this.context = context;
-        this.items = new ArrayList<T>();
+        this.items = new ArrayList<ItemType>();
     }
 
     private final Context context;
-    private final List<T> items;
+    private final List<ItemType> items;
     private boolean isChanged = false;
     private int mScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
@@ -48,7 +48,7 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
      * @param recycled The layout with views to be filled (e.g. text views).
      * @param item     The item at the current index of the adapter.
      */
-    public abstract View onViewCreated(int index, View recycled, T item);
+    public abstract View onViewCreated(int index, View recycled, ItemType item);
 
     /**
      * Gets the context passed in the constructor, that's used for inflating views.
@@ -57,13 +57,13 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
         return context;
     }
 
-    public void add(int index, T toAdd) {
+    public void add(int index, ItemType toAdd) {
         isChanged = true;
         this.items.add(index, toAdd);
         notifyDataSetChanged();
     }
 
-    public void add(int index, List<T> toAdd) {
+    public void add(int index, List<ItemType> toAdd) {
         for (int i = 0; i < toAdd.size(); i++) {
             add(index, toAdd.get(i));
             index++;
@@ -73,7 +73,7 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
     /**
      * Adds a single item to the adapter and notifies the attached ListView.
      */
-    public void add(T toAdd) {
+    public void add(ItemType toAdd) {
         isChanged = true;
         this.items.add(toAdd);
         notifyDataSetChanged();
@@ -82,16 +82,16 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
     /**
      * Adds an array of items to the adapter and notifies the attached ListView.
      */
-    public final void add(T[] toAdd) {
-        add(new ArrayList<T>(Arrays.asList(toAdd)));
+    public final void add(ItemType[] toAdd) {
+        add(new ArrayList<ItemType>(Arrays.asList(toAdd)));
     }
 
     /**
      * Adds a list of items to the adapter and notifies the attached Listview.
      */
-    public final void add(List<T> toAdd) {
+    public final void add(List<ItemType> toAdd) {
         isChanged = true;
-        for (T item : toAdd)
+        for (ItemType item : toAdd)
             add(item);
     }
 
@@ -104,7 +104,7 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
      *
      * @return True if the item was updated.
      */
-    public boolean update(T toUpdate) {
+    public boolean update(ItemType toUpdate) {
         return update(toUpdate, true);
     }
 
@@ -115,7 +115,7 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
      * @param addIfNotFound Whether or not the item will be added if it's not found.
      * @return True if the item was updated or added.
      */
-    public boolean update(T toUpdate, boolean addIfNotFound) {
+    public boolean update(ItemType toUpdate, boolean addIfNotFound) {
         boolean found = false;
         for (int i = 0; i < items.size(); i++) {
             if (toUpdate.equalTo(items.get(i))) {
@@ -135,26 +135,26 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
     /**
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
-    public final void set(T[] toSet) {
-        set(new ArrayList<T>(Arrays.asList(toSet)));
+    public final void set(ItemType[] toSet) {
+        set(new ArrayList<ItemType>(Arrays.asList(toSet)));
     }
 
     /**
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
-    public void set(List<T> toSet) {
+    public void set(List<ItemType> toSet) {
         isChanged = true;
         this.items.clear();
-        for (T item : toSet) this.add(item);
+        for (ItemType item : toSet) this.add(item);
         notifyDataSetChanged();
     }
 
     /**
      * Checks whether or not the adapter contains an item based on the adapter's inherited Filter.
      */
-    public final boolean contains(T item) {
+    public final boolean contains(ItemType item) {
         for (int i = 0; i < getCount(); i++) {
-            T curItem = getItem(i);
+            ItemType curItem = getItem(i);
             if (item.equalTo(curItem)) return true;
         }
         return false;
@@ -173,7 +173,7 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
      * Removes a single item in the adapter using isSame() from SilkComparable. Once the filter finds the item, the loop is broken
      * so you cannot remove multiple items with a single call.
      */
-    public void remove(T toRemove) {
+    public void remove(ItemType toRemove) {
         for (int i = 0; i < items.size(); i++) {
             if (toRemove.equalTo(items.get(i))) {
                 this.remove(i);
@@ -185,8 +185,8 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
     /**
      * Removes an array of items from the adapter, uses isSame() from SilkComparable to find the items.
      */
-    public final void remove(T[] toRemove) {
-        for (T item : toRemove) remove(item);
+    public final void remove(ItemType[] toRemove) {
+        for (ItemType item : toRemove) remove(item);
     }
 
     /**
@@ -201,7 +201,7 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
     /**
      * Gets a list of all items in the adapter.
      */
-    public final List<T> getItems() {
+    public final List<ItemType> getItems() {
         return items;
     }
 
@@ -211,14 +211,16 @@ public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapt
     }
 
     @Override
-    public T getItem(int i) {
+    public ItemType getItem(int i) {
         return items.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        return i;
+        return getItemId(getItem(i));
     }
+
+    public abstract long getItemId(ItemType item);
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {

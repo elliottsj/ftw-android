@@ -1,6 +1,5 @@
 package com.afollestad.silk.fragments;
 
-import android.util.Log;
 import com.afollestad.silk.caching.OnReadyCallback;
 import com.afollestad.silk.caching.SilkCache;
 import com.afollestad.silk.caching.SilkComparable;
