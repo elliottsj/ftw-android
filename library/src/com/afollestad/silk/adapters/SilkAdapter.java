@@ -19,7 +19,7 @@ import java.util.List;
  * @param <T> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter {
+public abstract class SilkAdapter<T extends SilkComparable<T>> extends BaseAdapter {
 
     public SilkAdapter(Context context) {
         this.context = context;
@@ -63,6 +63,13 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
         notifyDataSetChanged();
     }
 
+    public void add(int index, List<T> toAdd) {
+        for (int i = 0; i < toAdd.size(); i++) {
+            add(index, toAdd.get(i));
+            index++;
+        }
+    }
+
     /**
      * Adds a single item to the adapter and notifies the attached ListView.
      */
@@ -76,9 +83,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
      * Adds an array of items to the adapter and notifies the attached ListView.
      */
     public final void add(T[] toAdd) {
-        isChanged = true;
-        for (T item : toAdd)
-            add(item);
+        add(new ArrayList<T>(Arrays.asList(toAdd)));
     }
 
     /**
@@ -120,7 +125,7 @@ public abstract class SilkAdapter<T extends SilkComparable> extends BaseAdapter 
             }
         }
         if (found) return true;
-        else if (addIfNotFound && !found) {
+        else if (addIfNotFound) {
             add(toUpdate);
             return true;
         }

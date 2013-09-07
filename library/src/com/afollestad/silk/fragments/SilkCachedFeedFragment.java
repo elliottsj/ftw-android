@@ -59,7 +59,6 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     @Override
     protected void onVisibilityChanged(boolean visible) {
         super.onVisibilityChanged(visible);
-        Log.d(getCacheName() + "-fragment", "onVisibilityChanged(" + visible + ")");
         if (!visible && mCache != null && mCache.isChanged()) {
             mCache.commit(new SilkCache.SimpleCommitCallback() {
                 @Override
