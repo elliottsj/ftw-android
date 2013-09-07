@@ -18,6 +18,12 @@ import com.afollestad.silk.adapters.SilkAdapter;
  */
 public class SilkListView extends ListView {
 
+    public interface OnSilkScrollListener {
+        public void onScrollToTop();
+
+        public void onScrollToBottom();
+    }
+
     public SilkListView(Context context) {
         super(context);
         init();
@@ -34,6 +40,7 @@ public class SilkListView extends ListView {
     }
 
     private int lastState;
+    private OnSilkScrollListener mScrollListener;
 
     private void init() {
         setOnScrollListener(new OnScrollListener() {
@@ -51,6 +58,12 @@ public class SilkListView extends ListView {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (mScrollListener != null) {
+                    if (firstVisibleItem == 0)
+                        mScrollListener.onScrollToTop();
+                    else if (firstVisibleItem == (totalItemCount - visibleItemCount))
+                        mScrollListener.onScrollToBottom();
+                }
             }
         });
     }
@@ -72,5 +85,9 @@ public class SilkListView extends ListView {
      */
     public void setAdapter(SilkAdapter adapter) {
         super.setAdapter(adapter);
+    }
+
+    public void setOnSilkScrollListener(OnSilkScrollListener listener) {
+        mScrollListener = listener;
     }
 }
