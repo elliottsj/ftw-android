@@ -13,6 +13,8 @@ import java.util.List;
  */
 public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>> extends SilkListFragment<ItemType> {
 
+    private boolean mBlockPaginate = false;
+
     public static class OfflineException extends Exception {
         public OfflineException() {
             super("You are currently offline.");
@@ -24,9 +26,11 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
     }
 
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
-        if (paginated || getAddIndex() <= 0)
-            getAdapter().add(results);
-        else getAdapter().add(getAddIndex(), results);
+        if (results != null) {
+            if (paginated || getAddIndex() <= 0)
+                getAdapter().add(results);
+            else getAdapter().add(getAddIndex(), results);
+        }
         setLoadComplete(false);
     }
 
@@ -69,6 +73,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
 
     public void performPaginate(boolean showProgress) {
         if (isLoading()) return;
+        else if (mBlockPaginate) return;
         setLoading(showProgress);
         Thread t = new Thread(new Runnable() {
             @Override
@@ -76,14 +81,14 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                 try {
                     if (!Silk.isOnline(getActivity())) throw new OfflineException();
                     final List<ItemType> items = paginate();
-                    if (items != null) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                onPostLoad(items, true);
-                            }
-                        });
-                    }
+                    if (items == null)
+                        mBlockPaginate = true;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onPostLoad(items, true);
+                        }
+                    });
                 } catch (final Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
