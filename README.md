@@ -137,11 +137,6 @@ that you have to do is override `refresh()` on `onError()`.
 
 A `SilkFeedFragment` that automatically caches its contents locally, and loads it again later without pulling from the network.
 
-### SilkLastUpdatedFragment
-
-A `SilkCachedFeedFragment` that displays a frame on the top indicating the last time the fragment pulled from the network,
-and allowing the user to invoke a refresh.
-
 ### SilkPagerFragment
 
 A `SilkFragment` that contains a `ViewPager` and makes interaction with it easy.
