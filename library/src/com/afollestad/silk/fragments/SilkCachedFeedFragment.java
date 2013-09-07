@@ -13,6 +13,10 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
 
     public abstract String getCacheName();
 
+    public final SilkCache<ItemType> getCache() {
+        return mCache;
+    }
+
     protected void onCacheEmpty() {
         super.performRefresh(true);
     }
@@ -31,7 +35,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
                     onCacheEmpty();
                     return;
                 }
-                getAdapter().set(cache.read());
+                onPostLoad(cache.read());
             }
         });
     }
