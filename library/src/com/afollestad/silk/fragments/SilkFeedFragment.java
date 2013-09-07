@@ -86,7 +86,10 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            int beforeCount = getAdapter().getCount();
                             onPostLoad(items, true);
+                            if(items != null)
+                                getListView().smoothScrollToPosition(beforeCount);
                         }
                     });
                 } catch (final Exception e) {
