@@ -34,6 +34,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
     protected abstract void onError(Exception e);
 
     public void performRefresh(boolean showProgress) {
+        if (isLoading()) return;
         if (showProgress) setLoading(true);
         Thread t = new Thread(new Runnable() {
             @Override
