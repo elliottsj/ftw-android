@@ -3,7 +3,7 @@ package com.afollestad.silk.images;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LowPriorityThreadFactory implements ThreadFactory {
+class LowPriorityThreadFactory implements ThreadFactory {
 
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
     private final ThreadGroup group;

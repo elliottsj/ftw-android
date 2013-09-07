@@ -24,8 +24,8 @@ public class SilkHttpResponse {
         mEntity = response.getEntity();
     }
 
-    private List<SilkHttpHeader> mHeaders;
-    private HttpEntity mEntity;
+    private final List<SilkHttpHeader> mHeaders;
+    private final HttpEntity mEntity;
 
     /**
      * Gets all headers with a specified name from the response.

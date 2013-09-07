@@ -82,8 +82,7 @@ public class Dimension {
         return width == 0 && height == 0;
     }
 
-
-    public static int dpToPx(Context context, float dp) {
+    private static int dpToPx(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
     }

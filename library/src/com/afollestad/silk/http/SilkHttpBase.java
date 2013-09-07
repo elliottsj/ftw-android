@@ -37,8 +37,8 @@ class SilkHttpBase {
     }
 
     private HttpClient mClient;
-    protected List<SilkHttpHeader> mHeaders;
-    private Handler mHandler;
+    protected final List<SilkHttpHeader> mHeaders;
+    private final Handler mHandler;
 
     protected void reset() {
         mHeaders.clear();

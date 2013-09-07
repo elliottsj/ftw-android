@@ -22,7 +22,7 @@ public enum LimiterBehavior {
         mValue = value;
     }
 
-    private int mValue;
+    private final int mValue;
 
     public int intValue() {
         return mValue;

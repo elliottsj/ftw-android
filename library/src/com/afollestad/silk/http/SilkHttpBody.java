@@ -19,10 +19,6 @@ public class SilkHttpBody {
         mEntity = new ByteArrayEntity(bytes);
     }
 
-    public SilkHttpBody(File file, String contentType) {
-        mEntity = new FileEntity(file, contentType);
-    }
-
     public SilkHttpBody(InputStream stream, long length) {
         mEntity = new InputStreamEntity(stream, length);
     }

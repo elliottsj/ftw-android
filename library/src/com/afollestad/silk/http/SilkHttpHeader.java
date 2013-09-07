@@ -18,8 +18,8 @@ public class SilkHttpHeader {
         this(header.getName(), header.getValue());
     }
 
-    private String mName;
-    private String mValue;
+    private final String mName;
+    private final String mValue;
 
     public String getName() {
         return mName;
