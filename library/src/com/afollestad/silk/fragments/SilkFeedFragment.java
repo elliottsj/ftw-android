@@ -115,15 +115,17 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         performRefresh(true);
-        getListView().setOnSilkScrollListener(new SilkListView.OnSilkScrollListener() {
-            @Override
-            public void onScrollToTop() {
-            }
+        if (getListView() instanceof SilkListView) {
+            ((SilkListView)getListView()).setOnSilkScrollListener(new SilkListView.OnSilkScrollListener() {
+                @Override
+                public void onScrollToTop() {
+                }
 
-            @Override
-            public void onScrollToBottom() {
-                performPaginate(false);
-            }
-        });
+                @Override
+                public void onScrollToBottom() {
+                    performPaginate(false);
+                }
+            });
+        }
     }
 }
