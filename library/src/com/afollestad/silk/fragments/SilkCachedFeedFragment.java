@@ -15,12 +15,46 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
 
     public abstract String getCacheName();
 
+    private void writeCache() {
+        mCache.commit(new SilkCache.SimpleCommitCallback() {
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+                onError(e);
+            }
+        });
+    }
+
+    private void readCache() {
+        new SilkCache<ItemType>(getActivity(), getCacheName(), new OnReadyCallback<ItemType>() {
+            @Override
+            public void onReady(SilkCache<ItemType> cache) {
+                mCache = onCacheInitialized(cache);
+                if (mCache == null)
+                    throw new RuntimeException("onCacheInitialized() cannot return null.");
+                if (mCache.size() == 0) {
+                    SilkCachedFeedFragment.super.setLoadComplete(false);
+                    onCacheEmpty();
+                    return;
+                }
+                SilkCachedFeedFragment.super.onPostLoad(mCache.read(), false);
+            }
+        });
+    }
+
     public final SilkCache<ItemType> getCache() {
         return mCache;
     }
 
     protected void onCacheEmpty() {
         super.performRefresh(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (!isActuallyVisible())
+            writeCache();
     }
 
     @Override
@@ -43,33 +77,13 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
             return;
         }
         setLoading(showProgress);
-        new SilkCache<ItemType>(getActivity(), getCacheName(), new OnReadyCallback<ItemType>() {
-            @Override
-            public void onReady(SilkCache<ItemType> cache) {
-                mCache = onCacheInitialized(cache);
-                if (mCache == null)
-                    throw new RuntimeException("onCacheInitialized() cannot return null.");
-                if (mCache.size() == 0) {
-                    SilkCachedFeedFragment.super.setLoadComplete(false);
-                    onCacheEmpty();
-                    return;
-                }
-                SilkCachedFeedFragment.super.onPostLoad(mCache.read(), false);
-            }
-        });
+        readCache();
     }
 
     @Override
     protected void onVisibilityChanged(boolean visible) {
         super.onVisibilityChanged(visible);
-        if (!visible && mCache != null && mCache.isChanged()) {
-            mCache.commit(new SilkCache.SimpleCommitCallback() {
-                @Override
-                public void onError(Exception e) {
-                    e.printStackTrace();
-                    onError(e);
-                }
-            });
-        }
+        if (!visible && mCache != null && mCache.isChanged())
+            writeCache();
     }
 }

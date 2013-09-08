@@ -25,6 +25,9 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
         return -1;
     }
 
+    protected void onPreLoad() {
+    }
+
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
         if (results != null) {
             if (paginated || getAddIndex() < 0) {
