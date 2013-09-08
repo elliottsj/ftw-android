@@ -129,6 +129,38 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
         return -1;
     }
 
+    public final void find(final ItemType item, final SimpleFindCallback<ItemType> callback) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final int result = findIndex(item);
+                    getHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback != null) {
+                                ItemType resultItem = null;
+                                if (result > -1) resultItem = getBuffer().get(result);
+                                callback.onFound(resultItem, result);
+                            }
+                        }
+                    });
+                } catch (final Exception e) {
+                    log("Find error: " + e.getMessage());
+                    getHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback != null && callback instanceof FindCallback)
+                                ((FindCallback) callback).onError(e);
+                        }
+                    });
+                }
+            }
+        });
+        t.setPriority(Thread.MAX_PRIORITY);
+        t.start();
+    }
+
     public final SilkCache<ItemType> remove(int index) {
         if (index == -1 || index > getBuffer().size() - 1)
             throw new IndexOutOfBoundsException("Index " + index + " is larger than the cache size (" + getBuffer().size() + ")");
@@ -165,5 +197,13 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
 
     public interface CommitCallback extends SimpleCommitCallback {
         public void onCommitted();
+    }
+
+    public interface SimpleFindCallback<ItemType> {
+        public void onFound(ItemType item, int index);
+    }
+
+    public interface FindCallback<ItemType> extends SimpleFindCallback<ItemType> {
+        public void onError(Exception e);
     }
 }
