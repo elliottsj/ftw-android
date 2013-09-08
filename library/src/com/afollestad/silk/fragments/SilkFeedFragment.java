@@ -25,6 +25,9 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
         return -1;
     }
 
+    protected void onPreLoad() {
+    }
+
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
         if (results != null) {
             if (paginated || getAddIndex() < 0) {
@@ -45,6 +48,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     public void performRefresh(boolean showProgress) {
         if (isLoading()) return;
         setLoading(showProgress);
+        onPreLoad();
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
