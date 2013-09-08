@@ -79,11 +79,4 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
         setLoading(showProgress);
         readCache();
     }
-
-    @Override
-    protected void onVisibilityChanged(boolean visible) {
-        super.onVisibilityChanged(visible);
-        if (!visible && mCache != null && mCache.isChanged())
-            writeCache();
-    }
 }
