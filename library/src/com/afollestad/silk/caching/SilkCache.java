@@ -87,6 +87,7 @@ public class SilkCache<ItemType extends SilkComparable> extends SilkCacheBase<It
         getBuffer().clear();
         getBuffer().addAll(items);
         log("Cache overwritten with " + items.size() + " items");
+        markChanged();
         return this;
     }
 
