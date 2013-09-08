@@ -163,7 +163,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mListView = (SilkListView) view.findViewById(android.R.id.list);
+        mListView = (AbsListView)view.findViewById(android.R.id.list);
         mEmpty = (TextView) view.findViewById(android.R.id.empty);
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
         if (mListView == null)
