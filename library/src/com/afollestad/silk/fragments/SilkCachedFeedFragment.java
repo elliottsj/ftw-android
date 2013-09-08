@@ -9,11 +9,15 @@ import java.util.List;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<ItemType>> extends SilkFeedFragment<ItemType> {
+public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable> extends SilkFeedFragment<ItemType> {
 
     private SilkCache<ItemType> mCache;
 
     public abstract String getCacheName();
+
+    protected boolean shouldRecreateCacheOnResume() {
+        return false;
+    }
 
     private void writeCache() {
         if (mCache == null || !mCache.isChanged()) return;
@@ -49,6 +53,14 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
 
     protected void onCacheEmpty() {
         super.performRefresh(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (shouldRecreateCacheOnResume()) {
+            performRefresh(true);
+        }
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimiter<Item> {
+class SilkCacheBase<Item extends SilkComparable> extends SilkCacheBaseLimiter<Item> {
 
     public SilkCacheBase(Context context, String name) {
         super(context, name);

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>> extends SilkListFragment<ItemType> {
+public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
     private boolean mBlockPaginate = false;
 
@@ -23,9 +23,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
 
     protected int getAddIndex() {
         return -1;
-    }
-
-    protected void onPreLoad() {
     }
 
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
