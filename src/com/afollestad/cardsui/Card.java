@@ -58,7 +58,7 @@ public class Card implements CardBase<Card> {
         return equal;
     }
 
-    public interface CardMenuListener<ItemType extends CardBase> {
+    public interface CardMenuListener<ItemType> {
         public void onMenuItemClick(ItemType card, MenuItem item);
     }
 

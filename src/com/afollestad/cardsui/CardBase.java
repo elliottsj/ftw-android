@@ -6,7 +6,7 @@ import com.afollestad.silk.caching.SilkComparable;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public interface CardBase<ItemType extends CardBase> extends SilkComparable<ItemType> {
+public interface CardBase<ItemType> extends SilkComparable<ItemType> {
 
     public abstract String getTitle();
 
