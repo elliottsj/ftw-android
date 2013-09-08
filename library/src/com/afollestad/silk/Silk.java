@@ -52,7 +52,10 @@ public class Silk {
         context.getSharedPreferences("[silk-cache-expirations]", 0).edit().clear().commit();
         context.getSharedPreferences("[silk-cache-limiters]", 0).edit().clear().commit();
         File cacheDir = new File(Environment.getExternalStorageDirectory(), ".silk_cache");
-        for (File fi : cacheDir.listFiles()) fi.delete();
+        File[] files = cacheDir.listFiles();
+        if (files != null && files.length > 0) {
+            for (File fi : files) fi.delete();
+        }
         cacheDir.delete();
     }
 
