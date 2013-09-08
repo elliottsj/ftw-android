@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.caching.SilkComparable;
-import com.afollestad.silk.views.list.SilkListView;
 
 /**
  * A {@link com.afollestad.silk.fragments.SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
@@ -21,7 +20,7 @@ import com.afollestad.silk.views.list.SilkListView;
  * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkListFragment<ItemType extends SilkComparable> extends SilkFragment {
+public abstract class SilkListFragment<ItemType extends SilkComparable<ItemType>> extends SilkFragment {
 
     private AbsListView mListView;
     private TextView mEmpty;
@@ -163,7 +162,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mListView = (AbsListView)view.findViewById(android.R.id.list);
+        mListView = (AbsListView) view.findViewById(android.R.id.list);
         mEmpty = (TextView) view.findViewById(android.R.id.empty);
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);
         if (mListView == null)

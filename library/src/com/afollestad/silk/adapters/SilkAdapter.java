@@ -19,7 +19,7 @@ import java.util.List;
  * @param <ItemType> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseAdapter {
+public abstract class SilkAdapter<ItemType extends SilkComparable<ItemType>> extends BaseAdapter {
 
     public SilkAdapter(Context context) {
         this.context = context;
@@ -64,8 +64,8 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     }
 
     public void add(int index, List<ItemType> toAdd) {
-        for (int i = 0; i < toAdd.size(); i++) {
-            add(index, toAdd.get(i));
+        for (ItemType aToAdd : toAdd) {
+            add(index, aToAdd);
             index++;
         }
     }

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable> extends SilkFeedFragment<ItemType> {
+public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<ItemType>> extends SilkFeedFragment<ItemType> {
 
     private SilkCache<ItemType> mCache;
 

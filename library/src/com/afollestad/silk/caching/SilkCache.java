@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SilkCache<ItemType extends SilkComparable> extends SilkCacheBase<ItemType> {
+public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCacheBase<ItemType> {
 
     public SilkCache(Context context, String name, OnReadyCallback<ItemType> onReady) {
         super(context, name);
