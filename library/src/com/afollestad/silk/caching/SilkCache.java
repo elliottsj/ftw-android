@@ -1,6 +1,7 @@
 package com.afollestad.silk.caching;
 
 import android.content.Context;
+import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,11 @@ public class SilkCache<ItemType extends SilkComparable> extends SilkCacheBase<It
 
     public SilkCache(Context context, String name, OnReadyCallback<ItemType> onReady) {
         super(context, name);
+        init(onReady);
+    }
+
+    public SilkCache(Context context, String name, Handler handler, OnReadyCallback<ItemType> onReady) {
+        super(context, name, handler);
         init(onReady);
     }
 

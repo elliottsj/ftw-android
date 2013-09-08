@@ -13,8 +13,13 @@ import java.util.List;
 class SilkCacheBase<Item extends SilkComparable> extends SilkCacheBaseLimiter<Item> {
 
     public SilkCacheBase(Context context, String name) {
+        this(context, name, null);
+    }
+
+    public SilkCacheBase(Context context, String name, Handler handler) {
         super(context, name);
-        mHandler = new Handler();
+        if (handler == null) mHandler = new Handler();
+        else mHandler = handler;
     }
 
     private final static File CACHE_DIR = new File(Environment.getExternalStorageDirectory(), ".silk_cache");
