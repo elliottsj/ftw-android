@@ -16,7 +16,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     public abstract String getCacheName();
 
     private void writeCache() {
-        if (!mCache.isChanged()) return;
+        if (mCache == null || !mCache.isChanged()) return;
         mCache.commit(new SilkCache.SimpleCommitCallback() {
             @Override
             public void onError(Exception e) {
