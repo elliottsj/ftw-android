@@ -14,7 +14,7 @@ import com.afollestad.silk.adapters.SilkAdapter;
  *
  * @author Aidan Follestad (afollestad)
  */
-public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
+public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapter<ItemType> {
 
     public CardAdapter(Context context) {
         super(context);
@@ -23,7 +23,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
 
     private int mAccentColor;
     private int mPopupMenu = -1;
-    private Card.CardMenuListener mPopupListener;
+    private Card.CardMenuListener<ItemType> mPopupListener;
     private boolean mCardsClickable = true;
     private int mLayout = R.layout.list_item_card;
     private int mLayoutNoContent = R.layout.list_item_card_nocontent;
@@ -38,10 +38,10 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
 
     @Override
     public boolean isEnabled(int position) {
-        CardBase item = getItem(position);
+        ItemType item = getItem(position);
         if (!mCardsClickable && !item.isHeader()) return false;
         if (item.isHeader())
-            return ((CardHeader) item).getActionCallback() != null;
+            return item.getActionCallback() != null;
         return item.isClickable();
     }
 
@@ -51,7 +51,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      *
      * @param color The resolved color to use as an accent.
      */
-    public final CardAdapter<T> setAccentColor(int color) {
+    public final CardAdapter<ItemType> setAccentColor(int color) {
         mAccentColor = color;
         return this;
     }
@@ -62,7 +62,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      *
      * @param colorRes The color resource ID to use as an accent.
      */
-    public final CardAdapter<T> setAccentColorRes(int colorRes) {
+    public final CardAdapter<ItemType> setAccentColorRes(int colorRes) {
         setAccentColor(getContext().getResources().getColor(colorRes));
         return this;
     }
@@ -74,7 +74,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      * @param menuRes  The menu resource ID to use for the card's popup menu.
      * @param listener A listener invoked when an option in the popup menu is tapped by the user.
      */
-    public final CardAdapter<T> setPopupMenu(int menuRes, Card.CardMenuListener listener) {
+    public final CardAdapter<ItemType> setPopupMenu(int menuRes, Card.CardMenuListener listener) {
         mPopupMenu = menuRes;
         mPopupListener = listener;
         return this;
@@ -85,7 +85,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      * and the list's OnItemClickListener will not be called. This <b>will</b> override individual isClickable values
      * set to {@link Card}s.
      */
-    public final CardAdapter<T> setCardsClickable(boolean clickable) {
+    public final CardAdapter<ItemType> setCardsClickable(boolean clickable) {
         mCardsClickable = clickable;
         return this;
     }
@@ -94,7 +94,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      * Sets a custom layout to be used for all cards (not including headers) in the adapter. Must be called before
      * adding cards. This <b>does not</b> override layouts set to individual cards.
      */
-    public final CardAdapter<T> setCardLayout(int layoutRes) {
+    public final CardAdapter<ItemType> setCardLayout(int layoutRes) {
         mLayout = layoutRes;
         return this;
     }
@@ -103,7 +103,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
      * Sets a custom layout to be used for all cards (not including headers) in the adapter with null content. Must be called before
      * adding cards. This <b>does not</b> override layouts set to individual cards.
      */
-    public final CardAdapter<T> setCardLayoutNoContent(int layoutRes) {
+    public final CardAdapter<ItemType> setCardLayoutNoContent(int layoutRes) {
         mLayoutNoContent = layoutRes;
         return this;
     }
@@ -120,7 +120,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
         return layout;
     }
 
-    private void setupHeader(CardHeader header, View view) {
+    private void setupHeader(ItemType header, View view) {
         TextView title = (TextView) view.findViewById(android.R.id.title);
         if (title == null)
             throw new RuntimeException("Your header layout must contain a TextView with the ID @android:id/title.");
@@ -145,7 +145,7 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
         } else button.setVisibility(View.GONE);
     }
 
-    private void setupMenu(final CardBase card, final View view) {
+    private void setupMenu(final ItemType card, final View view) {
         if (view == null) return;
         if (card.getPopupMenu() < 0) {
             // Menu for this card is disabled
@@ -200,10 +200,9 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
     }
 
     @Override
-    public View onViewCreated(int index, View recycled, T item) {
+    public View onViewCreated(int index, View recycled, ItemType item) {
         if (item.isHeader()) {
-            final CardHeader header = (CardHeader) item;
-            setupHeader(header, recycled);
+            setupHeader(item, recycled);
             return recycled;
         }
 
@@ -226,6 +225,11 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
     }
 
     @Override
+    public long getItemId(ItemType item) {
+        return -1;
+    }
+
+    @Override
     public int getViewTypeCount() {
         return 3;
     }
@@ -238,21 +242,21 @@ public class CardAdapter<T extends CardBase> extends SilkAdapter<T> {
         return 0;
     }
 
-    protected boolean onProcessTitle(TextView title, T card, int accentColor) {
+    protected boolean onProcessTitle(TextView title, ItemType card, int accentColor) {
         if (title == null) return false;
         title.setText(card.getTitle());
         title.setTextColor(accentColor);
         return true;
     }
 
-    protected boolean onProcessThumbnail(ImageView icon, T card) {
+    protected boolean onProcessThumbnail(ImageView icon, ItemType card) {
         if (icon == null) return false;
         if (card.getThumbnail() == null) return false;
         icon.setImageDrawable(card.getThumbnail());
         return true;
     }
 
-    protected boolean onProcessContent(TextView content, T card) {
+    protected boolean onProcessContent(TextView content, ItemType card) {
         content.setText(card.getContent());
         return false;
     }

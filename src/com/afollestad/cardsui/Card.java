@@ -45,15 +45,28 @@ public class Card implements CardBase<Card> {
         this(context.getString(titleRes), context.getString(contentRes));
     }
 
-    public interface CardMenuListener<T> {
-        public void onMenuItemClick(T card, MenuItem item);
+    @Override
+    public Object getSilkId() {
+        return isHeader() + ":" + getTitle() + ":" + getContent();
+    }
+
+    @Override
+    public boolean equalTo(Card other) {
+        boolean equal = getTitle().equals(other.getTitle()) &&
+                isHeader() == other.isHeader();
+        if (getContent() != null) equal = equal && getContent().equals(other.getContent());
+        return equal;
+    }
+
+    public interface CardMenuListener<ItemType extends CardBase> {
+        public void onMenuItemClick(ItemType card, MenuItem item);
     }
 
     private String title;
     private String content;
     private boolean isHeader;
     private int mPopupMenu;
-    private CardMenuListener mPopupListener;
+    private CardMenuListener<Card> mPopupListener;
     private boolean isClickable;
     private Object mTag;
     private Drawable mThumbnail;
@@ -87,6 +100,16 @@ public class Card implements CardBase<Card> {
     @Override
     public int getPopupMenu() {
         return mPopupMenu;
+    }
+
+    @Override
+    public CardHeader.ActionListener getActionCallback() {
+        return null;
+    }
+
+    @Override
+    public String getActionTitle() {
+        return null;
     }
 
     @Override
@@ -179,18 +202,5 @@ public class Card implements CardBase<Card> {
     public Card setLayout(int layoutRes) {
         mLayout = layoutRes;
         return this;
-    }
-
-    @Override
-    public boolean isSameAs(Card another) {
-        boolean equal = getTitle().equals(another.getTitle()) &&
-                isHeader() == another.isHeader();
-        if (getContent() != null) equal = equal && getContent().equals(another.getContent());
-        return equal;
-    }
-
-    @Override
-    public boolean shouldIgnore() {
-        return isHeader;
     }
 }

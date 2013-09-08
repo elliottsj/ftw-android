@@ -37,6 +37,11 @@ public class CardHeader extends Card {
     private String mActionTitle;
     private ActionListener mCallback;
 
+    @Override
+    public ActionListener getActionCallback() {
+        return mCallback;
+    }
+
     public interface ActionListener {
         public void onClick(CardHeader header);
     }
@@ -76,12 +81,9 @@ public class CardHeader extends Card {
         return this;
     }
 
+    @Override
     public String getActionTitle() {
         return mActionTitle;
-    }
-
-    public ActionListener getActionCallback() {
-        return mCallback;
     }
 
     /**
