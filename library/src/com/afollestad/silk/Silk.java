@@ -51,7 +51,9 @@ public class Silk {
         context.getSharedPreferences("feed_last_update", 0).edit().clear().commit();
         context.getSharedPreferences("[silk-cache-expirations]", 0).edit().clear().commit();
         context.getSharedPreferences("[silk-cache-limiters]", 0).edit().clear().commit();
-        new File(Environment.getExternalStorageDirectory(), "Silk").delete();
+        File cacheDir = new File(Environment.getExternalStorageDirectory(), ".silk_cache");
+        for (File fi : cacheDir.listFiles()) fi.delete();
+        cacheDir.delete();
     }
 
     public static Object deserializeObject(String input) {
