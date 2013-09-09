@@ -42,7 +42,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
                     onCacheEmpty();
                     return;
                 }
-                SilkCachedFeedFragment.super.onPostLoad(mCache.read(), false);
+                onPostLoadFromCache(mCache.read());
             }
         });
     }
@@ -80,6 +80,10 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
                 mCache.addAll(0, results);
             }
         }
+    }
+
+    protected void onPostLoadFromCache(List<ItemType> results) {
+        super.onPostLoad(results, false);
     }
 
     protected SilkCache<ItemType> onCacheInitialized(SilkCache<ItemType> cache) {
