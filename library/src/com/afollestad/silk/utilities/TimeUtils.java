@@ -170,7 +170,9 @@ public class TimeUtils {
                 else if (days > 7) {
                     long weeks = days / 7;
                     days = days % 7;
-                    return weeks + "w" + days + "d";
+                    String str = weeks + "w";
+                    if (days > 0) str += days + "d";
+                    return str;
                 } else return days + "d";
             }
         } else {
