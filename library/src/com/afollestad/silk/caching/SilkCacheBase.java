@@ -61,17 +61,19 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
                 }
             }
             mBuffer = new ArrayList<Item>();
-            FileInputStream fileInputStream = new FileInputStream(cacheFile);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            while (true) {
-                try {
-                    final Item item = (Item) objectInputStream.readObject();
-                    if (item != null) mBuffer.add(item);
-                } catch (EOFException eof) {
-                    break;
+            if (cacheFile.exists()) {
+                FileInputStream fileInputStream = new FileInputStream(cacheFile);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                while (true) {
+                    try {
+                        final Item item = (Item) objectInputStream.readObject();
+                        if (item != null) mBuffer.add(item);
+                    } catch (EOFException eof) {
+                        break;
+                    }
                 }
-            }
-            objectInputStream.close();
+                objectInputStream.close();
+            } else log("Cache file doesn't exist (" + cacheFile.getAbsolutePath() + ").");
             log("Read " + mBuffer.size() + " items from the cache file");
         } catch (Exception e) {
             e.printStackTrace();
