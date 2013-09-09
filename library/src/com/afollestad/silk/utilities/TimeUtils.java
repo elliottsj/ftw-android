@@ -166,7 +166,14 @@ public class TimeUtils {
                     return hours + "h";
                 }
             } else {
-                return days + "d";
+//                23 / 7 = 3 weeks total
+//                23 % 7 = 2 days left over
+                if (days == 7) return "1w";
+                else if (days > 7) {
+                    long weeks = days / 7;
+                    days = days % 7;
+                    return weeks + "w" + days + "d";
+                } else return days + "d";
             }
         } else {
             return years + "y";
