@@ -19,7 +19,7 @@ import java.util.List;
  * @param <ItemType> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkAdapter<ItemType extends SilkComparable<ItemType>> extends BaseAdapter {
+public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseAdapter {
 
     public SilkAdapter(Context context) {
         this.context = context;
