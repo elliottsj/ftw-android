@@ -150,7 +150,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable<ItemType>
      * @param error Whether or not an error occurred while loading. This value is not used in the default implementation
      *              but can be used by overriding classes.
      */
-    public void setLoadComplete(boolean error) {
+    public final void setLoadComplete(boolean error) {
         mLoading = false;
         setListShown(true);
     }
