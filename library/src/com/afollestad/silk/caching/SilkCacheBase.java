@@ -73,7 +73,7 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
                     }
                 }
                 objectInputStream.close();
-            }
+            } else log("Cache file doesn't exist.");
             log("Read " + mBuffer.size() + " items from the cache file");
         } catch (Exception e) {
             e.printStackTrace();
