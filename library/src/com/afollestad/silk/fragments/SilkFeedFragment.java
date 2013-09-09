@@ -114,11 +114,14 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
         t.start();
     }
 
+    protected void onInitialRefresh() {
+        performRefresh(true);
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        performRefresh(true);
+        onInitialRefresh();
         if (getListView() instanceof SilkListView) {
             ((SilkListView) getListView()).setOnSilkScrollListener(new SilkListView.OnSilkScrollListener() {
                 @Override

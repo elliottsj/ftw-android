@@ -91,12 +91,12 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     }
 
     @Override
-    public void performRefresh(boolean showProgress) {
+    protected void onInitialRefresh() {
         if (getCacheName() == null) {
-            super.performRefresh(showProgress);
+            super.onInitialRefresh();
             return;
         }
-        setLoading(showProgress);
+        setLoading(true);
         readCache();
     }
 }
