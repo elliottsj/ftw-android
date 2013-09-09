@@ -16,6 +16,10 @@ import com.afollestad.silk.adapters.SilkAdapter;
  */
 public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapter<ItemType> {
 
+    private final static int TYPE_REGULAR = 0;
+    private final static int TYPE_NO_CONTENT = 1;
+    private final static int TYPE_HEADER = 2;
+
     public CardAdapter(Context context) {
         super(context);
         mAccentColor = context.getResources().getColor(android.R.color.black);
@@ -74,7 +78,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
      * @param menuRes  The menu resource ID to use for the card's popup menu.
      * @param listener A listener invoked when an option in the popup menu is tapped by the user.
      */
-    public final CardAdapter<ItemType> setPopupMenu(int menuRes, Card.CardMenuListener listener) {
+    public final CardAdapter<ItemType> setPopupMenu(int menuRes, Card.CardMenuListener<ItemType> listener) {
         mPopupMenu = menuRes;
         mPopupListener = listener;
         return this;
@@ -110,13 +114,16 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
 
     @Override
     public int getLayout(int index, int type) {
-        if (type == 2)
+        if (type == TYPE_HEADER)
             return R.layout.list_item_header;
-        else if (type == 1)
+        else if (type == TYPE_NO_CONTENT)
             return mLayoutNoContent;
         CardBase card = getItem(index);
         int layout = card.getLayout();
-        if (layout == 0) layout = mLayout;
+        if (layout <= 0) {
+            // If no layout was specified for the individual card, use the adapter's set layout
+            layout = mLayout;
+        }
         return layout;
     }
 
@@ -237,9 +244,11 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     @Override
     public int getItemViewType(int position) {
         CardBase item = getItem(position);
-        if (item.isHeader()) return 2;
-        else if (item.getContent() == null && item.getLayout() <= 0) return 1;
-        return 0;
+        if (item.isHeader())
+            return TYPE_HEADER;
+        else if ((item.getContent() == null || item.getContent().trim().isEmpty()) && item.getLayout() <= 0)
+            return TYPE_NO_CONTENT;
+        else return TYPE_REGULAR;
     }
 
     protected boolean onProcessTitle(TextView title, ItemType card, int accentColor) {
