@@ -28,7 +28,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
     protected void onPreLoad() {
     }
 
-    protected void onPostLoad(List<ItemType> results, boolean paginated, boolean loadComplete) {
+    protected final void appendToAdapter(List<ItemType> results, boolean paginated) {
         if (results != null) {
             if (paginated || getAddIndex() < 0) {
                 getAdapter().add(results);
@@ -36,7 +36,11 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                 getAdapter().add(getAddIndex(), results);
             }
         }
-        if (loadComplete) setLoadComplete(false);
+    }
+
+    protected void onPostLoad(List<ItemType> results, boolean paginated) {
+        appendToAdapter(results, paginated);
+        setLoadComplete(false);
     }
 
     protected abstract List<ItemType> refresh() throws Exception;
@@ -58,7 +62,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            onPostLoad(items, false, true);
+                            onPostLoad(items, false);
                         }
                     });
                 } catch (final Exception e) {
@@ -93,7 +97,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                         @Override
                         public void run() {
                             int beforeCount = getAdapter().getCount();
-                            onPostLoad(items, true, true);
+                            onPostLoad(items, true);
                             if (items != null)
                                 getListView().smoothScrollToPosition(beforeCount);
                         }
