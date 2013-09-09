@@ -28,7 +28,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
     protected void onPreLoad() {
     }
 
-    protected void onPostLoad(List<ItemType> results, boolean paginated) {
+    protected void onPostLoad(List<ItemType> results, boolean paginated, boolean loadComplete) {
         if (results != null) {
             if (paginated || getAddIndex() < 0) {
                 getAdapter().add(results);
@@ -36,7 +36,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                 getAdapter().add(getAddIndex(), results);
             }
         }
-        setLoadComplete(false);
+        if (loadComplete) setLoadComplete(false);
     }
 
     protected abstract List<ItemType> refresh() throws Exception;
@@ -58,7 +58,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            onPostLoad(items, false);
+                            onPostLoad(items, false, true);
                         }
                     });
                 } catch (final Exception e) {
@@ -93,7 +93,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
                         @Override
                         public void run() {
                             int beforeCount = getAdapter().getCount();
-                            onPostLoad(items, true);
+                            onPostLoad(items, true, true);
                             if (items != null)
                                 getListView().smoothScrollToPosition(beforeCount);
                         }
@@ -120,7 +120,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>
         super.onViewCreated(view, savedInstanceState);
         performRefresh(true);
         if (getListView() instanceof SilkListView) {
-            ((SilkListView)getListView()).setOnSilkScrollListener(new SilkListView.OnSilkScrollListener() {
+            ((SilkListView) getListView()).setOnSilkScrollListener(new SilkListView.OnSilkScrollListener() {
                 @Override
                 public void onScrollToTop() {
                 }
