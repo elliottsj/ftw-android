@@ -77,7 +77,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
             if (paginated || getAddIndex() < 0) {
                 mCache.addAll(results);
             } else {
-                mCache.addAll(0, results);
+                mCache.addAll(getAddIndex(), results);
             }
         }
     }
