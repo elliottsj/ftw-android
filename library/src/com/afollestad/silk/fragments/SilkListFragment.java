@@ -20,7 +20,7 @@ import com.afollestad.silk.caching.SilkComparable;
  * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkListFragment<ItemType extends SilkComparable<ItemType>> extends SilkFragment {
+public abstract class SilkListFragment<ItemType extends SilkComparable> extends SilkFragment {
 
     private AbsListView mListView;
     private TextView mEmpty;

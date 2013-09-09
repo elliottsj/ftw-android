@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkFeedFragment<ItemType extends SilkComparable<ItemType>> extends SilkListFragment<ItemType> {
+public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
     private boolean mBlockPaginate = false;
 
