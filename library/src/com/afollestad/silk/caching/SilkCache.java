@@ -48,19 +48,18 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
     public final SilkCache<ItemType> add(int index, ItemType item) {
         if (item == null) throw new IllegalArgumentException("You cannot add a null item.");
         log("Item " + item.getSilkId() + " added to the cache.");
-        getBuffer().add(item);
+        getBuffer().add(index, item);
         markChanged();
         return this;
     }
 
     public final SilkCache<ItemType> addAll(ItemType[] items) {
-        addAll(new ArrayList<ItemType>(Arrays.asList(items)));
+        addAll(0, new ArrayList<ItemType>(Arrays.asList(items)));
         return this;
     }
 
     public final SilkCache<ItemType> addAll(List<ItemType> items) {
-        for (int i = 0; i < items.size(); i++)
-            add(items.get(i));
+        addAll(0, items);
         return this;
     }
 
@@ -70,11 +69,15 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
     }
 
     public final SilkCache<ItemType> addAll(int startIndex, List<ItemType> items) {
+        if (items == null || items.size() == 0)
+            throw new IllegalArgumentException("You cannot add a null or empty collection.");
+        markChanged();
         int index = startIndex;
-        for (int i = 0; i < items.size(); i++) {
-            add(index, items.get(i));
+        for (ItemType item : items) {
+            getBuffer().add(index, item);
             index++;
         }
+        log("Added " + items.size() + " items to the cache at index " + startIndex);
         return this;
     }
 
