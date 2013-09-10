@@ -38,10 +38,14 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
 
     protected final void appendToAdapter(List<ItemType> results, boolean paginated) {
         if (results != null) {
-            if (paginated || getAddIndex() < 0) {
-                getAdapter().add(results);
+            if (paginated) {
+                if (getAddIndex() < 0) {
+                    getAdapter().add(results);
+                } else {
+                    getAdapter().add(getAddIndex(), results);
+                }
             } else {
-                getAdapter().add(getAddIndex(), results);
+                getAdapter().set(results);
             }
         }
     }
