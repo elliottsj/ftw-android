@@ -14,11 +14,19 @@ import java.util.List;
 public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
     private boolean mBlockPaginate = false;
+    protected boolean mInitialLoadOnResume;
 
     public static class OfflineException extends Exception {
         public OfflineException() {
             super("You are currently offline.");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mInitialLoadOnResume)
+            onInitialRefresh();
     }
 
     protected int getAddIndex() {
@@ -125,7 +133,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        onInitialRefresh();
         if (getListView() instanceof SilkListView) {
             ((SilkListView) getListView()).setOnSilkScrollListener(new SilkListView.OnSilkScrollListener() {
                 @Override
@@ -138,5 +145,11 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
                 }
             });
         }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (!mInitialLoadOnResume) onInitialRefresh();
     }
 }

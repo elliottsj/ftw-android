@@ -1,5 +1,6 @@
 package com.afollestad.silk.fragments;
 
+import android.app.Activity;
 import com.afollestad.silk.caching.OnReadyCallback;
 import com.afollestad.silk.caching.SilkCache;
 import com.afollestad.silk.caching.SilkComparable;
@@ -17,6 +18,17 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
 
     protected boolean shouldRecreateCacheOnResume() {
         return false;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        /**
+         * onAttach is called first in the fragment life cycle before anything else.
+         * This tells the parent feed fragment whether or not the fragment will refresh every time it resumes,
+         * or only the first time the fragment's views are created.
+         */
+        super.mInitialLoadOnResume = shouldRecreateCacheOnResume();
     }
 
     private void writeCache() {
@@ -56,14 +68,6 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (shouldRecreateCacheOnResume()) {
-            performRefresh(true);
-        }
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         if (!isActuallyVisible())
@@ -90,6 +94,9 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
         return cache;
     }
 
+    /**
+     * Overridden to initially load from the cache, if possible, instead of re-loading from the web.
+     */
     @Override
     protected void onInitialRefresh() {
         if (getCacheName() == null) {
