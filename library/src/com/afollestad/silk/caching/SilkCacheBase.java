@@ -4,20 +4,26 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Handler;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimiter<Item> {
 
-    public SilkCacheBase(Context context, String name) {
-        this(context, name, null);
+    public SilkCacheBase(Context context, String name, Class<Item> cls) {
+        this(context, name, cls, null);
     }
 
-    public SilkCacheBase(Context context, String name, Handler handler) {
+    public SilkCacheBase(Context context, String name, Class<Item> cls, Handler handler) {
         super(context, name);
+        mCls = cls;
         if (handler == null) mHandler = new Handler();
         else mHandler = handler;
     }
@@ -26,6 +32,13 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
     private final Handler mHandler;
     private List<Item> mBuffer;
     private boolean isChanged;
+    private final Class<?> mCls;
+
+    private Kryo getKryo() {
+        Kryo mKryo = new Kryo();
+        mKryo.register(mCls);
+        return mKryo;
+    }
 
     public final boolean isChanged() {
         return isChanged;
@@ -62,17 +75,14 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
             }
             mBuffer = new ArrayList<Item>();
             if (cacheFile.exists()) {
-                FileInputStream fileInputStream = new FileInputStream(cacheFile);
-                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                Kryo kryo = getKryo();
+                Input input = new Input(new FileInputStream(cacheFile));
                 while (true) {
-                    try {
-                        final Item item = (Item) objectInputStream.readObject();
-                        if (item != null) mBuffer.add(item);
-                    } catch (EOFException eof) {
-                        break;
-                    }
+                    final Item item = (Item) kryo.readObject(input, mCls);
+                    if (item != null) mBuffer.add(item);
+                    else break;
                 }
-                objectInputStream.close();
+                input.close();
             } else log("Cache file doesn't exist (" + cacheFile.getAbsolutePath() + ").");
             log("Read " + mBuffer.size() + " items from the cache file");
         } catch (Exception e) {
@@ -137,11 +147,11 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
         }
 
         CACHE_DIR.mkdirs();
-        FileOutputStream fileOutputStream = new FileOutputStream(cacheFile);
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        Kryo kryo = getKryo();
+        Output output = new Output(new FileOutputStream(cacheFile));
         for (Item item : mBuffer)
-            objectOutputStream.writeObject(item);
-        objectOutputStream.close();
+            kryo.writeObject(output, item);
+        output.close();
         log("Committed " + mBuffer.size() + " items.");
         isChanged = false;
     }

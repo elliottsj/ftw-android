@@ -16,6 +16,8 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
 
     public abstract String getCacheName();
 
+    public abstract Class<ItemType> getCacheClass();
+
     protected boolean shouldRecreateCacheOnResume() {
         return false;
     }
@@ -43,7 +45,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     }
 
     private void readCache() {
-        new SilkCache<ItemType>(getActivity(), getCacheName(), new OnReadyCallback<ItemType>() {
+        new SilkCache<ItemType>(getActivity(), getCacheName(), getCacheClass(), new OnReadyCallback<ItemType>() {
             @Override
             public void onReady(SilkCache<ItemType> cache) {
                 mCache = onCacheInitialized(cache);

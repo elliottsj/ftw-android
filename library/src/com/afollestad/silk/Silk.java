@@ -6,8 +6,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.Serializable;
 
 /**
  * Various convenience methods.
@@ -59,26 +66,30 @@ public class Silk {
         cacheDir.delete();
     }
 
-    public static Object deserializeObject(String input) {
+    public static Object deserializeObject(String str, Class<?> cls) {
         try {
-            byte[] data = Base64.decode(input, Base64.DEFAULT);
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-            Object o = ois.readObject();
-            ois.close();
-            return o;
+            Kryo kryo = new Kryo();
+            byte[] data = Base64.decode(str, Base64.DEFAULT);
+            ByteArrayInputStream bais = new ByteArrayInputStream(data);
+            Input input = new Input(bais);
+            Object obj = kryo.readObject(input, cls);
+            input.close();
+            return obj;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static String serializeObject(Serializable tweet) {
+    public static String serializeObject(Serializable tweet, Class<?> cls) {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(tweet);
-            oos.close();
-            return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+            Kryo kryo = new Kryo();
+            kryo.register(cls);
+            Output output = new Output(new ByteArrayOutputStream());
+            kryo.writeObject(output, tweet);
+            String str = Base64.encodeToString(output.toBytes(), Base64.DEFAULT);
+            output.close();
+            return str;
         } catch (Exception e) {
             e.printStackTrace();
             return "";
