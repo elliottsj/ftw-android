@@ -79,17 +79,8 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     @Override
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
         super.onPostLoad(results, paginated);
-        if (mCache != null && results != null) {
-            if (paginated) {
-                if (getAddIndex() < 0) {
-                    mCache.addAll(results);
-                } else {
-                    mCache.addAll(getAddIndex(), results);
-                }
-            } else {
-                mCache.set(results);
-            }
-        }
+        if (mCache != null)
+            mCache.set(getAdapter().getItems());
     }
 
     protected void onPostLoadFromCache(List<ItemType> results) {

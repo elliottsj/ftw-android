@@ -1,6 +1,7 @@
 package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import com.afollestad.silk.Silk;
 import com.afollestad.silk.caching.SilkComparable;
@@ -29,29 +30,23 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
             onInitialRefresh();
     }
 
-    protected int getAddIndex() {
-        return -1;
-    }
-
     protected void onPreLoad() {
     }
 
-    protected final void appendToAdapter(List<ItemType> results, boolean paginated) {
+    protected List<ItemType> onUpdateItems(List<ItemType> results, boolean paginated) {
+        List<ItemType> items = getAdapter().getItems();
         if (results != null) {
             if (paginated) {
-                if (getAddIndex() < 0) {
-                    getAdapter().add(results);
-                } else {
-                    getAdapter().add(getAddIndex(), results);
-                }
+                items.addAll(results);
             } else {
-                getAdapter().set(results);
+                items = results;
             }
         }
+        return items;
     }
 
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
-        appendToAdapter(results, paginated);
+        getAdapter().set(onUpdateItems(results, paginated));
         setLoadComplete(false);
     }
 

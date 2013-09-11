@@ -27,7 +27,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     }
 
     private final Context context;
-    private final List<ItemType> items;
+    private List<ItemType> items;
     private boolean isChanged = false;
     private int mScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
@@ -144,8 +144,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      */
     public void set(List<ItemType> toSet) {
         isChanged = true;
-        this.items.clear();
-        for (ItemType item : toSet) this.add(item);
+        this.items = toSet;
         notifyDataSetChanged();
     }
 

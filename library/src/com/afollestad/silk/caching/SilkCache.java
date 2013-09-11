@@ -87,8 +87,6 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
     }
 
     public final SilkCache<ItemType> set(List<ItemType> items) {
-        if (items == null || items.size() == 0)
-            throw new IllegalArgumentException("You cannot set a null or empty collection.");
         getBuffer().clear();
         getBuffer().addAll(items);
         log("Cache overwritten with " + items.size() + " items");
