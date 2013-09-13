@@ -17,11 +17,11 @@ import java.util.List;
 
 class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimiter<Item> {
 
-    public SilkCacheBase(Context context, String name, Class<Item> cls) {
+    public SilkCacheBase(Context context, String name, Class<?> cls) {
         this(context, name, cls, null);
     }
 
-    public SilkCacheBase(Context context, String name, Class<Item> cls, Handler handler) {
+    public SilkCacheBase(Context context, String name, Class<?> cls, Handler handler) {
         super(context, name);
         mCls = cls;
         if (handler == null) mHandler = new Handler();

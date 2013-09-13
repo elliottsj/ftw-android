@@ -9,12 +9,12 @@ import java.util.List;
 
 public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCacheBase<ItemType> {
 
-    public SilkCache(Context context, String name, Class<ItemType> cls, OnReadyCallback<ItemType> onReady) {
+    public SilkCache(Context context, String name, Class<?> cls, OnReadyCallback<ItemType> onReady) {
         super(context, name, cls);
         init(onReady);
     }
 
-    public SilkCache(Context context, String name, Class<ItemType> cls, OnReadyCallback<ItemType> onReady, Handler handler) {
+    public SilkCache(Context context, String name, Class<?> cls, OnReadyCallback<ItemType> onReady, Handler handler) {
         super(context, name, cls, handler);
         init(onReady);
     }
