@@ -76,7 +76,7 @@ public abstract class SilkFragment extends Fragment {
     @Override
     public final void setUserVisibleHint(boolean isVisibleToUser) {
         if (isVisibleToUser) notifyVisibility(true);
-        else if (isVisible() && !isVisibleToUser) notifyVisibility(false);
+        else if (isVisible()) notifyVisibility(false);
         super.setUserVisibleHint(isVisibleToUser);
     }
 
