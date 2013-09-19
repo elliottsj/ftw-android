@@ -45,9 +45,11 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     }
 
     private void readCache() {
+        if (getActivity() == null) return;
         new SilkCache<ItemType>(getActivity(), getCacheName(), getCacheClass(), new OnReadyCallback<ItemType>() {
             @Override
             public void onReady(SilkCache<ItemType> cache) {
+                if (getActivity() == null) return;
                 mCache = onCacheInitialized(cache);
                 if (mCache == null)
                     throw new RuntimeException("onCacheInitialized() cannot return null.");
