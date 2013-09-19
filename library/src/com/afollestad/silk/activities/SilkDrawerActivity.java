@@ -38,7 +38,7 @@ public abstract class SilkDrawerActivity extends Activity {
     /**
      * Checks whether or not any drawer is open in the DrawerActivity.
      */
-    public final boolean isDrawerOpen() {
+    protected final boolean isDrawerOpen() {
         DrawerLayout drawer = getDrawerLayout();
         return drawer.isDrawerOpen(Gravity.START) || drawer.isDrawerOpen(Gravity.LEFT) || drawer.isDrawerOpen(Gravity.RIGHT);
     }
@@ -47,38 +47,50 @@ public abstract class SilkDrawerActivity extends Activity {
      * Gets the drawer indicator drawable resource that will be displayed next to the the home up button in the activity. This is usually
      * an icon consisting of 3 vertically orientated lines.
      */
-    public abstract int getDrawerIndicatorRes();
+    protected abstract int getDrawerIndicatorRes();
 
     /**
      * Gets the shadow drawable resource that will be used for the drawer.
      */
-    public abstract int getDrawerShadowRes();
+    protected abstract int getDrawerShadowRes();
 
     /**
      * Gets the layout used for the activity.
      */
-    public abstract int getLayout();
+    protected abstract int getLayout();
 
     /**
      * Gets the drawer layout, you should return the View from the layout.
      */
-    public abstract DrawerLayout getDrawerLayout();
+    protected abstract DrawerLayout getDrawerLayout();
 
     /**
      * Gets the action bar title displayed when the drawer is open.
      */
-    public abstract int getOpenedTextRes();
+    protected abstract int getOpenedTextRes();
 
     /**
      * Can be overridden.
      */
-    public void onDrawerOpened() {
+    protected void onDrawerOpened() {
     }
 
     /**
      * Can be overridden.
      */
-    public void onDrawerClosed() {
+    protected void onDrawerClosed() {
+    }
+
+    private void invalidateOpenClosed() {
+        ActionBar ab = getActionBar();
+        if (isDrawerOpen()) {
+            ab.setTitle(getOpenedTextRes());
+            onDrawerOpened();
+        } else {
+            ab.setTitle(mTitle);
+            onDrawerClosed();
+        }
+        invalidateOptionsMenu();
     }
 
     private void setupDrawer() {
@@ -89,17 +101,13 @@ public abstract class SilkDrawerActivity extends Activity {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, getDrawerIndicatorRes(), getOpenedTextRes(), getOpenedTextRes()) {
             @Override
             public void onDrawerOpened(View drawerView) {
-                mTitle = getActionBar().getTitle();
-                getActionBar().setTitle(getOpenedTextRes());
-                invalidateOptionsMenu();
-                SilkDrawerActivity.this.onDrawerOpened();
+                invalidateOpenClosed();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu();
-                SilkDrawerActivity.this.onDrawerClosed();
+                invalidateOpenClosed();
+
             }
         };
         mDrawerLayout.setDrawerShadow(getDrawerShadowRes(), Gravity.START);
