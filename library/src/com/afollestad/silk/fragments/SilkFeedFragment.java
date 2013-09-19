@@ -1,7 +1,6 @@
 package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import com.afollestad.silk.Silk;
 import com.afollestad.silk.caching.SilkComparable;
@@ -126,6 +125,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     }
 
     protected void onInitialRefresh() {
+        getAdapter().clear();
         performRefresh(true);
     }
 
