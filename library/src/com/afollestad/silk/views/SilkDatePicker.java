@@ -169,4 +169,14 @@ public class SilkDatePicker extends LinearLayout {
         for (int i = getMinYear(); i <= getMaxYear(); i++) mYear.add(i + "");
         mYear.notifyDataSetChanged();
     }
+
+    @Override
+    public String toString() {
+        String year = mCal.get(Calendar.YEAR) + "";
+        String month = (mCal.get(Calendar.MONTH) + 1) + "";
+        if (month.length() == 1) month = "0" + month;
+        String day = mCal.get(Calendar.DAY_OF_MONTH) + "";
+        if (day.length() == 1) day = "0" + day;
+        return year + "/" + month + "/" + day;
+    }
 }
