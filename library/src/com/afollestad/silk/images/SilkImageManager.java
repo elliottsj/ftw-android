@@ -28,8 +28,16 @@ import java.util.concurrent.*;
  */
 public class SilkImageManager {
 
+    private interface ProcessCallback {
+        public Bitmap onProcess(Bitmap image);
+    }
+
     public interface ImageListener {
         public abstract void onImageReceived(String source, Bitmap bitmap);
+    }
+
+    public interface AdvancedImageListener extends ImageListener {
+        public abstract Bitmap onPostProcess(Bitmap image);
     }
 
     public static class Utils {
@@ -181,7 +189,7 @@ public class SilkImageManager {
 
     /**
      * Sets the resource ID of fallback image that is used when an image can't be loaded, or when you call
-     * {@link com.afollestad.silk.views.image.SilkImageView#showFallback()} from the SilkImageView.
+     * {@link com.afollestad.silk.views.image.SilkImageView#showFallback(SilkImageManager)} from the SilkImageView.
      */
     public SilkImageManager setFallbackImage(int resourceId) {
         this.fallbackImageId = resourceId;
@@ -205,7 +213,7 @@ public class SilkImageManager {
             log("Got " + source + " from the memory cache.");
         }
         if (bitmap == null) {
-            bitmap = getBitmapFromExternal(key, source, dimension);
+            bitmap = getBitmapFromExternal(key, source, dimension, null);
             log("Got " + source + " from the external source.");
         } else {
             log("Got " + source + " from the disk cache.");
@@ -230,7 +238,14 @@ public class SilkImageManager {
         mNetworkExecutorService.execute(new Runnable() {
             @Override
             public void run() {
-                final Bitmap bitmap = getBitmapFromExternal(key, source, dimension);
+                final Bitmap bitmap = getBitmapFromExternal(key, source, dimension, new ProcessCallback() {
+                    @Override
+                    public Bitmap onProcess(Bitmap image) {
+                        if (callback != null && callback instanceof AdvancedImageListener)
+                            image = ((AdvancedImageListener) callback).onPostProcess(image);
+                        return image;
+                    }
+                });
                 log("Got " + source + " from external source.");
                 postCallback(callback, source, bitmap);
             }
@@ -269,8 +284,10 @@ public class SilkImageManager {
                 }
 
                 if (!Silk.isOnline(context) && source.startsWith("http")) {
-                    log("Device is offline, getting fallback image...");
+                    log("Device is offline, image is not cached; getting fallback image...");
                     Bitmap fallback = get(SilkImageManager.SOURCE_FALLBACK, dimension);
+                    if (callback != null && callback instanceof AdvancedImageListener)
+                        fallback = ((AdvancedImageListener) callback).onPostProcess(bitmap);
                     postCallback(callback, source, fallback);
                     return;
                 }
@@ -278,7 +295,14 @@ public class SilkImageManager {
                 mNetworkExecutorService.execute(new Runnable() {
                     @Override
                     public void run() {
-                        final Bitmap bitmap = getBitmapFromExternal(key, source, dimension);
+                        Bitmap bitmap = getBitmapFromExternal(key, source, dimension, new ProcessCallback() {
+                            @Override
+                            public Bitmap onProcess(Bitmap image) {
+                                if (callback != null && callback instanceof AdvancedImageListener)
+                                    image = ((AdvancedImageListener) callback).onPostProcess(image);
+                                return image;
+                            }
+                        });
                         log("Got " + source + " from external source.");
                         postCallback(callback, source, bitmap);
                     }
@@ -313,7 +337,7 @@ public class SilkImageManager {
         return bitmap;
     }
 
-    private Bitmap getBitmapFromExternal(String key, String source, Dimension dimension) {
+    private Bitmap getBitmapFromExternal(String key, String source, Dimension dimension, ProcessCallback callback) {
         byte[] byteArray = sourceToBytes(source);
         if (byteArray == null) {
             source = SilkImageManager.SOURCE_FALLBACK;
@@ -321,10 +345,15 @@ public class SilkImageManager {
         }
 
         Bitmap bitmap = Utils.decodeByteArray(byteArray, dimension);
-        if (source.equals(SilkImageManager.SOURCE_FALLBACK))
+        if (source.equals(SilkImageManager.SOURCE_FALLBACK)) {
+            if (callback != null && bitmap != null)
+                bitmap = callback.onProcess(bitmap);
             return bitmap;
+        }
 
         if (bitmap != null) {
+            if (callback != null)
+                bitmap = callback.onProcess(bitmap);
             if (!source.startsWith("content") && !source.startsWith("file")) {
                 // If the source is already from the local disk, don't cache it locally again.
                 try {

@@ -31,13 +31,13 @@ public class SilkImageView extends ImageView {
         super(context, attrs, defStyle);
     }
 
-    private void log(String message) {
+    protected final void log(String message) {
         if (aimage != null && !aimage.isDebugEnabled()) return;
         Log.d("SilkImageView", message);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    protected final void onSizeChanged(int w, int h, int oldw, int oldh) {
         /**
          * This method allows the view to wait until it has been measured (a view won't be measured until
          * right before it becomes visible, which is usually after your code first starts executing. This
@@ -56,7 +56,7 @@ public class SilkImageView extends ImageView {
         loadFromSource();
     }
 
-    public void setImageURL(SilkImageManager manager, String url) {
+    public final void setImageURL(SilkImageManager manager, String url) {
         setImageURL(manager, url, true);
     }
 
@@ -73,19 +73,24 @@ public class SilkImageView extends ImageView {
      * Sets the view that will become visible when the view begins loading an image, and will be hidden when the
      * view finishes loading an image. The imageview itself will also be hidden during loading if a loading view is set.
      */
-    public SilkImageView setLoadingView(View view) {
+    public final SilkImageView setLoadingView(View view) {
         this.loadingView = view;
         return this;
+    }
+
+    protected Bitmap onPostProcess(Bitmap image) {
+        return image;
     }
 
     /**
      * Loads the fallback image set from the {@link com.afollestad.silk.images.SilkImageManager} set via #setManager.
      */
-    public void showFallback() {
+    public final void showFallback(SilkImageManager manager) {
+        aimage = manager;
         if (aimage == null)
             throw new IllegalStateException("You cannot load the fallback image until you have set a SilkImageManager via setManager().");
         log("Loading fallback image for view...");
-        aimage.get(SilkImageManager.SOURCE_FALLBACK, new SilkImageManager.ImageListener() {
+        aimage.get(SilkImageManager.SOURCE_FALLBACK, new SilkImageManager.AdvancedImageListener() {
             @Override
             public void onImageReceived(final String source, final Bitmap bitmap) {
                 setImageBitmap(bitmap);
@@ -95,6 +100,11 @@ public class SilkImageView extends ImageView {
                 }
                 log("Fallback image set to view.");
             }
+
+            @Override
+            public Bitmap onPostProcess(Bitmap image) {
+                return SilkImageView.this.onPostProcess(image);
+            }
         }, new Dimension(this));
     }
 
@@ -103,27 +113,25 @@ public class SilkImageView extends ImageView {
         if (aimage == null) {
             return;
         } else if (source == null || source.trim().isEmpty()) {
-            showFallback();
+            showFallback(aimage);
             return;
         } else if (getMeasuredWidth() == 0 && getMeasuredHeight() == 0) {
             log("View not measured yet, waiting...");
             return;
         }
-
         lastSource = source;
         final Dimension dimen = this.fitView ? new Dimension(this) : null;
         if (loadingView != null) {
             loadingView.setVisibility(View.VISIBLE);
             this.setVisibility(View.GONE);
         }
-        aimage.get(this.source, new SilkImageManager.ImageListener() {
+        aimage.get(this.source, new SilkImageManager.AdvancedImageListener() {
             @Override
             public void onImageReceived(final String source, final Bitmap bitmap) {
                 if (lastSource != null && !lastSource.equals(source)) {
                     log("View source changed since download started, not setting " + source + " to view.");
                     return;
                 }
-
                 // Post on the view's UI thread to be 100% sure we're on the right thread
                 SilkImageView.this.post(new Runnable() {
                     @Override
@@ -140,6 +148,11 @@ public class SilkImageView extends ImageView {
                         log(source + " set to view " + SilkImageManager.Utils.getKey(source, dimen));
                     }
                 });
+            }
+
+            @Override
+            public Bitmap onPostProcess(Bitmap image) {
+                return SilkImageView.this.onPostProcess(image);
             }
         }, dimen, mCacheEnabled);
     }
