@@ -112,8 +112,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
                         public void run() {
                             int beforeCount = getAdapter().getCount();
                             onPostLoad(items, true);
-                            if (items != null)
-                                getListView().smoothScrollToPosition(beforeCount);
+                            getListView().smoothScrollToPosition(beforeCount);
                         }
                     });
                 } catch (final Exception e) {
