@@ -78,8 +78,8 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
                 Kryo kryo = getKryo();
                 Input input = new Input(new FileInputStream(cacheFile));
                 while (true) {
-                    final Item item = (Item) kryo.readObject(input, mCls);
-                    if (item != null) mBuffer.add(item);
+                    final Object item = kryo.readObjectOrNull(input, mCls);
+                    if (item != null) mBuffer.add((Item) item);
                     else break;
                 }
                 input.close();
