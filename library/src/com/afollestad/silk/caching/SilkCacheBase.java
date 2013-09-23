@@ -61,34 +61,36 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
     }
 
     protected void loadItems() {
-        try {
-            File cacheFile = getCacheFile();
-            if (hasExpiration()) {
-                long expiration = getExpiration();
-                long now = Calendar.getInstance().getTimeInMillis();
-                if (now >= expiration) {
-                    // Cache is expired
-                    cacheFile.delete();
-                    log("Cache has expired, re-creating...");
-                    setExpiration(-1);
-                }
+        File cacheFile = getCacheFile();
+        if (hasExpiration()) {
+            long expiration = getExpiration();
+            long now = Calendar.getInstance().getTimeInMillis();
+            if (now >= expiration) {
+                // Cache is expired
+                cacheFile.delete();
+                log("Cache has expired, re-creating...");
+                setExpiration(-1);
             }
-            mBuffer = new ArrayList<Item>();
-            if (cacheFile.exists()) {
+        }
+        mBuffer = new ArrayList<Item>();
+        if (cacheFile.exists()) {
+            Input input = null;
+            try {
                 Kryo kryo = getKryo();
-                Input input = new Input(new FileInputStream(cacheFile));
+                input = new Input(new FileInputStream(cacheFile));
                 while (true) {
                     final Object item = kryo.readObjectOrNull(input, mCls);
                     if (item != null) mBuffer.add((Item) item);
                     else break;
                 }
-                input.close();
-            } else log("Cache file doesn't exist (" + cacheFile.getAbsolutePath() + ").");
-            log("Read " + mBuffer.size() + " items from the cache file");
-        } catch (Exception e) {
-            e.printStackTrace();
-            log("Error loading items -- " + e.getMessage());
-        }
+            } catch (Exception e) {
+                e.printStackTrace();
+                log("Error loading items -- " + e.getMessage());
+            } finally {
+                if (input != null) input.close();
+                log("Read " + mBuffer.size() + " items from the cache file");
+            }
+        } else log("Cache file doesn't exist (" + cacheFile.getAbsolutePath() + ").");
     }
 
     public final long getExpiration() {
