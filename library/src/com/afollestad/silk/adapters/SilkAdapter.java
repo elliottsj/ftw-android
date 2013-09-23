@@ -63,7 +63,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
         notifyDataSetChanged();
     }
 
-    public void add(int index, List<ItemType> toAdd) {
+    public final void add(int index, List<ItemType> toAdd) {
         for (ItemType aToAdd : toAdd) {
             add(index, aToAdd);
             index++;
@@ -142,10 +142,10 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     /**
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
-    public void set(List<ItemType> toSet) {
+    public final void set(List<ItemType> toSet) {
         isChanged = true;
-        this.items = toSet;
-        notifyDataSetChanged();
+        for (ItemType item : toSet)
+            add(item);
     }
 
     /**
