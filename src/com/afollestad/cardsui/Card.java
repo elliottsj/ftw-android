@@ -53,8 +53,21 @@ public class Card implements CardBase<Card> {
     @Override
     public boolean equalTo(Card other) {
         boolean equal = getTitle().equals(other.getTitle()) &&
-                isHeader() == other.isHeader();
-        if (getContent() != null) equal = equal && getContent().equals(other.getContent());
+                isHeader() == other.isHeader() &&
+                getPopupMenu() == other.getPopupMenu() &&
+                getLayout() == other.getLayout();
+        if (getContent() != null) {
+            equal = equal && getContent().equals(other.getContent());
+        } else {
+            equal = equal && other.getContent() == null;
+        }
+        if (getThumbnail() != null) {
+            Bitmap one = ((BitmapDrawable) getThumbnail()).getBitmap();
+            Bitmap two = ((BitmapDrawable) other.getThumbnail()).getBitmap();
+            equal = equal && one.sameAs(two);
+        } else {
+            equal = equal && other.getThumbnail() == null;
+        }
         return equal;
     }
 

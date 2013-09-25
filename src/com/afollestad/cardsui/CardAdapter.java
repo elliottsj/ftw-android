@@ -20,9 +20,40 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     private final static int TYPE_NO_CONTENT = 1;
     private final static int TYPE_HEADER = 2;
 
+    /**
+     * Initializes a new CardAdapter instance.
+     *
+     * @param context The context used to inflate layouts and retrieve resources.
+     */
     public CardAdapter(Context context) {
         super(context);
         mAccentColor = context.getResources().getColor(android.R.color.black);
+    }
+
+    /**
+     * Initializes a new CardAdapter instance.
+     *
+     * @param context       The context used to inflate layouts and retrieve resources.
+     * @param cardLayoutRes Sets a custom layout to be used for all cards (not including headers) in the adapter.
+     *                      This <b>does not</b> override layouts set to individual cards.
+     */
+    public CardAdapter(Context context, int cardLayoutRes) {
+        this(context);
+        mLayout = cardLayoutRes;
+    }
+
+    /**
+     * Initializes a new CardAdapter instance.
+     *
+     * @param context                The context used to inflate layouts and retrieve resources.
+     * @param cardLayoutRes          Sets a custom layout to be used for all cards (not including headers) in the adapter.
+     *                               This <b>does not</b> override layouts set to individual cards.
+     * @param cardLayoutNoContentRes Sets a custom layout to be used for all cards (not including headers) in the
+     *                               adapter with null content. This <b>does not</b> override layouts set to individual cards.
+     */
+    public CardAdapter(Context context, int cardLayoutRes, int cardLayoutNoContentRes) {
+        this(context, cardLayoutRes);
+        mLayoutNoContent = cardLayoutNoContentRes;
     }
 
     private int mAccentColor;
@@ -32,16 +63,8 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     private int mLayout = R.layout.list_item_card;
     private int mLayoutNoContent = R.layout.list_item_card_nocontent;
 
-    /**
-     * @deprecated Not supported for the card adapter.
-     */
     @Override
-    public boolean update(CardBase toUpdate, boolean addIfNotFound) {
-        throw new IllegalAccessError("The CardAdapter does not currently support the update() method from the SilkAdapter.");
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
+    public final boolean isEnabled(int position) {
         ItemType item = getItem(position);
         if (!mCardsClickable && !item.isHeader()) return false;
         if (item.isHeader())
@@ -91,24 +114,6 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
      */
     public final CardAdapter<ItemType> setCardsClickable(boolean clickable) {
         mCardsClickable = clickable;
-        return this;
-    }
-
-    /**
-     * Sets a custom layout to be used for all cards (not including headers) in the adapter. Must be called before
-     * adding cards. This <b>does not</b> override layouts set to individual cards.
-     */
-    public final CardAdapter<ItemType> setCardLayout(int layoutRes) {
-        mLayout = layoutRes;
-        return this;
-    }
-
-    /**
-     * Sets a custom layout to be used for all cards (not including headers) in the adapter with null content. Must be called before
-     * adding cards. This <b>does not</b> override layouts set to individual cards.
-     */
-    public final CardAdapter<ItemType> setCardLayoutNoContent(int layoutRes) {
-        mLayoutNoContent = layoutRes;
         return this;
     }
 
