@@ -38,7 +38,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      * If you override {#getItemViewType} and/or {#getViewTypeCount}, the parameter to this method will be filled with
      * the item type at the index of the item view being inflated. Otherwise, it can be ignored.
      */
-    public abstract int getLayout(int index, int type);
+    protected abstract int getLayout(int index, int type);
 
     /**
      * Called when a list item view is inflated and the inheriting adapter must fill in views in the inflated layout.
@@ -53,16 +53,25 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     /**
      * Gets the context passed in the constructor, that's used for inflating views.
      */
-    public final Context getContext() {
+    protected final Context getContext() {
         return context;
     }
 
+    /**
+     * Adds an item at a specific index inside the adapter.
+     */
     public void add(int index, ItemType toAdd) {
         isChanged = true;
         this.items.add(index, toAdd);
         notifyDataSetChanged();
     }
 
+    /**
+     * Adds a list of items to the adapter and notifies the attached Listview.
+     *
+     * @param index The index to begin adding items at (inserted starting here).
+     * @param toAdd The items to add.
+     */
     public final void add(int index, List<ItemType> toAdd) {
         for (ItemType aToAdd : toAdd) {
             add(index, aToAdd);
@@ -220,7 +229,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
         return getItemId(getItem(i));
     }
 
-    public abstract long getItemId(ItemType item);
+    protected abstract long getItemId(ItemType item);
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
@@ -249,7 +258,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     /**
      * Gets whether or not the adapter has been changed since the last time {#resetChanged} was called.
      */
-    public boolean isChanged() {
+    public final boolean isChanged() {
         return isChanged;
     }
 
