@@ -136,9 +136,9 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
         TextView title = (TextView) view.findViewById(android.R.id.title);
         if (title == null)
             throw new RuntimeException("Your header layout must contain a TextView with the ID @android:id/title.");
-        TextView subtitle = (TextView) view.findViewById(android.R.id.summary);
+        TextView subtitle = (TextView) view.findViewById(android.R.id.content);
         if (subtitle == null)
-            throw new RuntimeException("Your header layout must contain a TextView with the ID @android:id/summary.");
+            throw new RuntimeException("Your header layout must contain a TextView with the ID @android:id/content.");
         title.setText(header.getTitle());
         if (header.getContent() != null && !header.getContent().trim().isEmpty()) {
             subtitle.setVisibility(View.VISIBLE);

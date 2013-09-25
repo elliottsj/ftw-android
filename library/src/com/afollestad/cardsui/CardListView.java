@@ -1,7 +1,6 @@
 package com.afollestad.cardsui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,17 +25,17 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
 
     public CardListView(Context context) {
         super(context);
-        init(null);
+        init();
     }
 
     public CardListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs);
+        init();
     }
 
     public CardListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs);
+        init();
     }
 
     private OnItemClickListener mItemClickListener;
@@ -44,15 +43,12 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
     private CardClickListener mCardClickListener;
     private CardLongClickListener mCardLongClickListener;
 
-    private void init(AttributeSet attrs) {
+    private void init() {
         setDivider(null);
         setDividerHeight(0);
         int gray = getResources().getColor(R.color.card_gray);
-        TypedArray ta = getContext().obtainStyledAttributes(attrs, new int[]{android.R.attr.background});
-        if (ta.length() == 0) {
-            setBackgroundColor(gray);
-            setCacheColorHint(gray);
-        }
+        setBackgroundColor(gray);
+        setCacheColorHint(gray);
         setSelector(android.R.color.transparent);
         super.setOnItemClickListener(this);
         super.setOnItemLongClickListener(this);
