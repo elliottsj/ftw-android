@@ -27,7 +27,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     }
 
     private final Context context;
-    private List<ItemType> items;
+    private final List<ItemType> items;
     private boolean isChanged = false;
     private int mScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 

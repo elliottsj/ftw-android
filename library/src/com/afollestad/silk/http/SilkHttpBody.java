@@ -1,10 +1,12 @@
 package com.afollestad.silk.http;
 
 import ch.boye.httpclientandroidlib.HttpEntity;
-import ch.boye.httpclientandroidlib.entity.*;
+import ch.boye.httpclientandroidlib.entity.ByteArrayEntity;
+import ch.boye.httpclientandroidlib.entity.InputStreamEntity;
+import ch.boye.httpclientandroidlib.entity.SerializableEntity;
+import ch.boye.httpclientandroidlib.entity.StringEntity;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 

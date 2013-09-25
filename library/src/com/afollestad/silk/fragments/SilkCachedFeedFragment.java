@@ -39,7 +39,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
-                onError(e);
+                SilkCachedFeedFragment.this.onError(e);
             }
         });
     }
