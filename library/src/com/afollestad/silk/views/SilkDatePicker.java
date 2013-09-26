@@ -2,6 +2,7 @@ package com.afollestad.silk.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,7 @@ public class SilkDatePicker extends LinearLayout {
         init();
     }
 
-    public class SilkSpinnerAdapter extends ArrayAdapter<String> {
+    public final class SilkSpinnerAdapter extends ArrayAdapter<String> {
         public SilkSpinnerAdapter(Context context) {
             super(context, R.layout.spinner_item);
             super.setDropDownViewResource(R.layout.spinner_item_dropdown);
@@ -52,7 +53,7 @@ public class SilkDatePicker extends LinearLayout {
     private SilkSpinnerAdapter mDay;
     private SilkSpinnerAdapter mYear;
 
-    public Calendar getCalendar() {
+    public final Calendar getCalendar() {
         return mCal;
     }
 
@@ -61,9 +62,8 @@ public class SilkDatePicker extends LinearLayout {
         invalidateCalendar();
     }
 
-    public void setTime(Calendar time) {
-        mCal.setTimeInMillis(time.getTimeInMillis());
-        invalidateCalendar();
+    public final void setTime(Calendar time) {
+        setTime(time.getTimeInMillis());
     }
 
     private void invalidateCalendar() {
@@ -72,7 +72,7 @@ public class SilkDatePicker extends LinearLayout {
         Spinner daySpinner = (Spinner) getChildAt(1);
         daySpinner.setSelection(mCal.get(Calendar.DAY_OF_MONTH) - 1);
         Spinner yearSpinner = (Spinner) getChildAt(2);
-        yearSpinner.setSelection(mCurrentYear - getMinYear());
+        yearSpinner.setSelection(mCal.get(Calendar.YEAR) - getMinYear());
     }
 
     public int getMinYear() {
@@ -171,7 +171,7 @@ public class SilkDatePicker extends LinearLayout {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         String year = mCal.get(Calendar.YEAR) + "";
         String month = (mCal.get(Calendar.MONTH) + 1) + "";
         if (month.length() == 1) month = "0" + month;
