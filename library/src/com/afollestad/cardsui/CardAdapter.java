@@ -243,7 +243,18 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
 
     @Override
     public int getViewTypeCount() {
-        return 3;
+        // There's 3 layout types by default: cards, cards with no content, and card headers.
+        int viewTypes = 3;
+        for (int i = 0; i < getItems().size(); i++) {
+            int layout = getItem(i).getLayout();
+            if (layout > 0 &&
+                    layout != mLayout &&
+                    layout != mLayoutNoContent &&
+                    layout != R.layout.list_item_header) {
+                viewTypes++;
+            }
+        }
+        return viewTypes;
     }
 
     @Override
