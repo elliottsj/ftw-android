@@ -32,20 +32,10 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     protected void onPreLoad() {
     }
 
-    protected List<ItemType> onUpdateItems(List<ItemType> results, boolean paginated) {
-        List<ItemType> items = getAdapter().getItems();
-        if (results != null) {
-            if (paginated) {
-                items.addAll(results);
-            } else {
-                items = results;
-            }
-        }
-        return items;
-    }
-
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
-        getAdapter().set(onUpdateItems(results, paginated));
+        if (paginated)
+            getAdapter().add(results);
+        else getAdapter().set(results);
         setLoadComplete(false);
     }
 
