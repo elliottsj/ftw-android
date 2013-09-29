@@ -19,12 +19,12 @@ public class SilkHttpException extends Exception {
         mReason = stat.getReasonPhrase();
     }
 
-    private int mStatus;
+    private int mStatus = -1;
     private String mReason;
     private boolean mIsResponse;
 
     /**
-     * Gets the status code returned from the HTTP request, this will only be set if {@link #isServerResponse()} returns true;.
+     * Gets the status code returned from the HTTP request, this will only be set if {@link #isServerResponse()} returns true.
      */
     public int getStatusCode() {
         return mStatus;
