@@ -1,11 +1,7 @@
 package com.afollestad.silk.http;
 
-import android.text.Html;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.StatusLine;
-import ch.boye.httpclientandroidlib.util.EntityUtils;
-
-import java.io.IOException;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -21,18 +17,11 @@ public class SilkHttpException extends Exception {
         StatusLine stat = response.getStatusLine();
         mStatus = stat.getStatusCode();
         mReason = stat.getReasonPhrase();
-        try {
-            mBody = EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
-            e.printStackTrace();
-            mBody = null;
-        }
     }
 
     private int mStatus;
     private String mReason;
     private boolean mIsResponse;
-    private String mBody;
 
     /**
      * Gets the status code returned from the HTTP request, this will only be set if {@link #isServerResponse()} returns true;.
@@ -58,9 +47,7 @@ public class SilkHttpException extends Exception {
     @Override
     public String getMessage() {
         if (isServerResponse()) {
-            String msg = getStatusCode() + " " + getReasonPhrase();
-            if (mBody != null) msg += ":\n" + Html.fromHtml(mBody).toString();
-            return msg;
+            return getStatusCode() + " " + getReasonPhrase();
         }
         return super.getMessage();
     }
