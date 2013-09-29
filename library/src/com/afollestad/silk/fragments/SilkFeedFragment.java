@@ -1,7 +1,6 @@
 package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import com.afollestad.silk.Silk;
 import com.afollestad.silk.caching.SilkComparable;
@@ -35,10 +34,8 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
 
     protected List<ItemType> onUpdateItems(List<ItemType> results, boolean paginated) {
         List<ItemType> items = getAdapter().getItems();
-        Log.d("HomeFragment", "Adapter size: " + items.size());
         if (results != null) {
             if (paginated) {
-                Log.d("HomeFragment", "Adapter size: " + items.size());
                 items.addAll(results);
             } else {
                 items = results;
