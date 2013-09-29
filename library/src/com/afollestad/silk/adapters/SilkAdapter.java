@@ -153,6 +153,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      */
     public final void set(List<ItemType> toSet) {
         isChanged = true;
+        clear();
         for (ItemType item : toSet)
             add(item);
     }
