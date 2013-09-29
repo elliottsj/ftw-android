@@ -1,5 +1,6 @@
 package com.afollestad.silk.http;
 
+import android.text.Html;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.StatusLine;
 import ch.boye.httpclientandroidlib.util.EntityUtils;
@@ -58,7 +59,7 @@ public class SilkHttpException extends Exception {
     public String getMessage() {
         if (isServerResponse()) {
             String msg = getStatusCode() + " " + getReasonPhrase();
-            if (mBody != null) msg += ": " + mBody;
+            if (mBody != null) msg += ":\n" + Html.fromHtml(mBody).toString();
             return msg;
         }
         return super.getMessage();
