@@ -33,9 +33,11 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     }
 
     protected void onPostLoad(List<ItemType> results, boolean paginated) {
-        if (paginated)
+        if (paginated) {
             getAdapter().add(results);
-        else getAdapter().set(results);
+        } else {
+            getAdapter().set(results);
+        }
         setLoadComplete(false);
     }
 
