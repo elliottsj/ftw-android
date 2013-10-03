@@ -1,14 +1,13 @@
 package com.afollestad.cardsuisample;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
-import com.afollestad.cardsui.Card;
-import com.afollestad.cardsui.CardAdapter;
-import com.afollestad.cardsui.CardHeader;
-import com.afollestad.cardsui.CardListView;
+import com.afollestad.cardsui.*;
 
 public class MainActivity extends Activity implements Card.CardMenuListener<Card> {
 
@@ -19,7 +18,7 @@ public class MainActivity extends Activity implements Card.CardMenuListener<Card
         getActionBar().setDisplayShowHomeEnabled(false);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_card_list);
 
         // Initializes a CardAdapter with a blue accent color and basic popup menu for each card
         CardAdapter<Card> cardsAdapter = new CardAdapter<Card>(this)
@@ -28,7 +27,17 @@ public class MainActivity extends Activity implements Card.CardMenuListener<Card
 
         CardListView cardsList = (CardListView) findViewById(R.id.cardsList);
         cardsList.setAdapter(cardsAdapter);
+        cardsList.setOnCardClickListener(new CardListView.CardClickListener() {
+            @Override
+            public void onCardClick(int index, CardBase card, View view) {
+                if (index == 0) {
+                    startActivity(new Intent(MainActivity.this, CustomActivity.class));
+                }
+            }
+        });
 
+        cardsAdapter.add(new Card("View a custom adapter's cards")
+                .setPopupMenu(-1, null)); // disables the popup menu set to the adapter for this card
         cardsAdapter.add(new CardHeader("Week Days"));
         cardsAdapter.add(new Card("Monday", "Back to work :("));
         cardsAdapter.add(new Card("Tuesday", "Arguably the worst day of the week."));
@@ -36,7 +45,7 @@ public class MainActivity extends Activity implements Card.CardMenuListener<Card
         cardsAdapter.add(new Card("Thursday", "Almost there..."));
         cardsAdapter.add(new Card("Friday", "We made it!"));
 
-        cardsAdapter.add(new CardHeader("Companies")
+        cardsAdapter.add(new CardHeader("Companies", "The world's top tech businesses.")
                 // The action text here is set to a string resource, if you don't specify a context and/or string the default "See More" is used
                 .setAction(this, R.string.what_else, new CardHeader.ActionListener() {
                     @Override
@@ -46,7 +55,7 @@ public class MainActivity extends Activity implements Card.CardMenuListener<Card
                 }));
         cardsAdapter.add(new Card("Google", "Android is the best!")
                 .setThumbnail(this, R.drawable.android)  // sets a thumbnail image from drawable resources
-                .setPopupMenu(-1, null));  // -1 disables the popup menu for this individual card
+                .setPopupMenu(-1, null));
         cardsAdapter.add(new Card("Microsoft", "We're trying.")
                 .setThumbnail(this, R.drawable.wp)
                 .setPopupMenu(-1, null));
