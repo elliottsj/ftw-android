@@ -21,7 +21,8 @@ public class CustomActivity extends Activity implements Card.CardMenuListener<Ca
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 
-        // Initializes a CardAdapter with a red accent color (set in the adapter's constructor) and basic popup menu for each card
+        // Initializes a CustomCardAdapter with a basic popup menu for each card
+        // The adapter's accent color is set in its constructor, along with the custom card layout and image downloading logic
         CustomCardAdapter customAdapter = new CustomCardAdapter(this);
         customAdapter.setPopupMenu(R.menu.card_popup, this);
 
