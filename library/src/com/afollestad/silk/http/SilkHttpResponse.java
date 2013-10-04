@@ -76,7 +76,7 @@ public class SilkHttpResponse {
         try {
             return new JSONObject(getContentString());
         } catch (JSONException e) {
-            throw new Exception("The server returned invalid formatting.");
+            throw new Exception("The server did not return JSON.");
         }
     }
 
