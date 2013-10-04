@@ -144,7 +144,7 @@ A `SilkFragment` that contains a `ViewPager` and makes interaction with it easy.
 License
 =======
 
-    Copyright 2012 Jake Wharton
+    Copyright 2013 Aidan Follestad
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
