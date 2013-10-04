@@ -5,6 +5,7 @@ import ch.boye.httpclientandroidlib.HttpEntity;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -17,15 +18,15 @@ import java.util.List;
  */
 public class SilkHttpResponse {
 
+    private final List<SilkHttpHeader> mHeaders;
+    private final HttpEntity mEntity;
+
     SilkHttpResponse(HttpResponse response) {
         mHeaders = new ArrayList<SilkHttpHeader>();
         for (Header header : response.getAllHeaders())
             mHeaders.add(new SilkHttpHeader(header));
         mEntity = response.getEntity();
     }
-
-    private final List<SilkHttpHeader> mHeaders;
-    private final HttpEntity mEntity;
 
     /**
      * Gets all headers with a specified name from the response.
@@ -72,7 +73,11 @@ public class SilkHttpResponse {
      * Gets the response content as a JSONObject.
      */
     public JSONObject getContentJSON() throws Exception {
-        return new JSONObject(getContentString());
+        try {
+            return new JSONObject(getContentString());
+        } catch (JSONException e) {
+            throw new Exception("The server returned invalid formatting.");
+        }
     }
 
     /**
