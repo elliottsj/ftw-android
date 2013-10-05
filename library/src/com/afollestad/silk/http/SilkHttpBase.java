@@ -20,6 +20,10 @@ import java.util.List;
  */
 class SilkHttpBase {
 
+    protected final List<SilkHttpHeader> mHeaders;
+    private final Handler mHandler;
+    private HttpClient mClient;
+
     public SilkHttpBase(Handler handler) {
         mHeaders = new ArrayList<SilkHttpHeader>();
         mHandler = handler;
@@ -38,10 +42,6 @@ class SilkHttpBase {
         mClient = new DefaultHttpClient(cm);
     }
 
-    private HttpClient mClient;
-    protected final List<SilkHttpHeader> mHeaders;
-    private final Handler mHandler;
-
     protected void reset() {
         mHeaders.clear();
     }
@@ -57,6 +57,8 @@ class SilkHttpBase {
     }
 
     protected SilkHttpResponse performRequest(final HttpUriRequest request) throws SilkHttpException {
+        if (mClient == null)
+            throw new IllegalStateException("The client has already been shutdown, you must re-initialize it.");
         if (mHeaders.size() > 0) {
             for (SilkHttpHeader header : mHeaders)
                 request.setHeader(header.getName(), header.getValue());
@@ -77,8 +79,9 @@ class SilkHttpBase {
         return new SilkHttpResponse(response);
     }
 
-    public final void release() {
+    public final void shutdown() {
         reset();
         mClient.getConnectionManager().shutdown();
+        mClient = null;
     }
 }
