@@ -26,10 +26,11 @@ public class SilkSquareHeightImageView extends SilkImageView {
         Drawable d = getDrawable();
         if (d != null) {
             int height = MeasureSpec.getSize(heightMeasureSpec);
-            if (height > 0)
+            if (height > 0) {
                 setMeasuredDimension(height, height);
-            else
+            } else {
                 setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), height);
+            }
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
