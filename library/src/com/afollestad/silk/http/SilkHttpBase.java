@@ -78,6 +78,7 @@ class SilkHttpBase {
     }
 
     public final void release() {
+        reset();
         mClient.getConnectionManager().shutdown();
     }
 }
