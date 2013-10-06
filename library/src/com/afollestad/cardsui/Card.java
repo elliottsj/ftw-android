@@ -14,6 +14,15 @@ import android.view.MenuItem;
 public class Card implements CardBase<Card> {
 
     private static final long serialVersionUID = 7548618898682727465L;
+    private String title;
+    private String content;
+    private boolean isHeader;
+    private int mPopupMenu;
+    private CardMenuListener<Card> mPopupListener;
+    private boolean isClickable;
+    private Object mTag;
+    private Drawable mThumbnail;
+    private int mLayout;
 
     protected Card() {
     }
@@ -31,6 +40,10 @@ public class Card implements CardBase<Card> {
     public Card(String title, String content) {
         this(title);
         this.content = content;
+    }
+
+    public Card(Context context, int titleRes) {
+        this(context.getString(titleRes));
     }
 
     public Card(Context context, String title, int contentRes) {
@@ -71,20 +84,6 @@ public class Card implements CardBase<Card> {
         return equal;
     }
 
-    public interface CardMenuListener<ItemType> {
-        public void onMenuItemClick(ItemType card, MenuItem item);
-    }
-
-    private String title;
-    private String content;
-    private boolean isHeader;
-    private int mPopupMenu;
-    private CardMenuListener<Card> mPopupListener;
-    private boolean isClickable;
-    private Object mTag;
-    private Drawable mThumbnail;
-    private int mLayout;
-
     @Override
     public String getTitle() {
         return title;
@@ -105,9 +104,28 @@ public class Card implements CardBase<Card> {
         return isClickable;
     }
 
+    /**
+     * Sets whether or not the card is clickable, setting it to false will turn the card's list selector off
+     * and the list's OnItemClickListener will not be called.
+     * <p/>
+     * This <b>does not</b> override the isClickable value set to a {@link CardAdapter}, however.
+     */
+    public Card setClickable(boolean clickable) {
+        isClickable = clickable;
+        return this;
+    }
+
     @Override
     public Object getTag() {
         return mTag;
+    }
+
+    /**
+     * Sets a tag of any type that can be used to keep track of cards.
+     */
+    public Card setTag(Object tag) {
+        mTag = tag;
+        return this;
     }
 
     @Override
@@ -135,11 +153,6 @@ public class Card implements CardBase<Card> {
         return mThumbnail;
     }
 
-    @Override
-    public int getLayout() {
-        return mLayout;
-    }
-
     /**
      * Sets an optional thumbnail drawable that's displayed on the left side of the card.
      *
@@ -147,6 +160,21 @@ public class Card implements CardBase<Card> {
      */
     public Card setThumbnail(Drawable drawable) {
         mThumbnail = drawable;
+        return this;
+    }
+
+    @Override
+    public int getLayout() {
+        return mLayout;
+    }
+
+    /**
+     * Sets a custom layout to be used for this card. This will override custom layouts set to the {@link CardAdapter}.
+     *
+     * @param layoutRes The resource ID of a layout containing views with the same IDs as the layout contained in this library.
+     */
+    public Card setLayout(int layoutRes) {
+        mLayout = layoutRes;
         return this;
     }
 
@@ -173,25 +201,6 @@ public class Card implements CardBase<Card> {
     }
 
     /**
-     * Sets whether or not the card is clickable, setting it to false will turn the card's list selector off
-     * and the list's OnItemClickListener will not be called.
-     * <p/>
-     * This <b>does not</b> override the isClickable value set to a {@link CardAdapter}, however.
-     */
-    public Card setClickable(boolean clickable) {
-        isClickable = clickable;
-        return this;
-    }
-
-    /**
-     * Sets a tag of any type that can be used to keep track of cards.
-     */
-    public Card setTag(Object tag) {
-        mTag = tag;
-        return this;
-    }
-
-    /**
      * Sets a unique popup menu for the card, this will override any popup menu set for the {@link CardAdapter}
      * that the card is displayed in.
      * <p/>
@@ -207,13 +216,7 @@ public class Card implements CardBase<Card> {
         return this;
     }
 
-    /**
-     * Sets a custom layout to be used for this card. This will override custom layouts set to the {@link CardAdapter}.
-     *
-     * @param layoutRes The resource ID of a layout containing views with the same IDs as the layout contained in this library.
-     */
-    public Card setLayout(int layoutRes) {
-        mLayout = layoutRes;
-        return this;
+    public interface CardMenuListener<ItemType> {
+        public void onMenuItemClick(ItemType card, MenuItem item);
     }
 }
