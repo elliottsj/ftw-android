@@ -3,12 +3,13 @@ apply plugin: 'android-library'
 dependencies {
 //	compile 'com.android.support:support-v4:18.0.+'
     compile 'com.android.support:support-v13:18.0.+'
-    compile 'httpclientandroidlib-1.1.2:1.0+'
+    compile files('libs/httpclientandroidlib-1.1.2.jar')
+    compile files('libs/kryo-2.21-all.jar')
 }
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "18.0.0"
+    buildToolsVersion "18.0.1"
 
     sourceSets {
         main {
@@ -19,3 +20,13 @@ android {
         }
     }
 }
+
+apply plugin: 'maven'
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+    }
+  }
+}
+task install(dependsOn: uploadArchives)
