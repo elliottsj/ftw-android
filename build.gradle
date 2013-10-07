@@ -9,7 +9,7 @@ buildscript {
 }
 
 allprojects {
-  group = 'com.afollestadt.silk'
+  group = 'com.afollestad.silk'
   version = '1.0-SNAPSHOT'
 
   repositories {
