@@ -21,3 +21,6 @@ local.properties
 .project
 
 *.iml
+
+.gradle
+library/build
