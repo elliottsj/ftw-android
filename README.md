@@ -123,22 +123,22 @@ A `SilkImageView` that displays an image in a circle instead of a square, simila
 A `TextView` that automatically sets its typeface to Roboto Light. It loads
 from the assets folder so it will work on any version of Android.
 
-NOTE: You MUST copy the `assets` folder from this library to your application. The assets folder does not get compiled
-in your app when it's only in the library.
+NOTE: If you are not using Silk as an AAR file you MUST copy the `assets` folder from this library to your application. The assets folder does not get compiled
+in your app when it's only in the JAR library.
 
 #### SilkCondensedTextView
 
 Same as the `SilkTextView` but uses Roboto Condensed instead of light.
 
-NOTE: You MUST copy the `assets` folder from this library to your application. The assets folder does not get compiled
-in your app when it's only in the library
+NOTE: If you are not using Silk as an AAR file you MUST copy the `assets` folder from this library to your application. The assets folder does not get compiled
+in your app when it's only in the JAR library
 
 #### SilkEditText
 
 Same as the `SilkTextView` but it's an `EditText`.
 
-NOTE: You MUST copy the `assets` folder from this library to your application. The assets folder does not get compiled
-in your app when it's only in the library
+NOTE: If you are not using Silk as an AAR file you MUST copy the `assets` folder from this library to your application. The assets folder does not get compiled
+in your app when it's only in the JAR library
 
 Activities
 =============
