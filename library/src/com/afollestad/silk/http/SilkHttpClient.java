@@ -227,7 +227,7 @@ public class SilkHttpClient extends SilkHttpBase {
     /**
      * Makes a DELETE request from a separate thread and posts the results to a callback.
      */
-    public void delete(final String url, final SilkHttpCallback callback) {
+    public void deleteAsync(final String url, final SilkHttpCallback callback) {
         if (callback == null) throw new IllegalArgumentException("The callback cannot be null.");
         runOnPriorityThread(new Runnable() {
             @Override
