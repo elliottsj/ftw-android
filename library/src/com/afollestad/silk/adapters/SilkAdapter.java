@@ -21,15 +21,15 @@ import java.util.List;
  */
 public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseAdapter {
 
-    public SilkAdapter(Context context) {
-        this.context = context;
-        this.items = new ArrayList<ItemType>();
-    }
-
     private final Context context;
     private final List<ItemType> items;
     private boolean isChanged = false;
     private int mScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
+
+    public SilkAdapter(Context context) {
+        this.context = context;
+        this.items = new ArrayList<ItemType>();
+    }
 
     /**
      * Called to get the layout of a view being inflated by the SilkAdapter. The inheriting adapter class must return
@@ -103,7 +103,6 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
         for (ItemType item : toAdd)
             add(item);
     }
-
 
     /**
      * Updates a single item in the adapter using isSame() from SilkComparable. Once the filter finds the item, the loop is broken
@@ -264,16 +263,16 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     }
 
     /**
-     * Used by the {@link com.afollestad.silk.views.list.SilkListView} to update the adapter with its scroll state.
-     */
-    public final void setScrollState(int state) {
-        mScrollState = state;
-    }
-
-    /**
      * Gets the scroll state set by a {@link com.afollestad.silk.views.list.SilkListView}.
      */
     public final int getScrollState() {
         return mScrollState;
+    }
+
+    /**
+     * Used by the {@link com.afollestad.silk.views.list.SilkListView} to update the adapter with its scroll state.
+     */
+    public final void setScrollState(int state) {
+        mScrollState = state;
     }
 }

@@ -17,15 +17,10 @@ public enum LimiterBehavior {
      * When the cache limit is reached, items are trimmed from the bottom (index size() - 1).
      */
     REMOVE_BOTTOM(2);
+    private final int mValue;
 
     LimiterBehavior(int value) {
         mValue = value;
-    }
-
-    private final int mValue;
-
-    public int intValue() {
-        return mValue;
     }
 
     public static LimiterBehavior valueOf(int value) {
@@ -37,5 +32,9 @@ public enum LimiterBehavior {
             case 2:
                 return REMOVE_BOTTOM;
         }
+    }
+
+    public int intValue() {
+        return mValue;
     }
 }

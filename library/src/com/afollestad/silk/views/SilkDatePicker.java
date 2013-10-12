@@ -2,7 +2,6 @@ package com.afollestad.silk.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +20,15 @@ import java.util.Calendar;
  */
 public class SilkDatePicker extends LinearLayout {
 
+    private Calendar mCal;
+    private int mCurrentYear;
+    private int lastMonth = -1;
+    private int lastDay = -1;
+    private int lastYear = -1;
+    private SilkSpinnerAdapter mMonth;
+    private SilkSpinnerAdapter mDay;
+    private SilkSpinnerAdapter mYear;
+
     public SilkDatePicker(Context context) {
         super(context);
         init();
@@ -35,23 +43,6 @@ public class SilkDatePicker extends LinearLayout {
         super(context, attrs, defStyle);
         init();
     }
-
-    public final class SilkSpinnerAdapter extends ArrayAdapter<String> {
-        public SilkSpinnerAdapter(Context context) {
-            super(context, R.layout.spinner_item);
-            super.setDropDownViewResource(R.layout.spinner_item_dropdown);
-        }
-    }
-
-
-    private Calendar mCal;
-    private int mCurrentYear;
-    private int lastMonth = -1;
-    private int lastDay = -1;
-    private int lastYear = -1;
-    private SilkSpinnerAdapter mMonth;
-    private SilkSpinnerAdapter mDay;
-    private SilkSpinnerAdapter mYear;
 
     public final Calendar getCalendar() {
         return mCal;
@@ -178,5 +169,12 @@ public class SilkDatePicker extends LinearLayout {
         String day = mCal.get(Calendar.DAY_OF_MONTH) + "";
         if (day.length() == 1) day = "0" + day;
         return year + "/" + month + "/" + day;
+    }
+
+    public final class SilkSpinnerAdapter extends ArrayAdapter<String> {
+        public SilkSpinnerAdapter(Context context) {
+            super(context, R.layout.spinner_item);
+            super.setDropDownViewResource(R.layout.spinner_item_dropdown);
+        }
     }
 }

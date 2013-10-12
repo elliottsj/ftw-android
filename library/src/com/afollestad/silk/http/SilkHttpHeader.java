@@ -9,6 +9,9 @@ import ch.boye.httpclientandroidlib.Header;
  */
 public class SilkHttpHeader {
 
+    private final String mName;
+    private final String mValue;
+
     public SilkHttpHeader(String name, String value) {
         mName = name;
         mValue = value;
@@ -17,9 +20,6 @@ public class SilkHttpHeader {
     public SilkHttpHeader(Header header) {
         this(header.getName(), header.getValue());
     }
-
-    private final String mName;
-    private final String mValue;
 
     public String getName() {
         return mName;

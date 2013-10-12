@@ -18,11 +18,8 @@ import com.afollestad.silk.adapters.SilkAdapter;
  */
 public class SilkListView extends ListView {
 
-    public interface OnSilkScrollListener {
-        public void onScrollToTop();
-
-        public void onScrollToBottom();
-    }
+    private int lastState;
+    private OnSilkScrollListener mScrollListener;
 
     public SilkListView(Context context) {
         super(context);
@@ -38,9 +35,6 @@ public class SilkListView extends ListView {
         super(context, attrs, defStyle);
         init();
     }
-
-    private int lastState;
-    private OnSilkScrollListener mScrollListener;
 
     private void init() {
         setOnScrollListener(new OnScrollListener() {
@@ -89,5 +83,11 @@ public class SilkListView extends ListView {
 
     public void setOnSilkScrollListener(OnSilkScrollListener listener) {
         mScrollListener = listener;
+    }
+
+    public interface OnSilkScrollListener {
+        public void onScrollToTop();
+
+        public void onScrollToBottom();
     }
 }

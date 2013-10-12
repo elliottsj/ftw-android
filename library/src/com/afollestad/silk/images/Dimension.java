@@ -8,6 +8,9 @@ import android.view.View;
  */
 public class Dimension {
 
+    private final int width;
+    private final int height;
+
     /**
      * Initializes the Dimension with equal width in height.
      *
@@ -58,8 +61,10 @@ public class Dimension {
         height = dpToPx(context, heightDp);
     }
 
-    private final int width;
-    private final int height;
+    private static int dpToPx(Context context, float dp) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
+    }
 
     /**
      * Gets the width of the Dimension in pixels.
@@ -80,11 +85,6 @@ public class Dimension {
      */
     public boolean isZero() {
         return width == 0 && height == 0;
-    }
-
-    private static int dpToPx(Context context, float dp) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
     }
 
     @Override

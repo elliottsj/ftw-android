@@ -13,6 +13,8 @@ import ch.boye.httpclientandroidlib.client.methods.HttpPut;
  */
 public class SilkHttpClient extends SilkHttpBase {
 
+    private String mHost;
+
     /**
      * Initializes a new SilkHttpClient.
      */
@@ -28,8 +30,6 @@ public class SilkHttpClient extends SilkHttpBase {
     public SilkHttpClient(Handler handler) {
         super(handler);
     }
-
-    private String mHost;
 
     private String getUrl(String url) {
         if (mHost != null) {
@@ -72,7 +72,6 @@ public class SilkHttpClient extends SilkHttpBase {
         addHeader(new SilkHttpHeader(name, value));
         return this;
     }
-
 
     /**
      * Makes a GET request on the calling thread.

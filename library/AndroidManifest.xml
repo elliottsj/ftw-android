@@ -6,6 +6,7 @@
 
     <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="17"/>
 
-    <application></application> <!-- required to build aar. -->
+    <application/>
+    <!-- required to build aar. -->
 
 </manifest>

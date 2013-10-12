@@ -18,6 +18,8 @@ import com.afollestad.silk.adapters.SilkAdapter;
  */
 public class SilkGridView extends GridView {
 
+    private int lastState;
+
     public SilkGridView(Context context) {
         super(context);
         init();
@@ -32,8 +34,6 @@ public class SilkGridView extends GridView {
         super(context, attrs, defStyle);
         init();
     }
-
-    private int lastState;
 
     private void init() {
         setOnScrollListener(new OnScrollListener() {

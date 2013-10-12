@@ -11,6 +11,16 @@ import java.util.GregorianCalendar;
  */
 public class TimeUtils {
 
+    private static final int SECONDS_IN_MINUTE = 60;
+    private static final int MINUTES_IN_HOUR = 60;
+    private static final int HOURS_IN_DAY = 24;
+    private static final int DAYS_IN_YEAR = 365;
+    private static final int MILLIS_IN_SECOND = 1000;
+    private static final long MILLISECONDS_IN_MINUTE = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE;
+    private static final long MILLISECONDS_IN_HOUR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR;
+    private static final long MILLISECONDS_IN_DAY = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY;
+    private static final long MILLISECONDS_IN_YEAR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR;
+
     public static String toStringLong(Date date) {
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(date);
@@ -128,17 +138,6 @@ public class TimeUtils {
             return convertMonth(time.get(Calendar.MONTH), shortMonth) + " " + day + ", " + year;
         }
     }
-
-    private static final int SECONDS_IN_MINUTE = 60;
-    private static final int MINUTES_IN_HOUR = 60;
-    private static final int HOURS_IN_DAY = 24;
-    private static final int DAYS_IN_YEAR = 365;
-
-    private static final int MILLIS_IN_SECOND = 1000;
-    private static final long MILLISECONDS_IN_MINUTE = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE;
-    private static final long MILLISECONDS_IN_HOUR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR;
-    private static final long MILLISECONDS_IN_DAY = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY;
-    private static final long MILLISECONDS_IN_YEAR = (long) MILLIS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * HOURS_IN_DAY * DAYS_IN_YEAR;
 
     public static String toStringShort(Date date) {
         GregorianCalendar cal = new GregorianCalendar();
