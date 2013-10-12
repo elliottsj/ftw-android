@@ -15,19 +15,19 @@ import java.io.FileOutputStream;
  */
 public class DiskCache {
 
+    private static File CACHE_DIR;
+    private final Context context;
+
     public DiskCache(Context context) {
         this.context = context;
         setCacheDirectory(null);
     }
 
-    private final Context context;
-    private static File CACHE_DIR;
-
     public void put(String key, Bitmap image) throws Exception {
         File fi = getFile(key);
         Log.d("SilkImageManager.DiskCache", "Writing image to " + fi.getAbsolutePath());
         FileOutputStream os = new FileOutputStream(fi);
-        image.compress(Bitmap.CompressFormat.JPEG, 100, os);
+        image.compress(key.endsWith(".png") ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 100, os);
     }
 
     public Bitmap get(String key) {
@@ -37,7 +37,7 @@ public class DiskCache {
     }
 
     public File getFile(String key) {
-        return new File(CACHE_DIR, key + ".jpeg");
+        return new File(CACHE_DIR, key);
     }
 
     public void setCacheDirectory(File dir) {

@@ -28,116 +28,17 @@ import java.util.concurrent.*;
  */
 public class SilkImageManager {
 
-    private interface ProcessCallback {
-        public Bitmap onProcess(Bitmap image);
-    }
-
-    public interface ImageListener {
-        public abstract void onImageReceived(String source, Bitmap bitmap);
-    }
-
-    public interface AdvancedImageListener extends ImageListener {
-        public abstract Bitmap onPostProcess(Bitmap image);
-    }
-
-    public static class Utils {
-
-        public static int calculateInSampleSize(BitmapFactory.Options options, Dimension dimension) {
-            // Raw height and width of image
-            final int height = options.outHeight;
-            final int width = options.outWidth;
-            int inSampleSize = 1;
-
-            if (height > dimension.getHeight() || width > dimension.getWidth()) {
-
-                // Calculate ratios of height and width to requested height and width
-                final int heightRatio = Math.round((float) height / (float) dimension.getHeight());
-                final int widthRatio = Math.round((float) width / (float) dimension.getWidth());
-
-                // Choose the smallest ratio as inSampleSize value, this will guarantee
-                // a final image with both dimensions larger than or equal to the
-                // requested height and width.
-                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-            }
-
-            return inSampleSize;
-        }
-
-        public static BitmapFactory.Options getBitmapFactoryOptions(Dimension dimension) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPurgeable = true;
-            options.inInputShareable = true;
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            if (dimension != null)
-                options.inSampleSize = calculateInSampleSize(options, dimension);
-            return options;
-        }
-
-        public static Bitmap decodeByteArray(byte[] byteArray, Dimension dimension) {
-            try {
-                BitmapFactory.Options bitmapFactoryOptions = getBitmapFactoryOptions(dimension);
-                return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, bitmapFactoryOptions);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-            return null;
-        }
-
-        public static String getKey(String source, Dimension dimension) {
-            if (source == null) return null;
-            source = source.replace("http://", "").replace("https://", "");
-            if (dimension != null)
-                source += "_" + dimension.toString();
-            try {
-                return URLEncoder.encode(source, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-
-    public static class IOUtils {
-
-        public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
-
-        public static void closeQuietly(InputStream input) {
-            closeQuietly((Closeable) input);
-        }
-
-        public static void closeQuietly(OutputStream output) {
-            closeQuietly((Closeable) output);
-        }
-
-        public static void closeQuietly(Closeable closeable) {
-            try {
-                if (closeable != null) {
-                    closeable.close();
-                }
-            } catch (IOException ioe) {
-                // ignore
-            }
-        }
-
-        public static int copy(InputStream input, OutputStream output) throws IOException {
-            long count = copyLarge(input, output);
-            if (count > Integer.MAX_VALUE) {
-                return -1;
-            }
-            return (int) count;
-        }
-
-        private static long copyLarge(InputStream input, OutputStream output) throws IOException {
-            byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-            long count = 0;
-            int n;
-            while (-1 != (n = input.read(buffer))) {
-                output.write(buffer, 0, n);
-                count += n;
-            }
-            return count;
-        }
-    }
+    public static final String SOURCE_FALLBACK = "aimage://fallback_image";
+    protected static final int MEM_CACHE_SIZE_KB = (int) (Runtime.getRuntime().maxMemory() / 2 / 1024);
+    protected static final int ASYNC_THREAD_COUNT = (Runtime.getRuntime().availableProcessors() * 4);
+    private final Context context;
+    private final DiskCache mDiskCache;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService mNetworkExecutorService = newConfiguredThreadPool();
+    private final ExecutorService mDiskExecutorService = Executors.newCachedThreadPool(new LowPriorityThreadFactory());
+    private int fallbackImageId;
+    private boolean DEBUG = false;
+    private LruCache<String, Bitmap> mLruCache = newConfiguredLruCache();
 
     public SilkImageManager(Context context) {
         this.context = context;
@@ -150,19 +51,24 @@ public class SilkImageManager {
         mDiskCache = new DiskCache(context);
     }
 
+    private static ExecutorService newConfiguredThreadPool() {
+        int corePoolSize = 0;
+        int maximumPoolSize = ASYNC_THREAD_COUNT;
+        long keepAliveTime = 60L;
+        TimeUnit unit = TimeUnit.SECONDS;
+        BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
+        RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();
+        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
+    }
 
-    private int fallbackImageId;
-    private boolean DEBUG = false;
-    private final Context context;
-    private final DiskCache mDiskCache;
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private LruCache<String, Bitmap> mLruCache = newConfiguredLruCache();
-    private final ExecutorService mNetworkExecutorService = newConfiguredThreadPool();
-    private final ExecutorService mDiskExecutorService = Executors.newCachedThreadPool(new LowPriorityThreadFactory());
-
-    protected static final int MEM_CACHE_SIZE_KB = (int) (Runtime.getRuntime().maxMemory() / 2 / 1024);
-    protected static final int ASYNC_THREAD_COUNT = (Runtime.getRuntime().availableProcessors() * 4);
-    public static final String SOURCE_FALLBACK = "aimage://fallback_image";
+    private static LruCache<String, Bitmap> newConfiguredLruCache() {
+        return new LruCache<String, Bitmap>(MEM_CACHE_SIZE_KB * 1024) {
+            @Override
+            public int sizeOf(String key, Bitmap value) {
+                return value.getRowBytes() * value.getHeight();
+            }
+        };
+    }
 
     protected void log(String message) {
         if (!DEBUG)
@@ -412,22 +318,119 @@ public class SilkImageManager {
         return toreturn;
     }
 
-    private static ExecutorService newConfiguredThreadPool() {
-        int corePoolSize = 0;
-        int maximumPoolSize = ASYNC_THREAD_COUNT;
-        long keepAliveTime = 60L;
-        TimeUnit unit = TimeUnit.SECONDS;
-        BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
-        RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();
-        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
+    private interface ProcessCallback {
+        public Bitmap onProcess(Bitmap image);
     }
 
-    private static LruCache<String, Bitmap> newConfiguredLruCache() {
-        return new LruCache<String, Bitmap>(MEM_CACHE_SIZE_KB * 1024) {
-            @Override
-            public int sizeOf(String key, Bitmap value) {
-                return value.getRowBytes() * value.getHeight();
+    public interface ImageListener {
+        public abstract void onImageReceived(String source, Bitmap bitmap);
+    }
+
+    public interface AdvancedImageListener extends ImageListener {
+        public abstract Bitmap onPostProcess(Bitmap image);
+    }
+
+    public static class Utils {
+
+        public static int calculateInSampleSize(BitmapFactory.Options options, Dimension dimension) {
+            // Raw height and width of image
+            final int height = options.outHeight;
+            final int width = options.outWidth;
+            int inSampleSize = 1;
+
+            if (height > dimension.getHeight() || width > dimension.getWidth()) {
+
+                // Calculate ratios of height and width to requested height and width
+                final int heightRatio = Math.round((float) height / (float) dimension.getHeight());
+                final int widthRatio = Math.round((float) width / (float) dimension.getWidth());
+
+                // Choose the smallest ratio as inSampleSize value, this will guarantee
+                // a final image with both dimensions larger than or equal to the
+                // requested height and width.
+                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
             }
-        };
+
+            return inSampleSize;
+        }
+
+        public static BitmapFactory.Options getBitmapFactoryOptions(Dimension dimension) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPurgeable = true;
+            options.inInputShareable = true;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            if (dimension != null)
+                options.inSampleSize = calculateInSampleSize(options, dimension);
+            return options;
+        }
+
+        public static Bitmap decodeByteArray(byte[] byteArray, Dimension dimension) {
+            try {
+                BitmapFactory.Options bitmapFactoryOptions = getBitmapFactoryOptions(dimension);
+                return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, bitmapFactoryOptions);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            return null;
+        }
+
+        public static String getKey(String source, Dimension dimension) {
+            if (source == null) return null;
+            source = source.replace("http://", "").replace("https://", "");
+            String ext = null;
+            if (source.endsWith(".jpg") || source.endsWith(".jpeg"))
+                ext = ".jpeg";
+            else if (source.endsWith(".png"))
+                ext = ".png";
+            if (dimension != null)
+                source += "_" + dimension.toString();
+            try {
+                return URLEncoder.encode(source, "UTF-8") + ext;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public static class IOUtils {
+
+        public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+
+        public static void closeQuietly(InputStream input) {
+            closeQuietly((Closeable) input);
+        }
+
+        public static void closeQuietly(OutputStream output) {
+            closeQuietly((Closeable) output);
+        }
+
+        public static void closeQuietly(Closeable closeable) {
+            try {
+                if (closeable != null) {
+                    closeable.close();
+                }
+            } catch (IOException ioe) {
+                // ignore
+            }
+        }
+
+        public static int copy(InputStream input, OutputStream output) throws IOException {
+            long count = copyLarge(input, output);
+            if (count > Integer.MAX_VALUE) {
+                return -1;
+            }
+            return (int) count;
+        }
+
+        private static long copyLarge(InputStream input, OutputStream output) throws IOException {
+            byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+            long count = 0;
+            int n;
+            while (-1 != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+                count += n;
+            }
+            return count;
+        }
     }
 }
