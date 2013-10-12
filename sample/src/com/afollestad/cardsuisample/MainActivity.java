@@ -23,7 +23,7 @@ public class MainActivity extends Activity implements Card.CardMenuListener<Card
         // Initializes a CardAdapter with a blue accent color and basic popup menu for each card
         CardAdapter<Card> cardsAdapter = new CardAdapter<Card>(this)
                 .setAccentColorRes(android.R.color.holo_blue_light)
-                .setPopupMenu(R.menu.card_popup, this);
+                .setPopupMenu(R.menu.card_popup, this); // the popup menu callback is this activity
 
         CardListView cardsList = (CardListView) findViewById(R.id.cardsList);
         cardsList.setAdapter(cardsAdapter);
