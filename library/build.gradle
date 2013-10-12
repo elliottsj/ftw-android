@@ -1,12 +1,12 @@
 buildscript {
-  repositories {
-    mavenLocal()
-    mavenCentral()
-  }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
 
-  dependencies {
-    classpath 'com.android.tools.build:gradle:0.5.+'
-  }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+    }
 }
 
 apply plugin: 'android-library'
@@ -31,16 +31,16 @@ android {
 }
 
 tasks.withType(Compile) {
-  options.encoding = "UTF-8"
+    options.encoding = "UTF-8"
 }
 
 apply plugin: 'maven'
 uploadArchives {
-  repositories {
-    mavenDeployer {
-      repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+    repositories {
+        mavenDeployer {
+            repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+        }
     }
-  }
 }
 task install(dependsOn: uploadArchives)
 

@@ -10,6 +10,9 @@ import android.graphics.drawable.Drawable;
  */
 public class CardHeader extends Card {
 
+    private String mActionTitle;
+    private ActionListener mCallback;
+
     public CardHeader(String title) {
         super(title, null, true);
     }
@@ -34,16 +37,9 @@ public class CardHeader extends Card {
         this(context.getString(titleRes), context.getString(subtitleRes));
     }
 
-    private String mActionTitle;
-    private ActionListener mCallback;
-
     @Override
     public ActionListener getActionCallback() {
         return mCallback;
-    }
-
-    public interface ActionListener {
-        public void onClick(CardHeader header);
     }
 
     /**
@@ -100,5 +96,9 @@ public class CardHeader extends Card {
     @Override
     public Card setLayout(int layoutRes) {
         throw new RuntimeException("Card headers do not support setLayout().");
+    }
+
+    public interface ActionListener {
+        public void onClick(CardHeader header);
     }
 }

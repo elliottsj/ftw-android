@@ -19,6 +19,12 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     private final static int TYPE_REGULAR = 0;
     private final static int TYPE_NO_CONTENT = 1;
     private final static int TYPE_HEADER = 2;
+    private int mAccentColor;
+    private int mPopupMenu = -1;
+    private Card.CardMenuListener<ItemType> mPopupListener;
+    private boolean mCardsClickable = true;
+    private int mLayout = R.layout.list_item_card;
+    private int mLayoutNoContent = R.layout.list_item_card_nocontent;
 
     /**
      * Initializes a new CardAdapter instance.
@@ -55,13 +61,6 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
         this(context, cardLayoutRes);
         mLayoutNoContent = cardLayoutNoContentRes;
     }
-
-    private int mAccentColor;
-    private int mPopupMenu = -1;
-    private Card.CardMenuListener<ItemType> mPopupListener;
-    private boolean mCardsClickable = true;
-    private int mLayout = R.layout.list_item_card;
-    private int mLayoutNoContent = R.layout.list_item_card_nocontent;
 
     @Override
     public final boolean isEnabled(int position) {

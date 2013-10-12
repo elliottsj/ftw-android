@@ -15,13 +15,10 @@ import android.widget.ListView;
  */
 public class CardListView extends ListView implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
-    public interface CardClickListener {
-        public void onCardClick(int index, CardBase card, View view);
-    }
-
-    public interface CardLongClickListener {
-        public boolean onCardLongClick(int index, CardBase card, View view);
-    }
+    private OnItemClickListener mItemClickListener;
+    private OnItemLongClickListener mItemLongClickListener;
+    private CardClickListener mCardClickListener;
+    private CardLongClickListener mCardLongClickListener;
 
     public CardListView(Context context) {
         super(context);
@@ -37,11 +34,6 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
         super(context, attrs, defStyle);
         init();
     }
-
-    private OnItemClickListener mItemClickListener;
-    private OnItemLongClickListener mItemLongClickListener;
-    private CardClickListener mCardClickListener;
-    private CardLongClickListener mCardLongClickListener;
 
     private void init() {
         setDivider(null);
@@ -124,5 +116,13 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
         if (mCardLongClickListener != null)
             return mCardLongClickListener.onCardLongClick(position, item, view);
         return mItemLongClickListener != null && mItemLongClickListener.onItemLongClick(parent, view, position, id);
+    }
+
+    public interface CardClickListener {
+        public void onCardClick(int index, CardBase card, View view);
+    }
+
+    public interface CardLongClickListener {
+        public boolean onCardLongClick(int index, CardBase card, View view);
     }
 }
