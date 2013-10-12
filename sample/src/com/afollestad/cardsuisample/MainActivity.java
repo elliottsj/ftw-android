@@ -50,7 +50,7 @@ public class MainActivity extends Activity implements Card.CardMenuListener<Card
                 .setAction(this, R.string.what_else, new CardHeader.ActionListener() {
                     @Override
                     public void onClick(CardHeader header) {
-                        Toast.makeText(getApplicationContext(), "TODO", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), header.getActionTitle(), Toast.LENGTH_SHORT).show();
                     }
                 }));
         cardsAdapter.add(new Card("Google", "Android is the best!")
