@@ -2,6 +2,7 @@ package com.afollestad.cardsuisample;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.afollestad.cardsui.Card;
@@ -23,8 +24,14 @@ public class CustomCardAdapter extends CardAdapter<Card> {
     protected boolean onProcessThumbnail(ImageView icon, Card card) {
         // Optional, you can modify properties of the icon ImageView here.
         // In this case, this view is a SilkImageView in the card_larger.xml layout.
-        ((SilkImageView) icon).setImageURL(mImageLoader,
-                "http://cdn.crackberry.com/sites/crackberry.com/files/styles/large/public/topic_images/2013/ANDROID.png");
+
+        SilkImageView silkIcon = (SilkImageView) icon;
+        if (getScrollState() == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+            // If the list is being scrolled, don't load the thumbnail (scroll state is reported from CardListView because it extends SilkListView)
+            silkIcon.setImageDrawable(null);
+        } else {
+            silkIcon.setImageURL(mImageLoader, "http://cdn.crackberry.com/sites/crackberry.com/files/styles/large/public/topic_images/2013/ANDROID.png");
+        }
         return true;
     }
 
