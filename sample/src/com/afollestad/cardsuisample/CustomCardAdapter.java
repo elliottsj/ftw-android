@@ -26,7 +26,7 @@ public class CustomCardAdapter extends CardAdapter<Card> {
         // In this case, this view is a SilkImageView in the card_larger.xml layout.
         SilkImageView silkIcon = (SilkImageView) icon;
         if (getScrollState() == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-            // If the list is being scrolled, don't load the thumbnail (scroll state is reported from CardListView because it extends SilkListView)
+            // If the list is being scrolled quickly, don't load the thumbnail (scroll state is reported from CardListView because it extends SilkListView)
             silkIcon.setImageDrawable(null);
         } else {
             silkIcon.setImageURL(mImageLoader, "http://cdn.crackberry.com/sites/crackberry.com/files/styles/large/public/topic_images/2013/ANDROID.png");
