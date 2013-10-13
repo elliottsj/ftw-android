@@ -12,8 +12,12 @@ Getting Started
 Before the library will work, make sure you have `Silk` referenced as a dependency in both this library and your app. For best results, build Silk as a AAR file and install it to your local maven repository (see below).
 Otherwise, you will need to copy the `assets` folder from `Silk` to your app due to the fact that this library uses font resources.
 
-Installing as AAR (recommended)
-===============================
+#### Importing
+
+To use this library with your Android apps, you have to reference this project as a library (from Eclipse) or add it as a module (from IntelliJ). It now has Gradle support, too. It cannot be compiled as a JAR because this library contains resources such as layouts that are needed.
+
+#### Importing as AAR (recommended)
+
 This process was written with the assumption that you are using Android Studio 0.2.11, gradle 1.8+, and you have recent Android Build Tools 18.0.1. Other versions may work with some adaptations.
 
 You do not need to open this library in Android Studio to build and include it in your project.
