@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +58,14 @@ public class SilkHttpResponse {
     /**
      * Gets the response content as a string.
      */
-    public String getContentString() throws Exception {
+    public String getContentString() {
         if (mEntity == null) return null;
-        return EntityUtils.toString(mEntity);
+        try {
+            return EntityUtils.toString(mEntity);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -76,7 +82,7 @@ public class SilkHttpResponse {
         try {
             return new JSONObject(getContentString());
         } catch (JSONException e) {
-            throw new Exception("The server did not return JSON.");
+            throw new Exception("The server did not return a JSON Object.");
         }
     }
 
@@ -84,21 +90,11 @@ public class SilkHttpResponse {
      * Gets the response content as a JSONArray.
      */
     public JSONArray getContentJSONArray() throws Exception {
-        return new JSONArray(getContentString());
-    }
-
-    /**
-     * Gets the response content as a JSONObject using the specified charset.
-     */
-    public JSONObject getContentJSON(String defaultCharset) throws Exception {
-        return new JSONObject(getContentString(defaultCharset));
-    }
-
-    /**
-     * Gets the response content as a JSONArray using the specified charset.
-     */
-    public JSONArray getContentJSONArray(String defauktCharset) throws Exception {
-        return new JSONArray(getContentString());
+        try {
+            return new JSONArray(getContentString());
+        } catch (JSONException e) {
+            throw new Exception("The server did not return a JSON Array.");
+        }
     }
 
     /**
@@ -106,5 +102,14 @@ public class SilkHttpResponse {
      */
     public byte[] getContentBytes() throws Exception {
         return EntityUtils.toByteArray(mEntity);
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return getContentString();
+        } catch (Exception e) {
+            return super.toString();
+        }
     }
 }
