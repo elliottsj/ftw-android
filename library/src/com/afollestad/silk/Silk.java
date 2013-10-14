@@ -1,5 +1,6 @@
 package com.afollestad.silk;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -45,6 +46,14 @@ public class Silk {
         if (activeNetwork != null)
             state = activeNetwork.isConnectedOrConnecting();
         return state;
+    }
+
+    /**
+     * Checks whether or not the calling app has permission to access the internet.
+     */
+    public static boolean hasInternetPermission(Context context) {
+        int res = context.checkCallingOrSelfPermission(Manifest.permission.INTERNET);
+        return res == PackageManager.PERMISSION_GRANTED;
     }
 
     /**

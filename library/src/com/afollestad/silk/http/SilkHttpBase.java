@@ -1,5 +1,6 @@
 package com.afollestad.silk.http;
 
+import android.content.Context;
 import android.os.Handler;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.client.HttpClient;
@@ -11,6 +12,7 @@ import ch.boye.httpclientandroidlib.conn.scheme.SchemeRegistry;
 import ch.boye.httpclientandroidlib.conn.ssl.SSLSocketFactory;
 import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
 import ch.boye.httpclientandroidlib.impl.conn.PoolingClientConnectionManager;
+import com.afollestad.silk.Silk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,17 +23,19 @@ import java.util.List;
 class SilkHttpBase {
 
     protected final List<SilkHttpHeader> mHeaders;
+    private final Context mContext;
     private final Handler mHandler;
     private HttpClient mClient;
 
-    public SilkHttpBase(Handler handler) {
+    public SilkHttpBase(Context context, Handler handler) {
         mHeaders = new ArrayList<SilkHttpHeader>();
+        mContext = context;
         mHandler = handler;
         init();
     }
 
-    public SilkHttpBase() {
-        this(new Handler());
+    public SilkHttpBase(Context context) {
+        this(context, new Handler());
     }
 
     private void init() {
@@ -59,6 +63,12 @@ class SilkHttpBase {
     protected SilkHttpResponse performRequest(final HttpUriRequest request) throws SilkHttpException {
         if (mClient == null)
             throw new IllegalStateException("The client has already been shutdown, you must re-initialize it.");
+        else if (mContext != null) {
+            if (!Silk.hasInternetPermission(mContext))
+                throw new IllegalAccessError("Your app does not declare the android.permission.INTERNET permission in its manifest.");
+            else if (!Silk.isOnline(mContext))
+                throw new IllegalStateException("The device is currently offline.");
+        }
         if (mHeaders.size() > 0) {
             for (SilkHttpHeader header : mHeaders)
                 request.setHeader(header.getName(), header.getValue());

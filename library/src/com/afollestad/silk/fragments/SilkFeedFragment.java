@@ -2,7 +2,6 @@ package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
 import android.view.View;
-import com.afollestad.silk.Silk;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.views.list.SilkListView;
 
@@ -13,14 +12,8 @@ import java.util.List;
  */
 public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
-    private boolean mBlockPaginate = false;
     protected boolean mInitialLoadOnResume;
-
-    public static class OfflineException extends Exception {
-        public OfflineException() {
-            super("You are currently offline.");
-        }
-    }
+    private boolean mBlockPaginate = false;
 
     @Override
     public void onResume() {
@@ -55,7 +48,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
             @Override
             public void run() {
                 try {
-                    if (!Silk.isOnline(getActivity())) throw new OfflineException();
                     final List<ItemType> items = refresh();
                     runOnUiThread(new Runnable() {
                         @Override
@@ -87,7 +79,6 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
             @Override
             public void run() {
                 try {
-                    if (!Silk.isOnline(getActivity())) throw new OfflineException();
                     final List<ItemType> items = paginate();
                     if (items == null || items.size() == 0) {
                         mBlockPaginate = true;

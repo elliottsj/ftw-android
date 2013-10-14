@@ -1,5 +1,6 @@
 package com.afollestad.silk.http;
 
+import android.content.Context;
 import android.os.Handler;
 import ch.boye.httpclientandroidlib.client.methods.HttpDelete;
 import ch.boye.httpclientandroidlib.client.methods.HttpGet;
@@ -18,8 +19,8 @@ public class SilkHttpClient extends SilkHttpBase {
     /**
      * Initializes a new SilkHttpClient.
      */
-    public SilkHttpClient() {
-        super();
+    public SilkHttpClient(Context context) {
+        super(context);
     }
 
     /**
@@ -27,8 +28,8 @@ public class SilkHttpClient extends SilkHttpBase {
      *
      * @param handler The handler used to post to a thread for async callbacks.
      */
-    public SilkHttpClient(Handler handler) {
-        super(handler);
+    public SilkHttpClient(Context context, Handler handler) {
+        super(context, handler);
     }
 
     private String getUrl(String url) {
