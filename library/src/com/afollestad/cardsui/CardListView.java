@@ -1,6 +1,7 @@
 package com.afollestad.cardsui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,28 +23,43 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
 
     public CardListView(Context context) {
         super(context);
-        init();
+        init(null);
     }
 
     public CardListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs);
     }
 
     public CardListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(attrs);
     }
 
-    private void init() {
+    private void init(AttributeSet attrs) {
         setDivider(null);
         setDividerHeight(0);
-        int gray = getResources().getColor(R.color.card_gray);
-        setBackgroundColor(gray);
-        setCacheColorHint(gray);
         setSelector(android.R.color.transparent);
         super.setOnItemClickListener(this);
         super.setOnItemLongClickListener(this);
+
+        if (attrs != null) {
+            TypedArray a = getContext().obtainStyledAttributes(attrs, new int[]{android.R.attr.background});
+            if (a.length() > 0) {
+                int color = a.getColor(0, 0);
+                if (color == 0) setDefaultBackground();
+                else {
+                    setBackgroundColor(color);
+                    setCacheColorHint(color);
+                }
+            } else setDefaultBackground();
+        } else setDefaultBackground();
+    }
+
+    private void setDefaultBackground() {
+        int gray = getResources().getColor(R.color.card_gray);
+        setBackgroundColor(gray);
+        setCacheColorHint(gray);
     }
 
     /**
