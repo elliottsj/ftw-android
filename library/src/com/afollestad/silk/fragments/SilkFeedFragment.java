@@ -2,6 +2,7 @@ package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.views.list.SilkListView;
 
@@ -16,9 +17,9 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     private boolean mBlockPaginate = false;
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mInitialLoadOnResume)
+    protected void onVisibilityChanged(boolean visible) {
+        super.onVisibilityChanged(visible);
+        if (visible && mInitialLoadOnResume)
             onInitialRefresh();
     }
 

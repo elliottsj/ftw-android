@@ -103,7 +103,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
             return;
         }
         getAdapter().clear();
-        setLoading(true);
+        setLoading(false);
         readCache();
     }
 }
