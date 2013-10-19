@@ -298,7 +298,7 @@ public class SilkImageManager {
                 Uri uri = Uri.parse(source);
                 inputStream = new FileInputStream(new File(uri.getPath()));
             } else {
-                SilkHttpClient client = new SilkHttpClient(context);
+                SilkHttpClient client = new SilkHttpClient(context, mHandler);
                 SilkHttpResponse response = client.get(source);
                 inputStream = response.getContent().getContent();
             }
