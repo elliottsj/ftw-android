@@ -5,6 +5,9 @@ package com.afollestad.silk.caching;
  */
 public class SilkCacheLimiter {
 
+    private final int mSizeLimit;
+    private final LimiterBehavior mBehavior;
+
     /**
      * Initializes a new SilkCacheLimiter instance.
      *
@@ -22,9 +25,6 @@ public class SilkCacheLimiter {
         mSizeLimit = Integer.parseInt(split[0]);
         mBehavior = LimiterBehavior.valueOf(Integer.parseInt(split[1]));
     }
-
-    private final int mSizeLimit;
-    private final LimiterBehavior mBehavior;
 
     public int getSizeLimit() {
         return mSizeLimit;

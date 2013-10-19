@@ -2,7 +2,6 @@ package com.afollestad.silk.fragments;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.views.list.SilkListView;
 

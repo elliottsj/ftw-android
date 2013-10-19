@@ -17,6 +17,12 @@ import java.util.List;
 
 class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimiter<Item> {
 
+    private final static File CACHE_DIR = new File(Environment.getExternalStorageDirectory(), ".silk_cache");
+    private final Handler mHandler;
+    private final Class<?> mCls;
+    private List<Item> mBuffer;
+    private boolean isChanged;
+
     public SilkCacheBase(Context context, String name, Class<?> cls) {
         this(context, name, cls, null);
     }
@@ -27,12 +33,6 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
         if (handler == null) mHandler = new Handler();
         else mHandler = handler;
     }
-
-    private final static File CACHE_DIR = new File(Environment.getExternalStorageDirectory(), ".silk_cache");
-    private final Handler mHandler;
-    private List<Item> mBuffer;
-    private boolean isChanged;
-    private final Class<?> mCls;
 
     private Kryo getKryo() {
         Kryo mKryo = new Kryo();
@@ -98,16 +98,16 @@ class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimi
         return prefs.getLong(getName(), -1);
     }
 
-    public final boolean hasExpiration() {
-        return getExpiration() > -1;
-    }
-
     public final void setExpiration(long dateTime) {
         SharedPreferences.Editor prefs = getContext().getSharedPreferences("[silk-cache-expiration]", Context.MODE_PRIVATE).edit();
         if (dateTime < 0)
             prefs.remove(getName());
         else prefs.putLong(getName(), dateTime);
         prefs.commit();
+    }
+
+    public final boolean hasExpiration() {
+        return getExpiration() > -1;
     }
 
     public final void setExpiration(int weeks, int days, int hours, int minutes) {

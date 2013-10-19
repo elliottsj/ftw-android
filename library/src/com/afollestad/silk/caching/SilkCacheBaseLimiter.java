@@ -11,13 +11,13 @@ import java.util.List;
  */
 class SilkCacheBaseLimiter<Item> {
 
+    private final Context mContext;
+    private final String mName;
+
     public SilkCacheBaseLimiter(Context context, String name) {
         mContext = context;
         mName = name;
     }
-
-    private final Context mContext;
-    private final String mName;
 
     protected Context getContext() {
         return mContext;

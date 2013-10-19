@@ -119,17 +119,6 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
         return mLoading;
     }
 
-    private void setListShown(boolean shown) {
-        mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
-        if (!shown) {
-            if (mEmpty != null) mEmpty.setVisibility(View.GONE);
-        } else {
-            mListView.setEmptyView(mEmpty);
-            getAdapter().notifyDataSetChanged();
-        }
-        if (mProgress != null) mProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
-    }
-
     /**
      * Notifies the fragment that it is currently loading data.
      * <p/>
@@ -141,6 +130,17 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
         if (progress)
             setListShown(false);
         mLoading = true;
+    }
+
+    private void setListShown(boolean shown) {
+        mListView.setVisibility(shown ? View.VISIBLE : View.GONE);
+        if (!shown) {
+            if (mEmpty != null) mEmpty.setVisibility(View.GONE);
+        } else {
+            mListView.setEmptyView(mEmpty);
+            getAdapter().notifyDataSetChanged();
+        }
+        if (mProgress != null) mProgress.setVisibility(shown ? View.GONE : View.VISIBLE);
     }
 
     /**
