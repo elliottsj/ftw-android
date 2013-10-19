@@ -231,8 +231,11 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
 
     protected abstract long getItemId(ItemType item);
 
+    /**
+     * @deprecated Override onViewCreated() instead.
+     */
     @Override
-    public final View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
             int type = getItemViewType(i);
             view = LayoutInflater.from(context).inflate(getLayout(i, type), null);
