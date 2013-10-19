@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -17,21 +18,27 @@ import java.util.List;
 
 class SilkCacheBase<Item extends SilkComparable<Item>> extends SilkCacheBaseLimiter<Item> {
 
-    private final static File CACHE_DIR = new File(Environment.getExternalStorageDirectory(), ".silk_cache");
     private final Handler mHandler;
     private final Class<?> mCls;
+    private final File CACHE_DIR;
     private List<Item> mBuffer;
     private boolean isChanged;
 
-    public SilkCacheBase(Context context, String name, Class<?> cls) {
-        this(context, name, cls, null);
+    public SilkCacheBase(Context context, String name, Class<?> cls, File cacheDir) {
+        this(context, name, cls, cacheDir, null);
     }
 
-    public SilkCacheBase(Context context, String name, Class<?> cls, Handler handler) {
+    public SilkCacheBase(Context context, String name, Class<?> cls, File cacheDir, Handler handler) {
         super(context, name);
         mCls = cls;
-        if (handler == null) mHandler = new Handler();
-        else mHandler = handler;
+        if (cacheDir == null)
+            cacheDir = new File(Environment.getExternalStorageDirectory(), ".silk_cache");
+        CACHE_DIR = cacheDir;
+        if (handler == null) {
+            if (Looper.myLooper() == null)
+                throw new RuntimeException("Cannot initialize a SilkCache from a non-UI thread without passing a Handler to SilkCache in the constructor.");
+            mHandler = new Handler();
+        } else mHandler = handler;
     }
 
     private Kryo getKryo() {

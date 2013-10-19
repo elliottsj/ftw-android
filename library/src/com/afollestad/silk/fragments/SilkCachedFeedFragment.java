@@ -5,6 +5,7 @@ import com.afollestad.silk.caching.OnReadyCallback;
 import com.afollestad.silk.caching.SilkCache;
 import com.afollestad.silk.caching.SilkComparable;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -15,6 +16,10 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
     private SilkCache<ItemType> mCache;
 
     public abstract String getCacheName();
+
+    protected File getCacheDir() {
+        return null;
+    }
 
     public abstract Class<ItemType> getCacheClass();
 
@@ -60,7 +65,7 @@ public abstract class SilkCachedFeedFragment<ItemType extends SilkComparable<Ite
                 }
                 onPostLoadFromCache(mCache.read());
             }
-        });
+        }, getCacheDir());
     }
 
     public final SilkCache<ItemType> getCache() {

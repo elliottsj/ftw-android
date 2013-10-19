@@ -80,12 +80,6 @@ public class Silk {
         context.getSharedPreferences("feed_last_update", 0).edit().clear().commit();
         context.getSharedPreferences("[silk-cache-expirations]", 0).edit().clear().commit();
         context.getSharedPreferences("[silk-cache-limiters]", 0).edit().clear().commit();
-        File cacheDir = new File(Environment.getExternalStorageDirectory(), ".silk_cache");
-        File[] files = cacheDir.listFiles();
-        if (files != null && files.length > 0) {
-            for (File fi : files) fi.delete();
-        }
-        cacheDir.delete();
     }
 
     public static Object deserializeObject(String str, Class<?> cls) {
