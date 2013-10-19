@@ -2,6 +2,7 @@ package com.afollestad.silk.http;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.client.HttpClient;
 import ch.boye.httpclientandroidlib.client.methods.HttpUriRequest;
@@ -28,6 +29,11 @@ class SilkHttpBase {
     private HttpClient mClient;
 
     public SilkHttpBase(Context context, Handler handler) {
+        if (handler == null) {
+            if (Looper.myLooper() == null)
+                throw new RuntimeException("Cannot initialize a SilkHttpClient from a non-UI thread without passing a Handler to SilkHttpClient(Context, Handler).");
+            handler = new Handler();
+        }
         mHeaders = new ArrayList<SilkHttpHeader>();
         mContext = context;
         mHandler = handler;
@@ -35,7 +41,7 @@ class SilkHttpBase {
     }
 
     public SilkHttpBase(Context context) {
-        this(context, new Handler());
+        this(context, null);
     }
 
     private void init() {
