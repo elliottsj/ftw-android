@@ -22,6 +22,15 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
             onInitialRefresh();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isActuallyVisible() && mInitialLoadOnResume) {
+            // If it is visible, then onVisibilityChanged() will handle it instead
+            onInitialRefresh();
+        }
+    }
+
     protected void onPreLoad() {
     }
 
