@@ -36,6 +36,7 @@ public class SilkHttpClient extends SilkHttpBase {
         if ((url == null || url.trim().isEmpty()) && (mHost == null || mHost.trim().isEmpty()))
             throw new RuntimeException("The URL cannot be null.");
         if (mHost != null) {
+            if (url == null) return mHost;
             if (!url.startsWith("/")) url = "/" + url;
             return mHost + url;
         }
