@@ -44,7 +44,8 @@ public class SilkHttpClient extends SilkHttpBase {
     }
 
     /**
-     * Sets a host that is automatically put before every request's URL.
+     * Sets a host that is automatically put before every request's URL or used as a request's URL if a null string is passed
+     * to GET/POST/PUT/DELETE...
      */
     public SilkHttpClient setHost(String host) {
         if (host != null) {
