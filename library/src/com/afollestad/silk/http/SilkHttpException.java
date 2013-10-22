@@ -12,6 +12,10 @@ public class SilkHttpException extends Exception {
     private String mReason;
     private boolean mIsResponse;
 
+    SilkHttpException(String msg) {
+        super(msg);
+    }
+
     SilkHttpException(Exception e) {
         super(e);
     }

@@ -78,22 +78,22 @@ public class SilkHttpResponse {
     /**
      * Gets the response content as a JSONObject.
      */
-    public JSONObject getContentJSON() throws Exception {
+    public JSONObject getContentJSON() throws InvalidJSONException {
         try {
             return new JSONObject(getContentString());
         } catch (JSONException e) {
-            throw new Exception("The server did not return a JSON Object.");
+            throw new InvalidJSONException();
         }
     }
 
     /**
      * Gets the response content as a JSONArray.
      */
-    public JSONArray getContentJSONArray() throws Exception {
+    public JSONArray getContentJSONArray() throws InvalidJSONException {
         try {
             return new JSONArray(getContentString());
         } catch (JSONException e) {
-            throw new Exception("The server did not return a JSON Array.");
+            throw new InvalidJSONException();
         }
     }
 
@@ -111,5 +111,13 @@ public class SilkHttpResponse {
         } catch (Exception e) {
             return super.toString();
         }
+    }
+
+    public static class InvalidJSONException extends SilkHttpException {
+
+        public InvalidJSONException() {
+            super("The server did not return JSON.");
+        }
+
     }
 }
