@@ -285,7 +285,7 @@ public class SilkImageManager {
 
     private byte[] sourceToBytes(String source) {
         InputStream inputStream = null;
-        byte[] toreturn = null;
+        byte[] bytes = null;
         try {
             if (source.equals(SilkImageManager.SOURCE_FALLBACK)) {
                 log("Loading fallback image...");
@@ -302,7 +302,7 @@ public class SilkImageManager {
                 SilkHttpResponse response = client.get(source);
                 inputStream = response.getContent().getContent();
             }
-            toreturn = inputStreamToBytes(inputStream);
+            bytes = inputStreamToBytes(inputStream);
         } catch (Exception e) {
             log("Error: " + e.getMessage());
             e.printStackTrace();
@@ -310,7 +310,7 @@ public class SilkImageManager {
         } finally {
             IOUtils.closeQuietly(inputStream);
         }
-        return toreturn;
+        return bytes;
     }
 
     private interface ProcessCallback {
