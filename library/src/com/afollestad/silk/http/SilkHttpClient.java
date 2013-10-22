@@ -33,6 +33,8 @@ public class SilkHttpClient extends SilkHttpBase {
     }
 
     private String getUrl(String url) {
+        if ((url == null || url.trim().isEmpty()) && (mHost == null || mHost.trim().isEmpty()))
+            throw new RuntimeException("The URL cannot be null.");
         if (mHost != null) {
             if (!url.startsWith("/")) url = "/" + url;
             return mHost + url;
@@ -70,6 +72,8 @@ public class SilkHttpClient extends SilkHttpBase {
      * Adds an HTTP header to the client, which will be used for the next request. Headers are cleared after a request is performed.
      */
     public SilkHttpClient addHeader(String name, String value) {
+        if (name == null || name.trim().isEmpty())
+            throw new RuntimeException("The header name cannot be null.");
         addHeader(new SilkHttpHeader(name, value));
         return this;
     }
