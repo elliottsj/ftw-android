@@ -141,6 +141,7 @@ public class SilkCache<ItemType extends SilkComparable<ItemType>> extends SilkCa
             throw new IllegalArgumentException("You cannot search for a null item.");
         log("Searching for " + item.getSilkId() + "...");
         for (int i = 0; i < getBuffer().size(); i++) {
+            log(getBuffer().get(i).getSilkId() + " is a match?");
             if (item.equalTo(getBuffer().get(i))) {
                 log("Found " + item.getSilkId() + " at index " + i);
                 return i;
