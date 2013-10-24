@@ -3,6 +3,7 @@ package com.afollestad.silk.fragments;
 import android.os.Bundle;
 import android.view.View;
 import com.afollestad.silk.caching.SilkComparable;
+import com.afollestad.silk.views.list.OnSilkScrollListener;
 import com.afollestad.silk.views.list.SilkListView;
 
 import java.util.List;
@@ -131,7 +132,7 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getListView() instanceof SilkListView) {
-            ((SilkListView) getListView()).setOnSilkScrollListener(new SilkListView.OnSilkScrollListener() {
+            ((SilkListView) getListView()).setOnSilkScrollListener(new OnSilkScrollListener() {
                 @Override
                 public void onScrollToTop() {
                 }

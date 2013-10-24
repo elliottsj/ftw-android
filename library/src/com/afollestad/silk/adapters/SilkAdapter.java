@@ -19,7 +19,7 @@ import java.util.List;
  * @param <ItemType> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseAdapter {
+public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseAdapter implements ScrollStatePersister {
 
     private final Context context;
     private final List<ItemType> items;
@@ -225,8 +225,9 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
 
     @Override
     public long getItemId(int i) {
-        if (i < 0) i = 0;
-        return getItemId(getItem(i));
+        long id = getItemId(getItem(i));
+        if (id < 0) id = i;
+        return id;
     }
 
     protected abstract long getItemId(ItemType item);
@@ -268,6 +269,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     /**
      * Gets the scroll state set by a {@link com.afollestad.silk.views.list.SilkListView}.
      */
+    @Override
     public final int getScrollState() {
         return mScrollState;
     }
@@ -275,6 +277,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     /**
      * Used by the {@link com.afollestad.silk.views.list.SilkListView} to update the adapter with its scroll state.
      */
+    @Override
     public final void setScrollState(int state) {
         mScrollState = state;
     }
