@@ -187,7 +187,7 @@ public class SilkImageManager {
                     return;
                 }
 
-                if (!Silk.isOnline(context) && source.startsWith("http")) {
+                if (source.startsWith("http") && !Silk.isOnline(context)) {
                     log("Device is offline, image is not cached; getting fallback image...");
                     Bitmap fallback = get(SilkImageManager.SOURCE_FALLBACK, dimension);
                     if (callback != null && callback instanceof AdvancedImageListener)
