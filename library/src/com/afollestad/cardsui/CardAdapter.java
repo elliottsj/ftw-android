@@ -246,7 +246,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
         int viewTypes = 3;
         for (int i = 0; i < getItems().size(); i++) {
             int layout = getItem(i).getLayout();
-            if (layout > 0 &&
+            if (layout != 0 &&
                     layout != mLayout &&
                     layout != mLayoutNoContent &&
                     layout != R.layout.list_item_header) {
