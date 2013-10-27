@@ -3,6 +3,7 @@ package com.afollestad.silk.http;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.client.HttpClient;
 import ch.boye.httpclientandroidlib.client.methods.HttpUriRequest;
@@ -79,6 +80,7 @@ class SilkHttpBase {
             for (SilkHttpHeader header : mHeaders)
                 request.setHeader(header.getName(), header.getValue());
         }
+        Log.d("SilkHttp", "Making request to " + request.getURI().toString());
         HttpResponse response;
         try {
             response = mClient.execute(request);
