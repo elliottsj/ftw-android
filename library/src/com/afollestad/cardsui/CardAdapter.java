@@ -9,9 +9,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.afollestad.silk.adapters.SilkAdapter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A {@link SilkAdapter} that displays {@link Card} and {@link CardHeader} objects in a {@link CardListView}.
  *
@@ -28,7 +25,6 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     private boolean mCardsClickable = true;
     private int mLayout = R.layout.list_item_card;
     private int mLayoutNoContent = R.layout.list_item_card_nocontent;
-    private Map<Integer, Integer> mViewTypeMap;
 
     /**
      * Initializes a new CardAdapter instance.
@@ -38,7 +34,6 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     public CardAdapter(Context context) {
         super(context);
         mAccentColor = context.getResources().getColor(android.R.color.black);
-        mViewTypeMap = new HashMap<Integer, Integer>();
     }
 
     /**
@@ -248,16 +243,17 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     @Override
     public int getViewTypeCount() {
         // There's 3 layout types by default: cards, cards with no content, and card headers.
-        int count = mViewTypeMap.size() + 3;
+        int viewTypes = 3;
         for (int i = 0; i < getItems().size(); i++) {
             int layout = getItem(i).getLayout();
-            if (mViewTypeMap.containsKey(layout)) continue;
-            if (layout != 0 && layout != mLayout && layout != mLayoutNoContent && layout != R.layout.list_item_header) {
-                count++;
-                mViewTypeMap.put(layout, count);
+            if (layout > 0 &&
+                    layout != mLayout &&
+                    layout != mLayoutNoContent &&
+                    layout != R.layout.list_item_header) {
+                viewTypes++;
             }
         }
-        return count;
+        return viewTypes;
     }
 
     @Override
@@ -267,8 +263,6 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
             return TYPE_HEADER;
         else if ((item.getContent() == null || item.getContent().trim().isEmpty()) && item.getLayout() <= 0)
             return TYPE_NO_CONTENT;
-        else if (mViewTypeMap.containsKey(item.getLayout()))
-            return mViewTypeMap.get(item.getLayout());
         else return TYPE_REGULAR;
     }
 
