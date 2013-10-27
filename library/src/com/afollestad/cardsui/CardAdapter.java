@@ -9,6 +9,9 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import com.afollestad.silk.adapters.SilkAdapter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A {@link SilkAdapter} that displays {@link Card} and {@link CardHeader} objects in a {@link CardListView}.
  *
@@ -25,6 +28,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     private boolean mCardsClickable = true;
     private int mLayout = R.layout.list_item_card;
     private int mLayoutNoContent = R.layout.list_item_card_nocontent;
+    private Map<Integer, Integer> mViewTypes;
 
     /**
      * Initializes a new CardAdapter instance.
@@ -34,6 +38,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     public CardAdapter(Context context) {
         super(context);
         mAccentColor = context.getResources().getColor(android.R.color.black);
+        mViewTypes = new HashMap<Integer, Integer>();
     }
 
     /**
@@ -118,11 +123,11 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
 
     @Override
     public int getLayout(int index, int type) {
+        CardBase card = getItem(index);
         if (type == TYPE_HEADER)
             return R.layout.list_item_header;
         else if (type == TYPE_NO_CONTENT)
             return mLayoutNoContent;
-        CardBase card = getItem(index);
         int layout = card.getLayout();
         if (layout <= 0) {
             // If no layout was specified for the individual card, use the adapter's set layout
@@ -241,29 +246,36 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     }
 
     @Override
-    public int getViewTypeCount() {
+    public final int getViewTypeCount() {
         // There's 3 layout types by default: cards, cards with no content, and card headers.
-        int viewTypes = 3;
-        for (int i = 0; i < getItems().size(); i++) {
-            int layout = getItem(i).getLayout();
-            if (layout > 0 &&
-                    layout != mLayout &&
-                    layout != mLayoutNoContent &&
-                    layout != R.layout.list_item_header) {
-                viewTypes++;
-            }
-        }
-        return viewTypes;
+        return mViewTypes.size() + 3;
+    }
+
+    /**
+     * Registers a custom layout in the adapter, that isn't one of the default layouts, and that was passed in the adapter's constructor.
+     * <p/>
+     * This must be used if you override getLayout() and specify custom layouts for certain list items.
+     */
+    public final CardAdapter<ItemType> registerLayout(int layoutRes) {
+        mViewTypes.put(layoutRes, mViewTypes.size() + 3);
+        return this;
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         CardBase item = getItem(position);
-        if (item.isHeader())
-            return TYPE_HEADER;
-        else if ((item.getContent() == null || item.getContent().trim().isEmpty()) && item.getLayout() <= 0)
-            return TYPE_NO_CONTENT;
-        else return TYPE_REGULAR;
+        if (item.getLayout() > 0) {
+            if (mViewTypes.containsKey(item.getLayout()))
+                return mViewTypes.get(item.getLayout());
+            // Return the default if the layout is not registered
+            return TYPE_REGULAR;
+        } else {
+            if (item.isHeader())
+                return TYPE_HEADER;
+            else if ((item.getContent() == null || item.getContent().trim().isEmpty()))
+                return TYPE_NO_CONTENT;
+            else return TYPE_REGULAR;
+        }
     }
 
     protected boolean onProcessTitle(TextView title, ItemType card, int accentColor) {
