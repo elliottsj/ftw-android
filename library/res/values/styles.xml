@@ -83,6 +83,7 @@
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_toLeftOf">@android:id/button1</item>
         <item name="android:singleLine">true</item>
+        <item name="android:layout_centerVertical">true</item>
     </style>
 
     <style name="card_content">
