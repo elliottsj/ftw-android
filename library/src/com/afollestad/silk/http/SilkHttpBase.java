@@ -14,6 +14,9 @@ import ch.boye.httpclientandroidlib.conn.scheme.SchemeRegistry;
 import ch.boye.httpclientandroidlib.conn.ssl.SSLSocketFactory;
 import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
 import ch.boye.httpclientandroidlib.impl.conn.PoolingClientConnectionManager;
+import ch.boye.httpclientandroidlib.params.BasicHttpParams;
+import ch.boye.httpclientandroidlib.params.HttpConnectionParams;
+import ch.boye.httpclientandroidlib.params.HttpParams;
 import com.afollestad.silk.Silk;
 
 import java.util.ArrayList;
@@ -50,7 +53,10 @@ class SilkHttpBase {
         registry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
         registry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
         ClientConnectionManager cm = new PoolingClientConnectionManager(registry);
-        mClient = new DefaultHttpClient(cm);
+        HttpParams httpParameters = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
+        HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+        mClient = new DefaultHttpClient(cm, httpParameters);
     }
 
     protected void reset() {
