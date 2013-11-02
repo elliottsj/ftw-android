@@ -1,14 +1,11 @@
 package com.afollestad.silk.http;
 
 import ch.boye.httpclientandroidlib.Header;
-import ch.boye.httpclientandroidlib.HttpEntity;
 import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +17,13 @@ import java.util.List;
 public class SilkHttpResponse {
 
     private final List<SilkHttpHeader> mHeaders;
-    private final HttpEntity mEntity;
+    private final byte[] mContent;
 
-    SilkHttpResponse(HttpResponse response) {
+    SilkHttpResponse(HttpResponse response, byte[] content) {
         mHeaders = new ArrayList<SilkHttpHeader>();
         for (Header header : response.getAllHeaders())
             mHeaders.add(new SilkHttpHeader(header));
-        mEntity = response.getEntity();
+        mContent = content;
     }
 
     /**
@@ -49,30 +46,23 @@ public class SilkHttpResponse {
     }
 
     /**
-     * Gets the response entity.
+     * Gets the response content.
      */
-    public HttpEntity getContent() {
-        return mEntity;
+    public byte[] getContent() {
+        return mContent;
     }
 
     /**
      * Gets the response content as a string.
      */
     public String getContentString() {
-        if (mEntity == null) return null;
+        if (mContent == null) return null;
         try {
-            return EntityUtils.toString(mEntity);
-        } catch (IOException e) {
+            return new String(mContent);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * Gets the response content as a string using the specified charset.
-     */
-    public String getContentString(String defaultCharset) throws Exception {
-        return EntityUtils.toString(mEntity, defaultCharset);
     }
 
     /**
@@ -97,13 +87,6 @@ public class SilkHttpResponse {
         }
     }
 
-    /**
-     * Gets the response content as a raw byte array.
-     */
-    public byte[] getContentBytes() throws Exception {
-        return EntityUtils.toByteArray(mEntity);
-    }
-
     @Override
     public String toString() {
         try {
@@ -114,10 +97,8 @@ public class SilkHttpResponse {
     }
 
     public static class InvalidJSONException extends SilkHttpException {
-
         public InvalidJSONException() {
             super("The server did not return JSON.");
         }
-
     }
 }

@@ -8,13 +8,17 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.util.LruCache;
-import com.afollestad.silk.LowPriorityThreadFactory;
 import com.afollestad.silk.Silk;
 import com.afollestad.silk.http.SilkHttpClient;
 import com.afollestad.silk.http.SilkHttpResponse;
 import com.afollestad.silk.utilities.DiskCache;
+import com.afollestad.silk.utilities.IOUtils;
+import com.afollestad.silk.utilities.LowPriorityThreadFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.concurrent.*;
 
@@ -273,27 +277,16 @@ public class SilkImageManager {
         return null;
     }
 
-    private byte[] inputStreamToBytes(InputStream stream) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
-            IOUtils.copy(stream, byteArrayOutputStream);
-        } catch (IOException e) {
-            IOUtils.closeQuietly(byteArrayOutputStream);
-            return null;
-        }
-        return byteArrayOutputStream.toByteArray();
-    }
-
     private byte[] sourceToBytes(String source) {
         log("Loading: " + source);
-        InputStream inputStream = null;
         byte[] bytes = null;
+        InputStream inputStream = null;
         try {
             if (source.equals(SilkImageManager.SOURCE_FALLBACK)) {
                 log("Loading fallback image...");
-                if (fallbackImageId > 0)
+                if (fallbackImageId > 0) {
                     inputStream = context.getResources().openRawResource(fallbackImageId);
-                else return null;
+                } else return null;
             } else if (source.startsWith("content")) {
                 inputStream = context.getContentResolver().openInputStream(Uri.parse(source));
             } else if (source.startsWith("file")) {
@@ -302,15 +295,17 @@ public class SilkImageManager {
             } else {
                 SilkHttpClient client = new SilkHttpClient(context, mHandler);
                 SilkHttpResponse response = client.get(source);
-                inputStream = response.getContent().getContent();
+                bytes = response.getContent();
             }
-            bytes = inputStreamToBytes(inputStream);
         } catch (Exception e) {
             log("Error: " + e.getMessage());
             e.printStackTrace();
             return null;
         } finally {
-            IOUtils.closeQuietly(inputStream);
+            if (inputStream != null) {
+                bytes = IOUtils.inputStreamToBytes(inputStream);
+                IOUtils.closeQuietly(inputStream);
+            }
         }
         return bytes;
     }
@@ -386,48 +381,6 @@ public class SilkImageManager {
                 e.printStackTrace();
             }
             return null;
-        }
-    }
-
-    public static class IOUtils {
-
-        public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
-
-        public static void closeQuietly(InputStream input) {
-            closeQuietly((Closeable) input);
-        }
-
-        public static void closeQuietly(OutputStream output) {
-            closeQuietly((Closeable) output);
-        }
-
-        public static void closeQuietly(Closeable closeable) {
-            try {
-                if (closeable != null) {
-                    closeable.close();
-                }
-            } catch (IOException ioe) {
-                // ignore
-            }
-        }
-
-        public static int copy(InputStream input, OutputStream output) throws IOException {
-            long count = copyLarge(input, output);
-            if (count > Integer.MAX_VALUE) {
-                return -1;
-            }
-            return (int) count;
-        }
-
-        private static long copyLarge(InputStream input, OutputStream output) throws IOException {
-            byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-            long count = 0;
-            int n;
-            while (-1 != (n = input.read(buffer))) {
-                output.write(buffer, 0, n);
-                count += n;
-            }
-            return count;
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.afollestad.silk;
+package com.afollestad.silk.utilities;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

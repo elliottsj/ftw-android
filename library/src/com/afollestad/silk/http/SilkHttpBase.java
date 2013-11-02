@@ -18,6 +18,7 @@ import ch.boye.httpclientandroidlib.params.BasicHttpParams;
 import ch.boye.httpclientandroidlib.params.HttpConnectionParams;
 import ch.boye.httpclientandroidlib.params.HttpParams;
 import com.afollestad.silk.Silk;
+import com.afollestad.silk.utilities.IOUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,8 +104,10 @@ class SilkHttpBase {
         }
         log("Making request to " + request.getURI().toString());
         HttpResponse response;
+        byte[] content;
         try {
             response = mClient.execute(request);
+            content = IOUtils.inputStreamToBytes(response.getEntity().getContent());
         } catch (Exception e) {
             reset();
             throw new SilkHttpException(e);
@@ -117,7 +120,7 @@ class SilkHttpBase {
             throw new SilkHttpException(response);
         }
         reset();
-        return new SilkHttpResponse(response);
+        return new SilkHttpResponse(response, content);
     }
 
     public final void shutdown() {
