@@ -6,7 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.client.HttpClient;
-import ch.boye.httpclientandroidlib.client.methods.HttpUriRequest;
+import ch.boye.httpclientandroidlib.client.methods.HttpRequestBase;
 import ch.boye.httpclientandroidlib.conn.ClientConnectionManager;
 import ch.boye.httpclientandroidlib.conn.scheme.PlainSocketFactory;
 import ch.boye.httpclientandroidlib.conn.scheme.Scheme;
@@ -88,7 +88,7 @@ class SilkHttpBase {
         mNetworkExecutorService.execute(runnable);
     }
 
-    protected SilkHttpResponse performRequest(final HttpUriRequest request) throws SilkHttpException {
+    protected SilkHttpResponse performRequest(final HttpRequestBase request) throws SilkHttpException {
         if (mClient == null)
             throw new IllegalStateException("The client has already been shutdown, you must re-initialize it.");
         else if (mContext != null) {
@@ -108,6 +108,8 @@ class SilkHttpBase {
         } catch (Exception e) {
             reset();
             throw new SilkHttpException(e);
+        } finally {
+            request.releaseConnection();
         }
         int status = response.getStatusLine().getStatusCode();
         if (status != 200) {
