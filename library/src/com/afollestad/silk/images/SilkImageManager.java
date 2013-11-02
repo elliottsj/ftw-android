@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.util.LruCache;
+import com.afollestad.silk.LowPriorityThreadFactory;
 import com.afollestad.silk.Silk;
 import com.afollestad.silk.http.SilkHttpClient;
 import com.afollestad.silk.http.SilkHttpResponse;

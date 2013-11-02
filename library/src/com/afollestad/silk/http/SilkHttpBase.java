@@ -21,13 +21,16 @@ import com.afollestad.silk.Silk;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 class SilkHttpBase {
 
+    protected static final int ASYNC_THREAD_COUNT = (Runtime.getRuntime().availableProcessors() * 4);
     protected final List<SilkHttpHeader> mHeaders;
+    private final ExecutorService mNetworkExecutorService = newConfiguredThreadPool();
     private final Context mContext;
     private final Handler mHandler;
     private HttpClient mClient;
@@ -46,6 +49,20 @@ class SilkHttpBase {
 
     public SilkHttpBase(Context context) {
         this(context, null);
+    }
+
+    private static ExecutorService newConfiguredThreadPool() {
+        int corePoolSize = 0;
+        int maximumPoolSize = ASYNC_THREAD_COUNT;
+        long keepAliveTime = 60L;
+        TimeUnit unit = TimeUnit.SECONDS;
+        BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
+        RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();
+        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
+    }
+
+    protected void log(String message) {
+        Log.d("SilkHttpClient", message);
     }
 
     private void init() {
@@ -68,9 +85,7 @@ class SilkHttpBase {
     }
 
     protected void runOnPriorityThread(Runnable runnable) {
-        Thread t = new Thread(runnable);
-        t.setPriority(Thread.MAX_PRIORITY);
-        t.start();
+        mNetworkExecutorService.execute(runnable);
     }
 
     protected SilkHttpResponse performRequest(final HttpUriRequest request) throws SilkHttpException {
@@ -86,7 +101,7 @@ class SilkHttpBase {
             for (SilkHttpHeader header : mHeaders)
                 request.setHeader(header.getName(), header.getValue());
         }
-        Log.d("SilkHttp", "Making request to " + request.getURI().toString());
+        log("Making request to " + request.getURI().toString());
         HttpResponse response;
         try {
             response = mClient.execute(request);
@@ -107,5 +122,6 @@ class SilkHttpBase {
         reset();
         mClient.getConnectionManager().shutdown();
         mClient = null;
+        log("Client has been shutdown.");
     }
 }
