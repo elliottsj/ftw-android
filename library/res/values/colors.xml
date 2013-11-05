@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="card_pressed">#eeeeee</color>
-    <color name="card_pressed_header">#eeeeee</color>
+    <color name="card_pressed">#ececec</color>
+    <color name="card_pressed_header">#d0d0d0</color>
     <color name="header_button_default">#494949</color>
-    <color name="card_gray">#DEDEDE</color>
+    <color name="card_gray">#dedede</color>
 
 </resources>
