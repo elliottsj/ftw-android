@@ -224,13 +224,16 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     }
 
     @Override
-    public long getItemId(int i) {
-        long id = getItemId(getItem(i));
-        if (id < 0) id = i;
-        return id;
+    public long getItemId(int position) {
+        ItemType item = getItem(position);
+        if (item == null) return position;
+        Object id = getItemId(item);
+        if (id instanceof Long) return (Long) id;
+        else if (id instanceof Integer) return (Integer) id;
+        return position;
     }
 
-    public abstract long getItemId(ItemType item);
+    public abstract Object getItemId(ItemType item);
 
     /**
      * @deprecated Override {@link #onViewCreated(int, android.view.View, com.afollestad.silk.caching.SilkComparable)} instead.
