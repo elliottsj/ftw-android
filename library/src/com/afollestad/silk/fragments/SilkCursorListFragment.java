@@ -1,6 +1,7 @@
 package com.afollestad.silk.fragments;
 
 import android.app.LoaderManager;
+import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -14,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkCursorAdapter;
-import com.afollestad.silk.caching.SilkComparable;
+import com.afollestad.silk.caching.SilkCursorItem;
 
 /**
  * Same as the {@link SilkListFragment}, but loads contents from a cursor and displays them in a {@link com.afollestad.silk.adapters.SilkCursorAdapter}.
@@ -22,7 +23,7 @@ import com.afollestad.silk.caching.SilkComparable;
  * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCursorListFragment<ItemType extends SilkComparable> extends SilkFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem> extends SilkFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private AbsListView mListView;
     private TextView mEmpty;
@@ -86,6 +87,15 @@ public abstract class SilkCursorListFragment<ItemType extends SilkComparable> ex
      */
     protected abstract SilkCursorAdapter<ItemType> initializeAdapter();
 
+    protected void onPostLoadFromCursor(Cursor cursor) {
+        getAdapter().changeCursor(cursor);
+        setLoadComplete(false);
+    }
+
+    protected void clearProvider() {
+        getActivity().getContentResolver().delete(getLoaderUri(), null, null);
+    }
+
     /**
      * Called when an item in the list is tapped by the user.
      *
@@ -104,6 +114,10 @@ public abstract class SilkCursorListFragment<ItemType extends SilkComparable> ex
      * @return Whether or not the event was handled.
      */
     protected abstract boolean onItemLongTapped(int index, ItemType item, View view);
+
+    protected void onCursorEmpty() {
+        // Do nothing by default
+    }
 
     /**
      * Gets whether or not the list is currently loading.
@@ -204,6 +218,10 @@ public abstract class SilkCursorListFragment<ItemType extends SilkComparable> ex
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        onInitialRefresh();
+    }
+
+    protected void onInitialRefresh() {
         setLoading(true);
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -216,8 +234,11 @@ public abstract class SilkCursorListFragment<ItemType extends SilkComparable> ex
     @Override
     public final void onLoadFinished(Loader<Cursor> arg0, Cursor data) {
         setLoadComplete(false);
-        if (data == null) return;
-        if (getAdapter() != null) getAdapter().changeCursor(data);
+        if (data == null || data.getColumnCount() == 0 || data.getCount() == 0) {
+            onCursorEmpty();
+            return;
+        }
+        if (getAdapter() != null) onPostLoadFromCursor(data);
     }
 
     @Override

@@ -8,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.SimpleCursorAdapter;
-import com.afollestad.silk.caching.SilkComparable;
+import com.afollestad.silk.caching.SilkCursorItem;
+
+import java.lang.reflect.Method;
 
 /**
  * A CursorAdapter wrapper that makes creating list adapters easier. Contains various convenience methods and handles
@@ -17,30 +19,30 @@ import com.afollestad.silk.caching.SilkComparable;
  * @param <ItemType> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCursorAdapter<ItemType extends SilkComparable> extends SimpleCursorAdapter implements ScrollStatePersister {
+public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem> extends SimpleCursorAdapter implements ScrollStatePersister {
 
     private final Context context;
+    private final Class<ItemType> mClass;
     private final int mLayout;
-    private CursorConverter<ItemType> mConverter;
     private int mScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
-    public SilkCursorAdapter(Activity context, int layout, CursorConverter<ItemType> converter) {
-        this(context, layout, null, converter);
+    public SilkCursorAdapter(Activity context, Class<ItemType> cls, int layout) {
+        this(context, cls, layout, null);
     }
 
-    public SilkCursorAdapter(Activity context, int layout, Cursor c, CursorConverter<ItemType> converter) {
-        this(context, layout, c, new String[]{}, new int[]{}, 0, converter);
+    public SilkCursorAdapter(Activity context, Class<ItemType> cls, int layout, Cursor c) {
+        this(context, cls, layout, c, new String[]{}, new int[]{}, 0);
     }
 
-    public SilkCursorAdapter(Activity context, int layout, Cursor c, String[] from, int[] to, int flags, CursorConverter<ItemType> converter) {
+    public SilkCursorAdapter(Activity context, Class<ItemType> cls, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
+        this.mClass = cls;
         this.context = context;
         this.mLayout = layout;
-        this.mConverter = converter;
     }
 
-    public void setConverter(CursorConverter<ItemType> converter) {
-        mConverter = converter;
+    public int getLayout() {
+        return mLayout;
     }
 
     /**
@@ -66,18 +68,39 @@ public abstract class SilkCursorAdapter<ItemType extends SilkComparable> extends
     }
 
     /**
-     * @deprecated Override {@link #onViewCreated(int, android.view.View, SilkComparable)} instead.
+     * Called to get the layout of a view being inflated by the SilkAdapter. The inheriting adapter class must return
+     * the layout for list items, this should always be the same value unless you have multiple view types.
+     * <p/>
+     * If you override {#getItemViewType} and/or {#getViewTypeCount}, the parameter to this method will be filled with
+     * the item type at the index of the item view being inflated. Otherwise, it can be ignored.
+     */
+    protected abstract int getLayout(int index, int type);
+
+    /**
+     * @deprecated Override {@link #onViewCreated(int, android.view.View, SilkCursorItem)} instead.
      */
     @Override
-    public View getView(int i, View convertView, ViewGroup viewGroup) {
-        View view = super.getView(i, convertView, viewGroup);
-        if (view == null) view = convertView;
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        if (view == null) {
+            int type = getItemViewType(i);
+            view = LayoutInflater.from(context).inflate(getLayout(i, type), null);
+        }
         return onViewCreated(i, view, getItem(i));
     }
 
     public ItemType getItem(int position) {
         getCursor().moveToPosition(position);
-        return mConverter.convert(getCursor());
+        return performConvert();
+    }
+
+    private ItemType performConvert() {
+        try {
+            Object o = mClass.newInstance();
+            Method m = mClass.getDeclaredMethod("convert", Cursor.class);
+            return (ItemType) m.invoke(o, getCursor());
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while invoking convert() of class " + mClass.getName());
+        }
     }
 
     /**
@@ -94,9 +117,5 @@ public abstract class SilkCursorAdapter<ItemType extends SilkComparable> extends
     @Override
     public final void setScrollState(int state) {
         mScrollState = state;
-    }
-
-    public interface CursorConverter<T extends SilkComparable> {
-        public T convert(Cursor cursor);
     }
 }
