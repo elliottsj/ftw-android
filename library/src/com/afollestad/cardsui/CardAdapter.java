@@ -241,8 +241,8 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     }
 
     @Override
-    public long getItemId(ItemType item) {
-        return -1;
+    public Object getItemId(ItemType item) {
+        return item.getSilkId();
     }
 
     @Override
