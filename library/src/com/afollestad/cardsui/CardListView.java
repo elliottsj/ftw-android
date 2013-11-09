@@ -70,6 +70,9 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
         if (adapter instanceof CardAdapter) {
             setAdapter((CardAdapter) adapter);
             return;
+        } else if (adapter instanceof CardCursorAdapter) {
+            setAdapter((CardCursorAdapter) adapter);
+            return;
         }
         throw new RuntimeException("The CardListView only accepts CardAdapters.");
     }
@@ -78,6 +81,13 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
      * Sets the list's adapter, enforces the use of only a CardAdapter, not any other type of adapter
      */
     public void setAdapter(CardAdapter adapter) {
+        super.setAdapter(adapter);
+    }
+
+    /**
+     * Sets the list's adapter, enforces the use of only a CardCursorAdapter, not any other type of adapter
+     */
+    public void setAdapter(CardCursorAdapter adapter) {
         super.setAdapter(adapter);
     }
 
