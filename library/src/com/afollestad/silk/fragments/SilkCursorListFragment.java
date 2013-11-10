@@ -1,7 +1,6 @@
 package com.afollestad.silk.fragments;
 
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
