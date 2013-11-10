@@ -28,6 +28,7 @@ public class CardCursorAdapter<ItemType extends CardBase<ItemType> & SilkCursorI
     private int mPopupMenu = -1;
     private Card.CardMenuListener<ItemType> mPopupListener;
     private boolean mCardsClickable = true;
+    private int mLayout = R.layout.list_item_card;
     private int mLayoutNoContent = R.layout.list_item_card_nocontent;
     private Map<Integer, Integer> mViewTypes;
 
@@ -37,7 +38,7 @@ public class CardCursorAdapter<ItemType extends CardBase<ItemType> & SilkCursorI
      * @param context The context used to inflate layouts and retrieve resources.
      */
     public CardCursorAdapter(Activity context, Class<ItemType> cls) {
-        super(context, cls, R.layout.list_item_card, null);
+        super(context, cls);
         mAccentColor = context.getResources().getColor(android.R.color.black);
         mViewTypes = new HashMap<Integer, Integer>();
     }
@@ -50,9 +51,10 @@ public class CardCursorAdapter<ItemType extends CardBase<ItemType> & SilkCursorI
      *                      This <b>does not</b> override layouts set to individual cards.
      */
     public CardCursorAdapter(Activity context, Class<ItemType> cls, int cardLayoutRes) {
-        super(context, cls, cardLayoutRes, null);
+        super(context, cls);
         mAccentColor = context.getResources().getColor(android.R.color.black);
         mViewTypes = new HashMap<Integer, Integer>();
+        mLayout = cardLayoutRes;
     }
 
     /**
@@ -124,16 +126,21 @@ public class CardCursorAdapter<ItemType extends CardBase<ItemType> & SilkCursorI
     }
 
     @Override
+    public Object getItemId(ItemType item) {
+        return item.getSilkId();
+    }
+
+    @Override
     public int getLayout(int index, int type) {
         CardBase card = getItem(index);
         if (type == TYPE_HEADER)
-            return R.layout.list_item_header;
+            return mLayout;
         else if (type == TYPE_NO_CONTENT)
             return mLayoutNoContent;
         int layout = card.getLayout();
         if (layout <= 0) {
             // If no layout was specified for the individual card, use the adapter's set layout
-            layout = getLayout();
+            layout = getLayout(index, type);
         }
         return layout;
     }
