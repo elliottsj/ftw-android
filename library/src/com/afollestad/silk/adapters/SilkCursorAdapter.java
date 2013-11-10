@@ -50,7 +50,7 @@ public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem> extends
             Method m = mClass.getDeclaredMethod("convert", Cursor.class);
             return (ItemType) m.invoke(o, getCursor());
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred while invoking convert() of class " + mClass.getName());
+            throw new RuntimeException("An error occurred while invoking convert() of class " + mClass.getName() + ": " + e.getMessage());
         }
     }
 }
