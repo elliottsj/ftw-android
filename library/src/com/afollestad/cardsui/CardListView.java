@@ -123,7 +123,7 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
 
     @Override
     public final void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        CardBase item = (CardBase) ((CardAdapter) getAdapter()).getItem(position);
+        CardBase item = (CardBase) getAdapter().getItem(position);
         if (item.isHeader()) {
             CardHeader header = (CardHeader) item;
             if (header.getActionCallback() != null)
