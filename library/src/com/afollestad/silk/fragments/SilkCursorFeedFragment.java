@@ -52,7 +52,7 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem> ex
     }
 
     public void performRefresh(boolean showProgress) {
-        if (isLoading()) return;
+        if (isLoading() || mBlockRefresh) return;
         mBlockRefresh = false;
         setLoading(showProgress);
         onPreLoad();
