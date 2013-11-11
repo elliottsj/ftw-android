@@ -12,6 +12,7 @@ import java.util.List;
 public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem> extends SilkCursorListFragment<ItemType> {
 
     protected boolean mInitialLoadOnResume;
+    private boolean mBlockRefresh;
 
     @Override
     protected void onVisibilityChanged(boolean visible) {
@@ -52,6 +53,7 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem> ex
 
     public void performRefresh(boolean showProgress) {
         if (isLoading()) return;
+        mBlockRefresh = false;
         setLoading(showProgress);
         onPreLoad();
         Thread t = new Thread(new Runnable() {
@@ -62,6 +64,7 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem> ex
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mBlockRefresh = items.size() == 0;
                             onPostLoad(items);
                         }
                     });
