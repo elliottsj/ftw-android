@@ -24,11 +24,12 @@ public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem> extends
 
     public final void changeCursor(Cursor cursor) {
         clear();
-        while (cursor.moveToNext()) {
-            ItemType item = performConvert(cursor);
-            if (item != null) add(item);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                ItemType item = performConvert(cursor);
+                if (item != null) add(item);
+            }
         }
-        notifyDataSetChanged();
     }
 
     private ItemType performConvert(Cursor cursor) {
