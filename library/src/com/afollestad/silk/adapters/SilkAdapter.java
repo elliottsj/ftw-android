@@ -22,13 +22,13 @@ import java.util.List;
 public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseAdapter implements ScrollStatePersister {
 
     private final Context context;
-    private final List<ItemType> items;
+    private final List<ItemType> mItems;
     private boolean isChanged = false;
     private int mScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
     public SilkAdapter(Context context) {
         this.context = context;
-        this.items = new ArrayList<ItemType>();
+        this.mItems = new ArrayList<ItemType>();
     }
 
     /**
@@ -62,7 +62,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      */
     public void add(int index, ItemType toAdd) {
         isChanged = true;
-        this.items.add(index, toAdd);
+        this.mItems.add(index, toAdd);
         notifyDataSetChanged();
     }
 
@@ -84,7 +84,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      */
     public void add(ItemType toAdd) {
         isChanged = true;
-        this.items.add(toAdd);
+        this.mItems.add(toAdd);
         notifyDataSetChanged();
     }
 
@@ -125,9 +125,10 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      */
     public boolean update(ItemType toUpdate, boolean addIfNotFound) {
         boolean found = false;
-        for (int i = 0; i < items.size(); i++) {
-            if (toUpdate.equalTo(items.get(i))) {
-                items.set(i, toUpdate);
+        for (int i = 0; i < getCount(); i++) {
+            ItemType item = getItem(i);
+            if (toUpdate.equalTo(item)) {
+                getItems().set(i, toUpdate);
                 found = true;
                 break;
             }
@@ -152,9 +153,8 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      */
     public final void set(List<ItemType> toSet) {
         isChanged = true;
-        this.items.clear();
-        for (ItemType item : toSet)
-            add(item);
+        this.mItems.clear();
+        for (ItemType item : toSet) add(item);
     }
 
     /**
@@ -173,7 +173,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      */
     public void remove(int index) {
         isChanged = true;
-        this.items.remove(index);
+        this.mItems.remove(index);
         notifyDataSetChanged();
     }
 
@@ -182,8 +182,9 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      * so you cannot remove multiple items with a single call.
      */
     public void remove(ItemType toRemove) {
-        for (int i = 0; i < items.size(); i++) {
-            if (toRemove.equalTo(items.get(i))) {
+        for (int i = 0; i < getCount(); i++) {
+            ItemType item = getItem(i);
+            if (toRemove.equalTo(item)) {
                 this.remove(i);
                 break;
             }
@@ -202,7 +203,7 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      */
     public void clear() {
         isChanged = true;
-        this.items.clear();
+        this.mItems.clear();
         notifyDataSetChanged();
     }
 
@@ -210,17 +211,17 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      * Gets a list of all items in the adapter.
      */
     public final List<ItemType> getItems() {
-        return items;
+        return mItems;
     }
 
     @Override
     public int getCount() {
-        return items.size();
+        return mItems.size();
     }
 
     @Override
     public ItemType getItem(int i) {
-        return items.get(i);
+        return mItems.get(i);
     }
 
     @Override
