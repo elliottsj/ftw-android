@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
  */
 public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem> extends SilkAdapter<ItemType> implements ScrollStatePersister {
 
-    private Cursor mCursor;
     private Class<? extends SilkCursorItem> mClass;
 
     public SilkCursorAdapter(Context context, Class<? extends SilkCursorItem> cls) {
@@ -23,32 +22,20 @@ public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem> extends
         mClass = cls;
     }
 
-    public final Cursor getCursor() {
-        return mCursor;
-    }
-
     public final void changeCursor(Cursor cursor) {
-        mCursor = cursor;
+        clear();
+        while (cursor.moveToNext()) {
+            ItemType item = performConvert(cursor);
+            if (item != null) add(item);
+        }
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getCount() {
-        if (mCursor == null) return 0;
-        return mCursor.getCount();
-    }
-
-    public final ItemType getItem(int position) {
-        if (mCursor == null || mCursor.getCount() == 0) return null;
-        mCursor.moveToPosition(position);
-        return performConvert();
-    }
-
-    private ItemType performConvert() {
+    private ItemType performConvert(Cursor cursor) {
         try {
             Object o = mClass.newInstance();
             Method m = mClass.getDeclaredMethod("convert", Cursor.class);
-            return (ItemType) m.invoke(o, getCursor());
+            return (ItemType) m.invoke(o, cursor);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("An error occurred while invoking convert() of class " + mClass.getName() + ": " + e.getMessage());
