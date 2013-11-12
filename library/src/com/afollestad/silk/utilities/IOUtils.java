@@ -7,17 +7,17 @@ import java.io.*;
  */
 public class IOUtils {
 
-    public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+    private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
     public static void closeQuietly(InputStream input) {
         closeQuietly((Closeable) input);
     }
 
-    public static void closeQuietly(OutputStream output) {
+    private static void closeQuietly(OutputStream output) {
         closeQuietly((Closeable) output);
     }
 
-    public static void closeQuietly(Closeable closeable) {
+    private static void closeQuietly(Closeable closeable) {
         try {
             if (closeable != null) {
                 closeable.close();
@@ -27,7 +27,7 @@ public class IOUtils {
         }
     }
 
-    public static int copy(InputStream input, OutputStream output) throws IOException {
+    private static int copy(InputStream input, OutputStream output) throws IOException {
         long count = copyLarge(input, output);
         if (count > Integer.MAX_VALUE) {
             return -1;

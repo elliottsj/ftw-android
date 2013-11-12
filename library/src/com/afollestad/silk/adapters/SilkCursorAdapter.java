@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  */
 public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem> extends SilkAdapter<ItemType> implements ScrollStatePersister {
 
-    private Class<? extends SilkCursorItem> mClass;
+    private final Class<? extends SilkCursorItem> mClass;
 
     public SilkCursorAdapter(Context context, Class<? extends SilkCursorItem> cls) {
         super(context);
