@@ -30,7 +30,7 @@ public class CardCursorAdapter<ItemType extends CardBase<ItemType> & SilkCursorI
     private boolean mCardsClickable = true;
     private int mLayout = R.layout.list_item_card;
     private int mLayoutNoContent = R.layout.list_item_card_nocontent;
-    private Map<Integer, Integer> mViewTypes;
+    private final Map<Integer, Integer> mViewTypes;
 
     /**
      * Initializes a new CardAdapter instance.
