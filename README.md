@@ -79,11 +79,6 @@ dependencies {
 * At the root of your project directory, run `./gradlew build`. You should see `:<ProjectName>:prepareComAfollestadSilkLibrary10SNAPSHOTLibrary` or something like it in the output and `BUILD SUCCESSFUL` at the end.
 * You're done. You can now use Cards UI in your app.
 
-
-Implementing
+Tutorial
 ============
-Implementing this library in your own apps is pretty simple. First, you need an XML layout that will contain the `ListView`
-that displays your cards; it's recommended that you use the `CardListView` class instead of a stock `ListView`, as it
-automates many things (such as notifying card headers that they were clicked and disabling the ListView divider and selector).
-
-See the sample application for code details on how to start implementing the library into your own code.
+Tutorials are available on this project's wiki pages.
