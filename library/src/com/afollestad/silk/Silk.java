@@ -8,7 +8,6 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Environment;
 import android.util.Base64;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
@@ -16,7 +15,6 @@ import com.esotericsoftware.kryo.io.Output;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 

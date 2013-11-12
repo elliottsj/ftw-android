@@ -22,24 +22,24 @@ public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem> extends
         mClass = cls;
     }
 
+    public static Object performConvert(Cursor cursor, Class<? extends SilkCursorItem> type) {
+        try {
+            Object o = type.newInstance();
+            Method m = type.getDeclaredMethod("convert", Cursor.class);
+            return m.invoke(o, cursor);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("An error occurred while invoking convert() of class " + type.getName() + ": " + e.getMessage());
+        }
+    }
+
     public final void changeCursor(Cursor cursor) {
         clear();
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                ItemType item = performConvert(cursor);
+                ItemType item = (ItemType) performConvert(cursor, mClass);
                 if (item != null) add(item);
             }
-        }
-    }
-
-    private ItemType performConvert(Cursor cursor) {
-        try {
-            Object o = mClass.newInstance();
-            Method m = mClass.getDeclaredMethod("convert", Cursor.class);
-            return (ItemType) m.invoke(o, cursor);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("An error occurred while invoking convert() of class " + mClass.getName() + ": " + e.getMessage());
         }
     }
 }
