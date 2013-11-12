@@ -8,10 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.*;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkCursorAdapter;
 import com.afollestad.silk.caching.SilkCursorItem;
@@ -115,7 +112,7 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem> ex
     protected abstract boolean onItemLongTapped(int index, ItemType item, View view);
 
     protected void onCursorEmpty() {
-        // Do nothing by default
+        setLoadComplete(false);
     }
 
     /**
