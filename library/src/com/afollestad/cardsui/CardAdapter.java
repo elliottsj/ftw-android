@@ -122,7 +122,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     }
 
     @Override
-    public int getLayout(int index, int type) {
+    public final int getLayout(int index, int type) {
         CardBase card = getItem(index);
         if (type == TYPE_HEADER)
             return R.layout.list_item_header;
