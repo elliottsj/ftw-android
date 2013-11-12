@@ -35,7 +35,7 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem> ex
 
     protected void onPostLoad(List<ItemType> items) {
         if (items.size() == 0) {
-            onCursorEmpty();
+            setLoadComplete(false);
             return;
         }
         ContentResolver resolver = getActivity().getContentResolver();
