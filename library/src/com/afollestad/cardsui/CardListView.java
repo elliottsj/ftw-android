@@ -138,7 +138,7 @@ public class CardListView extends ListView implements AdapterView.OnItemClickLis
 
     @Override
     public final boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        CardBase item = (CardBase) ((CardAdapter) getAdapter()).getItem(position);
+        CardBase item = (CardBase) getAdapter().getItem(position);
         if (mCardLongClickListener != null)
             return mCardLongClickListener.onCardLongClick(position, item, view);
         return mItemLongClickListener != null && mItemLongClickListener.onItemLongClick(parent, view, position, id);
