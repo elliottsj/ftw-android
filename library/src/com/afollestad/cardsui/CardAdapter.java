@@ -183,6 +183,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
             public void onClick(View v) {
                 int menuRes = mPopupMenu;
                 if (card.getPopupMenu() != 0) menuRes = card.getPopupMenu();
+                // Force the holo light theme on every card's popup menu
                 Context themedContext = getContext();
                 themedContext.setTheme(android.R.style.Theme_Holo_Light);
                 PopupMenu popup = new PopupMenu(themedContext, view);
