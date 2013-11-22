@@ -14,12 +14,13 @@ import java.util.List;
 public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
     protected boolean mInitialLoadOnResume;
+    protected boolean mInitialLoadOnVisible;
     private boolean mBlockPaginate = false;
 
     @Override
     protected void onVisibilityChanged(boolean visible) {
         super.onVisibilityChanged(visible);
-        if (visible && mInitialLoadOnResume)
+        if (visible && mInitialLoadOnVisible)
             onInitialRefresh();
     }
 

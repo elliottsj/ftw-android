@@ -12,11 +12,12 @@ import java.util.List;
 public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem> extends SilkCursorListFragment<ItemType> {
 
     protected boolean mInitialLoadOnResume;
+    protected boolean mInitialLoadOnVisible;
 
     @Override
     protected void onVisibilityChanged(boolean visible) {
         super.onVisibilityChanged(visible);
-        if (visible && mInitialLoadOnResume)
+        if (visible && mInitialLoadOnVisible)
             onInitialRefresh();
     }
 
