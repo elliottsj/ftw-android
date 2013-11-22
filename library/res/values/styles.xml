@@ -64,7 +64,7 @@
     <style name="card_thumbnail">
         <item name="android:layout_width">@dimen/card_thumbnail</item>
         <item name="android:layout_height">@dimen/card_thumbnail</item>
-        <item name="android:scaleType">fitXY</item>
+        <item name="android:scaleType">centerCrop</item>
         <item name="android:layout_marginRight">@dimen/card_thumbnail_margin</item>
     </style>
 
