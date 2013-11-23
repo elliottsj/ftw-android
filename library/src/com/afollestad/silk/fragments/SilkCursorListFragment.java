@@ -8,7 +8,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkCursorAdapter;
 import com.afollestad.silk.caching.SilkCursorItem;
@@ -155,7 +158,7 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem> ex
      * @param error Whether or not an error occurred while loading. This value is not used in the default implementation
      *              but can be used by overriding classes.
      */
-    public final void setLoadComplete(boolean error) {
+    public void setLoadComplete(boolean error) {
         mLoading = false;
         setListShown(true);
     }
