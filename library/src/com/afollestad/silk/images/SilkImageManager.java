@@ -40,7 +40,7 @@ public class SilkImageManager {
     private final ExecutorService mNetworkExecutorService = newConfiguredThreadPool();
     private final ExecutorService mDiskExecutorService = Executors.newCachedThreadPool(new LowPriorityThreadFactory());
     private int fallbackImageId;
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
     private LruCache<String, Bitmap> mLruCache = newConfiguredLruCache();
 
     public SilkImageManager(Context context) {
