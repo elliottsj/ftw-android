@@ -3,6 +3,8 @@ package com.afollestad.silk.http;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.StatusLine;
 
+import java.net.SocketTimeoutException;
+
 /**
  * @author Aidan Follestad (afollestad)
  */
@@ -17,7 +19,7 @@ public class SilkHttpException extends Exception {
     }
 
     SilkHttpException(Exception e) {
-        super(e);
+        super((e instanceof SocketTimeoutException) ? new Exception("Connection timed out") : e);
     }
 
     SilkHttpException(HttpResponse response) {
