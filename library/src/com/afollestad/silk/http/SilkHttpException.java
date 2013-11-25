@@ -19,7 +19,7 @@ public class SilkHttpException extends Exception {
     }
 
     SilkHttpException(Exception e) {
-        super((e instanceof SocketTimeoutException) ? new Exception("Connection timed out") : e);
+        super((e instanceof SocketTimeoutException) ? "Connection timed out" : e.getMessage());
     }
 
     SilkHttpException(HttpResponse response) {
