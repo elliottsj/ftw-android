@@ -22,13 +22,14 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     private final static int TYPE_REGULAR = 0;
     private final static int TYPE_NO_CONTENT = 1;
     private final static int TYPE_HEADER = 2;
+    private final static int POPUP_MENU_THEME = android.R.style.Theme_Holo_Light;
+    private final Map<Integer, Integer> mViewTypes;
     private int mAccentColor;
     private int mPopupMenu = -1;
     private Card.CardMenuListener<ItemType> mPopupListener;
     private boolean mCardsClickable = true;
     private int mLayout = R.layout.list_item_card;
     private int mLayoutNoContent = R.layout.list_item_card_nocontent;
-    private final Map<Integer, Integer> mViewTypes;
 
     /**
      * Initializes a new CardAdapter instance.
@@ -111,6 +112,10 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
         return this;
     }
 
+    protected Card.CardMenuListener<ItemType> getMenuListener() {
+        return mPopupListener;
+    }
+
     /**
      * Sets whether or not cards in the adapter are clickable, setting it to false will turn card's list selectors off
      * and the list's OnItemClickListener will not be called. This <b>will</b> override individual isClickable values
@@ -161,52 +166,6 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
         } else button.setVisibility(View.GONE);
     }
 
-    private void setupMenu(final ItemType card, final View view) {
-        if (view == null) return;
-        if (card.getPopupMenu() < 0) {
-            // Menu for this card is disabled
-            view.setVisibility(View.INVISIBLE);
-            view.setOnClickListener(null);
-            return;
-        }
-        int menuRes = mPopupMenu;
-        if (card.getPopupMenu() != 0) menuRes = card.getPopupMenu();
-        if (menuRes < 0) {
-            // No menu for the adapter or the card
-            view.setVisibility(View.INVISIBLE);
-            view.setOnClickListener(null);
-            return;
-        }
-        view.setVisibility(View.VISIBLE);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int menuRes = mPopupMenu;
-                if (card.getPopupMenu() != 0) menuRes = card.getPopupMenu();
-                // Force the holo light theme on every card's popup menu
-                Context themedContext = getContext();
-                themedContext.setTheme(android.R.style.Theme_Holo_Light);
-                PopupMenu popup = new PopupMenu(themedContext, view);
-                MenuInflater inflater = popup.getMenuInflater();
-                inflater.inflate(menuRes, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (card.getPopupMenu() > 0 && card.getPopupListener() != null) {
-                            // This individual card has it unique menu
-                            card.getPopupListener().onMenuItemClick(card, item);
-                        } else if (mPopupListener != null) {
-                            // The card does not have a unique menu, use the adapter's default
-                            mPopupListener.onMenuItemClick(card, item);
-                        }
-                        return false;
-                    }
-                });
-                popup.show();
-            }
-        });
-    }
-
     private void invalidatePadding(int index, View view) {
         int top = index == 0 ? R.dimen.card_outer_padding_firstlast : R.dimen.card_outer_padding_top;
         int bottom = index == (getCount() - 1) ? R.dimen.card_outer_padding_firstlast : R.dimen.card_outer_padding_top;
@@ -235,9 +194,16 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
                 icon.setVisibility(View.GONE);
             }
         }
-
+        View menu = recycled.findViewById(android.R.id.button1);
+        if (menu != null) {
+            if (onProcessMenu(menu, item)) {
+                menu.setVisibility(View.VISIBLE);
+            } else {
+                menu.setOnClickListener(null);
+                menu.setVisibility(View.INVISIBLE);
+            }
+        }
         invalidatePadding(index, recycled);
-        setupMenu(item, recycled.findViewById(android.R.id.button1));
         return recycled;
     }
 
@@ -296,5 +262,46 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     protected boolean onProcessContent(TextView content, ItemType card) {
         content.setText(card.getContent());
         return false;
+    }
+
+    protected boolean onProcessMenu(final View view, final ItemType card) {
+        if (card.getPopupMenu() < 0) {
+            // Menu for this card is disabled
+            return false;
+        }
+        int menuRes = mPopupMenu;
+        if (card.getPopupMenu() != 0) menuRes = card.getPopupMenu();
+        if (menuRes < 0) {
+            // No menu for the adapter or the card
+            return false;
+        }
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int menuRes = mPopupMenu;
+                if (card.getPopupMenu() != 0) menuRes = card.getPopupMenu();
+                // Force the holo light theme on every card's popup menu
+                Context themedContext = getContext();
+                themedContext.setTheme(POPUP_MENU_THEME);
+                PopupMenu popup = new PopupMenu(themedContext, view);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(menuRes, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (card.getPopupMenu() > 0 && card.getPopupListener() != null) {
+                            // This individual card has it unique menu
+                            card.getPopupListener().onMenuItemClick(card, item);
+                        } else if (mPopupListener != null) {
+                            // The card does not have a unique menu, use the adapter's default
+                            mPopupListener.onMenuItemClick(card, item);
+                        }
+                        return false;
+                    }
+                });
+                popup.show();
+            }
+        });
+        return true;
     }
 }
