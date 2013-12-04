@@ -22,9 +22,14 @@ public class NearbyStopsActivity extends Activity {
 
         CardAdapter<Card> cardAdapter = new CardAdapter<Card>(this);
 
-        cardAdapter.add(new CardHeader("Header 1"));
-        cardAdapter.add(new Card("One", "Example 1"));
-        cardAdapter.add(new Card("Two", "Example 2"));
+        cardAdapter.add(new CardHeader("College St At Beverly St"));
+        cardAdapter.add(new Card("East - 506 Carlton towards Main Street Station", "2 minutes"));
+
+        cardAdapter.add(new CardHeader("Eglinton Ave East At Redpath Ave"));
+        cardAdapter.add(new Card("South - 103 Mount Pleasant North towards Eglinton Station", "2 minutes"));
+        cardAdapter.add(new Card("West - 54 Lawrence East towards Eglinton Station", "3 minutes"));
+
+
 
         cardList.setAdapter(cardAdapter);
         cardList.setOnCardClickListener(new CardListView.CardClickListener() {

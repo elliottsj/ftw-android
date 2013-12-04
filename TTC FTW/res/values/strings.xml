@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">TTC FTW</string>
+
+    <!-- String related to NearbyStopsActivity -->
+    <string name="nearby_stops">Nearby Stops</string>
+    <string name="saved_stops">Saved Stops</string>
+    <string name="east"><![CDATA[<b>East</b>]]></string>
+
 </resources>
