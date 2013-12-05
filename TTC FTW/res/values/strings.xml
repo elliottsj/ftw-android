@@ -3,6 +3,11 @@
 
     <string name="app_name">TTC FTW</string>
 
+    <!-- Placeholder strings -->
+    <string name="sample_stop">College St At Beverly St</string>
+    <string name="sample_route">506 Carlton towards Main Street Station</string>
+    <string name="sample_prediction">2 minutes</string>
+
     <!-- String related to NearbyStopsActivity -->
     <string name="nearby_stops">Nearby Stops</string>
     <string name="saved_stops">Saved Stops</string>
