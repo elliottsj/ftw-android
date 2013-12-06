@@ -133,8 +133,10 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
                 break;
             }
         }
-        if (found) return true;
-        else if (addIfNotFound) {
+        if (found) {
+            notifyDataSetChanged();
+            return true;
+        } else if (addIfNotFound) {
             add(toUpdate);
             return true;
         }
