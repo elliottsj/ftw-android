@@ -34,6 +34,11 @@ public class RouteCardAdapter extends CardAdapter<Card> {
         return super.onViewCreated(index, recycled, item);
     }
 
+    @Override
+    protected boolean onProcessTitle(TextView title, Card card, int accentColor) {
+        return super.onProcessTitle(title, card, title.getCurrentTextColor());
+    }
+
     protected boolean onProcessDescription(TextView description, RouteCard card) {
         description.setText(card.getDescription());
         return false;
