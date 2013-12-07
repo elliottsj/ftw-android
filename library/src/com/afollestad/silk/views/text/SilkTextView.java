@@ -29,6 +29,7 @@ public class SilkTextView extends TextView {
     }
 
     private void init(Context context) {
+        if (isInEditMode()) return;
         try {
             Typeface tf = Typeface.createFromAsset(context.getAssets(), "Roboto-Light.ttf");
             setTypeface(tf);

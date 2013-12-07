@@ -29,6 +29,7 @@ public class SilkCondensedTextView extends TextView {
     }
 
     private void init(Context context) {
+        if (isInEditMode()) return;
         try {
             Typeface tf = Typeface.createFromAsset(context.getAssets(), "Roboto-Condensed.ttf");
             setTypeface(tf);
