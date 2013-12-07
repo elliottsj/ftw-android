@@ -36,6 +36,7 @@ public class RouteCardAdapter extends CardAdapter<Card> {
 
     @Override
     protected boolean onProcessTitle(TextView title, Card card, int accentColor) {
+        // Ignore accentColor; just use the title's current color
         return super.onProcessTitle(title, card, title.getCurrentTextColor());
     }
 

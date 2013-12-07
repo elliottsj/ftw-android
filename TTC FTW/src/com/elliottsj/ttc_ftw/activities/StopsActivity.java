@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.elliottsj.ttc_ftw.R;
 
@@ -27,6 +28,12 @@ public class StopsActivity extends Activity {
         mStopsTabsAdapter = new StopsTabsAdapter(getFragmentManager());
         mViewPager.setAdapter(mStopsTabsAdapter);
         mTabs.setViewPager(mViewPager);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.stops, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     public static class StopsTabsAdapter extends FragmentPagerAdapter {
