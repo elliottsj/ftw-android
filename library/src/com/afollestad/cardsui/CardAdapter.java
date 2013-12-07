@@ -1,8 +1,10 @@
 package com.afollestad.cardsui;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -66,6 +68,21 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     public CardAdapter(Context context, int cardLayoutRes, int cardLayoutNoContentRes) {
         this(context, cardLayoutRes);
         mLayoutNoContent = cardLayoutNoContentRes;
+    }
+
+    public static void setupTouchDelegate(final View menu) {
+        ((View) menu.getParent()).post(new Runnable() {
+            public void run() {
+                Rect delegateArea = new Rect();
+                menu.getHitRect(delegateArea);
+                delegateArea.top -= 600;
+                delegateArea.bottom += 600;
+                delegateArea.left -= 600;
+                delegateArea.right += 600;
+                TouchDelegate expandedArea = new TouchDelegate(delegateArea, menu);
+                ((View) menu.getParent()).setTouchDelegate(expandedArea);
+            }
+        });
     }
 
     @Override
@@ -275,6 +292,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
             // No menu for the adapter or the card
             return false;
         }
+        setupTouchDelegate(view);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

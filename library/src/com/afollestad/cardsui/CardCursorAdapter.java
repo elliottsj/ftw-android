@@ -279,6 +279,7 @@ public class CardCursorAdapter<ItemType extends CardBase<ItemType> & SilkCursorI
             // No menu for the adapter or the card
             return false;
         }
+        CardAdapter.setupTouchDelegate(view);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
