@@ -70,15 +70,16 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
         mLayoutNoContent = cardLayoutNoContentRes;
     }
 
-    public static void setupTouchDelegate(final View menu) {
+    public static void setupTouchDelegate(Context context, final View menu) {
+        final int offset = context.getResources().getDimensionPixelSize(R.dimen.card_action_touchdelegate);
         ((View) menu.getParent()).post(new Runnable() {
             public void run() {
                 Rect delegateArea = new Rect();
                 menu.getHitRect(delegateArea);
-                delegateArea.top -= 600;
-                delegateArea.bottom += 600;
-                delegateArea.left -= 600;
-                delegateArea.right += 600;
+                delegateArea.top -= offset;
+                delegateArea.bottom += offset;
+                delegateArea.left -= offset;
+                delegateArea.right += offset;
                 TouchDelegate expandedArea = new TouchDelegate(delegateArea, menu);
                 ((View) menu.getParent()).setTouchDelegate(expandedArea);
             }
@@ -292,7 +293,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
             // No menu for the adapter or the card
             return false;
         }
-        setupTouchDelegate(view);
+        setupTouchDelegate(getContext(), view);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
