@@ -26,7 +26,7 @@ public class CardCursorAdapter<ItemType extends CardBase<ItemType> & SilkCursorI
     private final static int TYPE_HEADER = 2;
     private final static int POPUP_MENU_THEME = android.R.style.Theme_Holo_Light;
     private final Map<Integer, Integer> mViewTypes;
-    private int mAccentColor;
+    protected int mAccentColor;
     private int mPopupMenu = -1;
     private Card.CardMenuListener<ItemType> mPopupListener;
     private boolean mCardsClickable = true;
