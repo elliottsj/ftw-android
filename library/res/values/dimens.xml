@@ -25,6 +25,6 @@
     <dimen name="card_header_button_padding_top">5dp</dimen>
     <dimen name="card_header_button_margin_left">10dp</dimen>
 
-    <dimen name="card_action_touchdelegate">10dp</dimen>
+    <dimen name="card_action_touchdelegate">25dp</dimen>
 
 </resources>
