@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.elliottsj.ttc_ftw.R;
+import net.sf.nextbus.publicxmlfeed.impl.SimplestNextbusServiceAdapter;
 
 public class StopsActivity extends Activity {
 
@@ -28,6 +29,9 @@ public class StopsActivity extends Activity {
         mStopsTabsAdapter = new StopsTabsAdapter(getFragmentManager());
         mViewPager.setAdapter(mStopsTabsAdapter);
         mTabs.setViewPager(mViewPager);
+
+        SimplestNextbusServiceAdapter svc = new SimplestNextbusServiceAdapter();
+
     }
 
     @Override
