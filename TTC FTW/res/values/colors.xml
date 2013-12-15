@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="ttc_red">#D11D1D</color>
+    <!--<color name="ttc_red">#D11D1D</color>-->
+    <color name="ttc_red">#FFC74B46</color>
 
 </resources>
