@@ -3,7 +3,6 @@ package com.afollestad.silk.views.image;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import com.afollestad.silk.images.Dimension;
@@ -29,11 +28,6 @@ public class SilkImageView extends ImageView {
 
     public SilkImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-    }
-
-    protected final void log(String message) {
-        if (aimage != null && !aimage.isDebugEnabled()) return;
-        Log.d("SilkImageView", message);
     }
 
     @Override
@@ -89,7 +83,6 @@ public class SilkImageView extends ImageView {
         aimage = manager;
         if (aimage == null)
             throw new IllegalStateException("You cannot load the fallback image until you have set a SilkImageManager via setManager().");
-        log("Loading fallback image for view...");
         aimage.get(SilkImageManager.SOURCE_FALLBACK, new SilkImageManager.AdvancedImageListener() {
             @Override
             public void onImageReceived(final String source, final Bitmap bitmap) {
@@ -98,7 +91,6 @@ public class SilkImageView extends ImageView {
                     requestLayout();
                     invalidate();
                 }
-                log("Fallback image set to view.");
             }
 
             @Override
@@ -116,7 +108,6 @@ public class SilkImageView extends ImageView {
             showFallback(aimage);
             return;
         } else if (getMeasuredWidth() == 0 && getMeasuredHeight() == 0) {
-            log("View not measured yet, waiting...");
             return;
         }
         lastSource = source;
@@ -129,7 +120,6 @@ public class SilkImageView extends ImageView {
             @Override
             public void onImageReceived(final String source, final Bitmap bitmap) {
                 if (lastSource != null && !lastSource.equals(source)) {
-                    log("View source changed since download started, not setting " + source + " to view.");
                     return;
                 }
                 // Post on the view's UI thread to be 100% sure we're on the right thread
@@ -145,7 +135,6 @@ public class SilkImageView extends ImageView {
                             loadingView.setVisibility(View.GONE);
                             SilkImageView.this.setVisibility(View.VISIBLE);
                         }
-                        log(source + " set to view " + SilkImageManager.Utils.getKey(source, dimen));
                     }
                 });
             }
