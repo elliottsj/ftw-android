@@ -15,7 +15,7 @@ public class CustomCardAdapter extends CardAdapter<Card> {
     private SilkImageManager mImageLoader;
 
     public CustomCardAdapter(Context context) {
-        super(context, R.layout.card_larger); // the custom card layout is passed to the super constructor instead of every individual card
+        super(context, R.layout.custom_card); // the custom card layout is passed to the super constructor instead of every individual card
         setAccentColorRes(android.R.color.holo_red_dark);
         mImageLoader = new SilkImageManager(context);
     }
@@ -23,7 +23,7 @@ public class CustomCardAdapter extends CardAdapter<Card> {
     @Override
     protected boolean onProcessThumbnail(ImageView icon, Card card) {
         // Optional, you can modify properties of the icon ImageView here.
-        // In this case, this view is a SilkImageView in the card_larger.xml layout.
+        // In this case, this view is a SilkImageView in the custom_card.xml layout.
         SilkImageView silkIcon = (SilkImageView) icon;
         if (getScrollState() == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
             // If the list is being scrolled quickly, don't load the thumbnail (scroll state is reported from CardListView because it extends SilkListView)
@@ -47,8 +47,26 @@ public class CustomCardAdapter extends CardAdapter<Card> {
     }
 
     @Override
+    protected boolean onProcessMenu(View view, final Card card) {
+        // Sets up a card's menu (custom_card.xml makes this a star)
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Toggles the activaed state of the star, keeps the state in the Card tag so it's maintained while recycling views
+                boolean turnedOn = card.getTag() != null ? (Boolean) card.getTag() : false;
+                update(card.setTag(!turnedOn));
+            }
+        });
+        return true;
+    }
+
+    @Override
     public View onViewCreated(int index, View recycled, Card item) {
         // Optional, you can modify properties of other views that you add to the card layout that aren't the icon, title, content...
+        if (!item.isHeader() && item.getTag() != null) {
+            // Sets the activated state of a card's star button based on the value set when a star is tapped (see onProcessMenu())
+            recycled.findViewById(android.R.id.button1).setActivated((Boolean) item.getTag());
+        }
         return super.onViewCreated(index, recycled, item);
     }
 }

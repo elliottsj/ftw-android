@@ -18,4 +18,11 @@
         <item name="android:textSize">@dimen/card_content_large</item>
     </style>
 
+    <style name="card_popup_anchor_star" parent="@style/card_popup_anchor">
+        <item name="android:layout_width">28dp</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:src">@drawable/custom_card_star</item>
+    </style>
+
 </resources>

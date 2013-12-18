@@ -13,7 +13,7 @@
             <TextView android:id="@android:id/title" style="@style/card_title_large"/>
 
             <!--suppress AndroidLintContentDescription -->
-            <ImageButton android:id="@android:id/button1" style="@style/card_popup_anchor"/>
+            <ImageButton android:id="@android:id/button1" style="@style/card_popup_anchor_star"/>
 
         </RelativeLayout>
 

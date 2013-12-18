@@ -45,6 +45,9 @@ public class MainActivity extends Activity implements Card.CardMenuListener<Card
         cardsAdapter.add(new Card("Thursday", "Almost there..."));
         cardsAdapter.add(new Card("Friday", "We made it!"));
 
+        cardsAdapter.add(new CardHeader("Countries"));
+        cardsAdapter.add(new CardCenteredHeader("Nothing to see here"));
+
         cardsAdapter.add(new CardHeader("Companies", "The world's top tech businesses.")
                 // The action text here is set to a string resource, if you don't specify a context and/or string the default "See More" is used
                 .setAction(this, R.string.what_else, new CardHeader.ActionListener() {
