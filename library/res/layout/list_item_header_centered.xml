@@ -3,6 +3,7 @@
 
     <com.afollestad.cardsui.LightItalicTextView android:id="@android:id/title"
                                                 style="@style/card_header_title"
-                                                android:layout_centerHorizontal="true"/>
+                                                android:layout_centerHorizontal="true"
+                                                android:paddingBottom="3dp"/>
 
 </RelativeLayout>
