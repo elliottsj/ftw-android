@@ -93,7 +93,7 @@ public abstract class SilkDrawerActivity extends Activity {
         invalidateOptionsMenu();
     }
 
-    private void setupDrawer() {
+    protected void setupDrawer() {
         mTitle = getTitle();
         DrawerLayout mDrawerLayout = getDrawerLayout();
         if (mDrawerLayout == null)
