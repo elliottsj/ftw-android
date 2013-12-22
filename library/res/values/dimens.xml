@@ -27,4 +27,7 @@
 
     <dimen name="card_action_touchdelegate">25dp</dimen>
 
+    <dimen name="card_inner_padding_vertical_large">14dp</dimen>
+    <dimen name="card_inner_padding_horizontal_large">12dp</dimen>
+
 </resources>

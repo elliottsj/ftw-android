@@ -134,4 +134,11 @@
         <item name="android:layout_gravity">center_vertical</item>
     </style>
 
+    <style name="card_inner_compressed" parent="@style/card_inner">
+        <item name="android:paddingLeft">@dimen/card_inner_padding_horizontal_large</item>
+        <item name="android:paddingRight">@dimen/card_inner_padding_horizontal_large</item>
+        <item name="android:paddingTop">@dimen/card_inner_padding_vertical_large</item>
+        <item name="android:paddingBottom">@dimen/card_inner_padding_vertical_large</item>
+    </style>
+
 </resources>
