@@ -95,6 +95,7 @@
         <item name="android:layout_toRightOf">@android:id/icon</item>
         <item name="android:layout_marginLeft">@dimen/card_title_margin_left</item>
         <item name="android:layout_marginRight">@dimen/card_title_margin_left</item>
+        <item name="android:maxLines">2</item>
     </style>
 
     <style name="card_header_outer">
@@ -132,6 +133,7 @@
         <item name="android:textSize">@dimen/card_subheader</item>
         <item name="android:visibility">gone</item>
         <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:singleLine">true</item>
     </style>
 
     <style name="card_inner_compressed" parent="@style/card_inner">
