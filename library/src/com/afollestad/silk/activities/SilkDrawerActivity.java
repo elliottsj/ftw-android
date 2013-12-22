@@ -38,7 +38,7 @@ public abstract class SilkDrawerActivity extends Activity {
     /**
      * Checks whether or not any drawer is open in the DrawerActivity.
      */
-    protected final boolean isDrawerOpen() {
+    public final boolean isDrawerOpen() {
         DrawerLayout drawer = getDrawerLayout();
         return drawer.isDrawerOpen(Gravity.START) || drawer.isDrawerOpen(Gravity.LEFT) || drawer.isDrawerOpen(Gravity.RIGHT);
     }
