@@ -17,6 +17,14 @@ public class CardCompressed extends Card {
         super(context, title, subtitle);
     }
 
+    public CardCompressed(Context context, int title, String subtitle) {
+        super(context, title, subtitle);
+    }
+
+    public CardCompressed(Context context, String title, int subtitle) {
+        super(context, title, subtitle);
+    }
+
     @Override
     public int getLayout() {
         return R.layout.list_item_header_centered;
