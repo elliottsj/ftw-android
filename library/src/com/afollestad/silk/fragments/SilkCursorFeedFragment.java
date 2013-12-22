@@ -2,6 +2,7 @@ package com.afollestad.silk.fragments;
 
 import android.content.ContentResolver;
 import android.os.Bundle;
+import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem> extends SilkCursorListFragment<ItemType> {
+public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & SilkComparable> extends SilkCursorListFragment<ItemType> {
 
     protected boolean mInitialLoadOnResume;
     protected boolean mInitialLoadOnVisible;

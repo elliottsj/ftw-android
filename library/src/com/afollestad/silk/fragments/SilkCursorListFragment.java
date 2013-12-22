@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkCursorAdapter;
+import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
 
 /**
@@ -22,7 +23,7 @@ import com.afollestad.silk.caching.SilkCursorItem;
  * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem> extends SilkFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & SilkComparable> extends SilkFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private AbsListView mListView;
     private TextView mEmpty;

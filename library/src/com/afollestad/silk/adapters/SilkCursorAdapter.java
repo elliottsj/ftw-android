@@ -2,6 +2,7 @@ package com.afollestad.silk.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
 
 import java.lang.reflect.Method;
@@ -13,7 +14,7 @@ import java.lang.reflect.Method;
  * @param <ItemType> The type of items held in the adapter.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem> extends SilkAdapter<ItemType> implements ScrollStatePersister {
+public abstract class SilkCursorAdapter<ItemType extends SilkCursorItem & SilkComparable> extends SilkAdapter<ItemType> implements ScrollStatePersister {
 
     private final Class<? extends SilkCursorItem> mClass;
 
