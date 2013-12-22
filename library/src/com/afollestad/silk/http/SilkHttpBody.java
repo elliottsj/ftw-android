@@ -1,6 +1,8 @@
 package com.afollestad.silk.http;
 
 import ch.boye.httpclientandroidlib.HttpEntity;
+import ch.boye.httpclientandroidlib.NameValuePair;
+import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
 import ch.boye.httpclientandroidlib.entity.ByteArrayEntity;
 import ch.boye.httpclientandroidlib.entity.InputStreamEntity;
 import ch.boye.httpclientandroidlib.entity.SerializableEntity;
@@ -9,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Represents the content of a POST or PUT request.
@@ -43,6 +46,10 @@ public class SilkHttpBody {
 
     public SilkHttpBody(JSONObject json) throws Exception {
         this(json.toString(), "UTF-8");
+    }
+
+    public SilkHttpBody(List<NameValuePair> bodyParams, String charset) throws Exception {
+        mEntity = new UrlEncodedFormEntity(bodyParams, charset);
     }
 
     private HttpEntity mEntity;

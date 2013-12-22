@@ -115,7 +115,7 @@ class SilkHttpBase {
             request.releaseConnection();
         }
         int status = response.getStatusLine().getStatusCode();
-        if (status != 200) {
+        if (status != 200 && status != 201) {
             reset();
             throw new SilkHttpException(response);
         }
