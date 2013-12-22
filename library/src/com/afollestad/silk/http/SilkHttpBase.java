@@ -103,6 +103,7 @@ class SilkHttpBase {
             response = mClient.execute(request);
             content = IOUtils.inputStreamToBytes(response.getEntity().getContent());
         } catch (Exception e) {
+            e.printStackTrace();
             reset();
             throw new SilkHttpException(e);
         } finally {
