@@ -27,11 +27,6 @@ public class CardCompressed extends Card {
 
     @Override
     public int getLayout() {
-        return R.layout.list_item_header_centered;
-    }
-
-    @Override
-    public boolean isClickable() {
-        return false;
+        return R.layout.list_item_card_compressed;
     }
 }
