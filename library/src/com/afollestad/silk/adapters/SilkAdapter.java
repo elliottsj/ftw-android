@@ -147,7 +147,8 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
      * Sets the items in the adapter (clears any previous ones before adding) and notifies the attached ListView.
      */
     public final void set(ItemType[] toSet) {
-        set(new ArrayList<ItemType>(Arrays.asList(toSet)));
+        if (toSet == null) clear();
+        else set(new ArrayList<ItemType>(Arrays.asList(toSet)));
     }
 
     /**
@@ -156,7 +157,9 @@ public abstract class SilkAdapter<ItemType extends SilkComparable> extends BaseA
     public final void set(List<ItemType> toSet) {
         isChanged = true;
         this.mItems.clear();
-        for (ItemType item : toSet) add(item);
+        if (toSet != null) {
+            for (ItemType item : toSet) add(item);
+        }
     }
 
     /**
