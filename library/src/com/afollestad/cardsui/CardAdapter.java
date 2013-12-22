@@ -24,6 +24,10 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     private final static int TYPE_REGULAR = 0;
     private final static int TYPE_NO_CONTENT = 1;
     private final static int TYPE_HEADER = 2;
+    private final static int TYPE_HEADER_CENTERED = 3;
+    private final static int TYPE_COMPRESSED = 4;
+    private final static int DEFAULT_TYPE_COUNT = 5;
+
     private final static int POPUP_MENU_THEME = android.R.style.Theme_Holo_Light;
     private final Map<Integer, Integer> mViewTypes;
     protected int mAccentColor;
@@ -42,8 +46,6 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
         super(context);
         mAccentColor = context.getResources().getColor(android.R.color.black);
         mViewTypes = new HashMap<Integer, Integer>();
-        registerLayout(R.layout.list_item_card_compressed);
-        registerLayout(R.layout.list_item_header_centered);
     }
 
     /**
@@ -153,6 +155,10 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
             return R.layout.list_item_header;
         else if (type == TYPE_NO_CONTENT)
             return mLayoutNoContent;
+        else if (type == TYPE_HEADER_CENTERED)
+            return R.layout.list_item_header_centered;
+        else if (type == TYPE_COMPRESSED)
+            return R.layout.list_item_card_compressed;
         int layout = card.getLayout();
         if (layout <= 0) {
             // If no layout was specified for the individual card, use the adapter's set layout
@@ -234,8 +240,8 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
 
     @Override
     public final int getViewTypeCount() {
-        // There's 3 layout types by default: cards, cards with no content, and card headers.
-        return mViewTypes.size() + 3;
+        // 5 layout types by default (see constants on the top)
+        return mViewTypes.size() + 5;
     }
 
     /**
@@ -244,7 +250,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
      * This must be used if you override getLayout() and specify custom layouts for certain list items.
      */
     public final CardAdapter<ItemType> registerLayout(int layoutRes) {
-        mViewTypes.put(layoutRes, mViewTypes.size() + 3);
+        mViewTypes.put(layoutRes, mViewTypes.size() + 5);
         return this;
     }
 
