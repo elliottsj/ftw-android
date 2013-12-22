@@ -241,7 +241,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
     @Override
     public final int getViewTypeCount() {
         // 5 layout types by default (see constants on the top)
-        return mViewTypes.size() + 5;
+        return mViewTypes.size() + DEFAULT_TYPE_COUNT;
     }
 
     /**
@@ -250,7 +250,7 @@ public class CardAdapter<ItemType extends CardBase<ItemType>> extends SilkAdapte
      * This must be used if you override getLayout() and specify custom layouts for certain list items.
      */
     public final CardAdapter<ItemType> registerLayout(int layoutRes) {
-        mViewTypes.put(layoutRes, mViewTypes.size() + 5);
+        mViewTypes.put(layoutRes, mViewTypes.size() + DEFAULT_TYPE_COUNT);
         return this;
     }
 
