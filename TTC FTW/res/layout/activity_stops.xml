@@ -10,7 +10,8 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="48dip"
-            app:indicatorColor="@color/ttc_red" />
+            app:indicatorColor="@color/ttc_red"
+            app:shouldExpand="true" />
 
     <android.support.v4.view.ViewPager android:id="@+id/pager"
                                        android:layout_width="match_parent"
