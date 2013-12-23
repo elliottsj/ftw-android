@@ -15,7 +15,7 @@
     </style>
 
     <style name="card_header_title" parent="card_header_title">
-        <item name="android:layout_marginLeft">@dimen/card_header_title_margin_left</item>
+        <!--<item name="android:layout_marginLeft">@dimen/card_header_title_margin_left</item>-->
     </style>
 
     <style name="route_card_content" parent="card_content">
