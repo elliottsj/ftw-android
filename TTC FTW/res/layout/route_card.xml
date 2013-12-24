@@ -11,7 +11,6 @@
 
             <com.elliottsj.ttc_ftw.views.CondensedTextView android:id="@android:id/title"
                                                            style="@style/card_title"
-                                                           android:textSize="30sp"
                                                            android:text="506 Carlton"/>
 
             <!--suppress AndroidLintContentDescription -->
@@ -21,7 +20,7 @@
         </RelativeLayout>
 
         <RelativeLayout android:layout_below="@id/titleFrame"
-                        style="@style/route_card_content">
+                        style="@style/card_content">
 
                 <com.elliottsj.ttc_ftw.views.LightTextView android:id="@+id/prediction"
                                                            android:layout_width="wrap_content"

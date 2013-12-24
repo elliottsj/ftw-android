@@ -15,10 +15,14 @@
     </style>
 
     <style name="card_header_title" parent="card_header_title">
-        <!--<item name="android:layout_marginLeft">@dimen/card_header_title_margin_left</item>-->
+        <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="route_card_content" parent="card_content">
+    <style name="card_title" parent="card_title">
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="card_content" parent="card_content">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>

@@ -1,8 +1,6 @@
 package com.elliottsj.ttc_ftw.utilities;
 
-import android.net.http.HttpResponseCache;
 import android.util.Log;
-import net.sf.nextbus.publicxmlfeed.impl.NextbusService;
 import net.sf.nextbus.publicxmlfeed.impl.RPCImpl;
 import net.sf.nextbus.publicxmlfeed.impl.RPCRequest;
 import net.sf.nextbus.publicxmlfeed.service.ServiceConfigurationException;
@@ -10,17 +8,14 @@ import net.sf.nextbus.publicxmlfeed.service.ServiceException;
 import net.sf.nextbus.publicxmlfeed.service.TransientServiceException;
 
 import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  *
  */
 public class AndroidRPCImpl implements RPCImpl {
-
-    private static final Logger logger = Logger.getLogger(NextbusService.class.getName());
 
     private long lastSuccessfulCallTimeUTC;
     private long totalRPCCalls;
@@ -29,8 +24,8 @@ public class AndroidRPCImpl implements RPCImpl {
     private static final String TAG = "AndroidRPCImpl";
 
     // Enforces advisory warnings on bandwidth use - NextBus spec says 2MB/20sec Max
-    private static final long BANDWIDTH_LIMIT_INTERVAL_MILLISECONDS = 20*1000;  // 20 seconds
-    private static final long BANDWIDTH_LIMIT_INTERVAL_BYTES = 2^21;              // 2 megabytes
+    private static final long BANDWIDTH_LIMIT_INTERVAL_MILLISECONDS = 20*1000;
+    private static final long BANDWIDTH_LIMIT_INTERVAL_BYTES = 2^21;
 
     // State machine values for Sliding bandwidth monitor
     private long bwLimitIntervalStartTime;
@@ -52,43 +47,16 @@ public class AndroidRPCImpl implements RPCImpl {
             c = (HttpURLConnection) url.openConnection();
             Log.i(TAG, "RPC handler opened HTTP connection");
 
-            try {
-                HttpResponseCache cache = HttpResponseCache.getInstalled();
-                String response;
-                try {
-                    long maxSize = cache.maxSize();
-                    Map<String, List<String>> requestHeaders = new HashMap<String, List<String>>();
-//                    requestHeaders.put("Accept-Encoding", Arrays.asList("gzip", "deflate"));
-//                    requestHeaders.put("Accept", Arrays.asList("*/*"));
-//                    requestHeaders.put("Accept-Language", Arrays.asList("en-us"));
-                    CacheResponse cr = cache.get(url.toURI(), "GET", requestHeaders);
-                    if (cr != null) response = cr.toString();
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
-
-                c.setRequestProperty("Cache-Control", "only-if-cached");
-                is = new BufferedInputStream(c.getInputStream());
-            } catch (FileNotFoundException e) {
-                c.disconnect();
-
-                c = (HttpURLConnection) url.openConnection();
-                Log.i(TAG, "RPC handler opened HTTP connection");
-
-                Map<String, List<String>> requestHeaders = c.getRequestProperties();
-
-                c.connect();
-                int http_status = c.getResponseCode();
-                if (http_status != HttpURLConnection.HTTP_OK) {
-                    String msg = String.format("Received HTTP Status Code %s : %s", http_status, c.getResponseMessage());
-                    Log.w(TAG, msg);
-                    totalRPCCalls++;
-                    throw new TransientServiceException(msg);
-                }
-
-                is = new BufferedInputStream(c.getInputStream());
+            c.connect();
+            int http_status = c.getResponseCode();
+            if (http_status != HttpURLConnection.HTTP_OK) {
+                String msg = String.format("Received HTTP Status Code %s : %s", http_status, c.getResponseMessage());
+                Log.w(TAG, msg);
+                totalRPCCalls++;
+                throw new TransientServiceException(msg);
             }
 
+            is = new BufferedInputStream(c.getInputStream());
 
             /* Read in the HTTP Response until end of buffer */
             rd = new BufferedReader(new InputStreamReader(is));
@@ -96,8 +64,7 @@ public class AndroidRPCImpl implements RPCImpl {
             while ((line = rd.readLine()) != null) {
                 bytesReceived += line.length();
                 sb.append(line);
-                logger.log(Level.FINEST, "Read " + line.length() + " bytes from the HTTP input buffer");
-//                Log.i(TAG, "Read " + line.length() + " bytes from the HTTP input buffer");
+                Log.i(TAG, "Read " + line.length() + " bytes from the HTTP input buffer");
                 checkBandwidthLimits();
             }
 
