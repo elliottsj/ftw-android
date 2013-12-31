@@ -7,7 +7,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
-import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,18 +20,17 @@ import com.afollestad.cardsui.CardListView;
 import com.elliottsj.ttc_ftw.R;
 import com.elliottsj.ttc_ftw.adapters.RouteCardAdapter;
 import com.elliottsj.ttc_ftw.cards.RouteCard;
+import com.elliottsj.ttc_ftw.nextbus.CachedNextbusServiceAdapter;
+import com.elliottsj.ttc_ftw.nextbus.NextbusNextbusCache;
 import com.elliottsj.ttc_ftw.utilities.AndroidRPCImpl;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
-import net.sf.nextbus.publicxmlfeed.domain.Geolocation;
-import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.Stop;
 import net.sf.nextbus.publicxmlfeed.impl.NextbusService;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +58,7 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     // Global variable to hold the current location
     Location mCurrentLocation;
 
-    NextbusService mNextbusService;
+    CachedNextbusServiceAdapter mNextbusService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -101,11 +99,6 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     public void onStop() {
         // Disconnecting the client invalidates it.
         mLocationClient.disconnect();
-
-        HttpResponseCache cache = HttpResponseCache.getInstalled();
-        if (cache != null)
-            cache.flush();
-
         super.onStop();
     }
 
@@ -119,15 +112,14 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
          */
         mLocationClient = new LocationClient(getActivity(), this, this);
 
+        NextbusService backing = new NextbusService(new AndroidRPCImpl());
+        NextbusNextbusCache cache = null;
         try {
-            File httpCacheDir = new File(getActivity().getCacheDir(), "http");
-            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
-            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+            cache = new NextbusNextbusCache(getActivity());
         } catch (IOException e) {
-            Log.i(TAG, "HTTP response cache installation failed:" + e);
+            e.printStackTrace();
         }
-
-        mNextbusService = new NextbusService(new AndroidRPCImpl());
+        mNextbusService = new CachedNextbusServiceAdapter(backing, cache);
     }
 
     @Override
@@ -153,7 +145,6 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT).show();
 
         new LoadNearbyStopsTask().execute(mLocationClient.getLastLocation());
-
     }
 
     /*
@@ -275,26 +266,27 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
 
         @Override
         protected List<Stop> doInBackground(Location... locations) {
-            List<Stop> allStops = new ArrayList<Stop>();
-            Geolocation here = new Geolocation(locations[0].getLatitude(), locations[0].getLongitude());
+            List<Agency> agencies = mNextbusService.getAgencies();
 
-            Agency ttc = mNextbusService.getAgency("ttc");
-            for (Route route : mNextbusService.getRoutes(ttc).subList(0, 1)) {
-                allStops.addAll(mNextbusService.getRouteConfiguration(route).getStops());
-                HttpResponseCache httpResponseCache = HttpResponseCache.getInstalled();
-                Log.i(TAG, "Network count: " + httpResponseCache.getNetworkCount());
-                Log.i(TAG, "Hit count: " + httpResponseCache.getHitCount());
-            }
+            return new ArrayList<Stop>();
 
-            return Geolocation.sortedByClosest(allStops, here, 10, 1);
+//            List<Stop> allStops = new ArrayList<Stop>();
+//            Geolocation here = new Geolocation(locations[0].getLatitude(), locations[0].getLongitude());
+//
+//            Agency ttc = mNextbusService.getAgency("ttc");
+//            for (Route route : mNextbusService.getRoutes(ttc).subList(0, 1)) {
+//                allStops.addAll(mNextbusService.getRouteConfiguration(route).getStops());
+//                HttpResponseCache httpResponseCache = HttpResponseCache.getInstalled();
+//                Log.i(TAG, "Network count: " + httpResponseCache.getNetworkCount());
+//                Log.i(TAG, "Hit count: " + httpResponseCache.getHitCount());
+//            }
+//
+//            return Geolocation.sortedByClosest(allStops, here, 10, 1);
         }
 
         @Override
         protected void onPostExecute(List<Stop> stops) {
-            HttpResponseCache httpResponseCache = HttpResponseCache.getInstalled();
-            Log.i(TAG, "Request count: " + httpResponseCache.getRequestCount());
-            Log.i(TAG, "Network count: " + httpResponseCache.getNetworkCount());
-            Log.i(TAG, "Hit count: " + httpResponseCache.getHitCount());
+
         }
 
     }
