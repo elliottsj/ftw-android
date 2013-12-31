@@ -21,7 +21,7 @@ import com.elliottsj.ttc_ftw.R;
 import com.elliottsj.ttc_ftw.adapters.RouteCardAdapter;
 import com.elliottsj.ttc_ftw.cards.RouteCard;
 import com.elliottsj.ttc_ftw.nextbus.CachedNextbusServiceAdapter;
-import com.elliottsj.ttc_ftw.nextbus.NextbusNextbusCache;
+import com.elliottsj.ttc_ftw.nextbus.NextbusCache;
 import com.elliottsj.ttc_ftw.utilities.AndroidRPCImpl;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -113,9 +113,9 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         mLocationClient = new LocationClient(getActivity(), this, this);
 
         NextbusService backing = new NextbusService(new AndroidRPCImpl());
-        NextbusNextbusCache cache = null;
+        NextbusCache cache = null;
         try {
-            cache = new NextbusNextbusCache(getActivity());
+            cache = new NextbusCache(getActivity());
         } catch (IOException e) {
             e.printStackTrace();
         }

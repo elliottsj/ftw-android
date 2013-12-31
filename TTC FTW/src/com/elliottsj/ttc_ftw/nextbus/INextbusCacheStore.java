@@ -108,9 +108,8 @@ public interface INextbusCacheStore {
     /**
      * Stores the given vehicle locations in this cache
      *
-     * @param route the route which the vehicles are travelling on
      * @param vehicleLocations the vehicle locations to store
      */
-    public void putVehicleLocations(Route route, List<VehicleLocation> vehicleLocations);
+    public void putVehicleLocations(List<VehicleLocation> vehicleLocations);
 
 }
