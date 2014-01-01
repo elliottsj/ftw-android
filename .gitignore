@@ -1,3 +1,6 @@
+# gradle files
+.gradle
+
 # built application files
 *.apk
 *.ap_
