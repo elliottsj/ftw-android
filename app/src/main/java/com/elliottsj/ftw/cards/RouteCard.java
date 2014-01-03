@@ -1,9 +1,9 @@
-package com.elliottsj.ttc_ftw.cards;
+package com.elliottsj.ftw.cards;
 
 import com.afollestad.cardsui.Card;
 
 /**
- * Represents a single card displayed in a {@link com.elliottsj.ttc_ftw.adapters.RouteCardAdapter}.
+ * Represents a single card displayed in a {@link com.elliottsj.ftw.adapters.RouteCardAdapter}.
  */
 public class RouteCard extends Card {
 

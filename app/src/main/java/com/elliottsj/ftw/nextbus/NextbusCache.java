@@ -1,4 +1,4 @@
-package com.elliottsj.ttc_ftw.nextbus;
+package com.elliottsj.ftw.nextbus;
 
 import android.annotation.SuppressLint;
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Simple implementation of {@link com.elliottsj.ttc_ftw.nextbus.INextbusCacheStore}
+ * Simple implementation of {@link INextbusCache}
  */
-public class NextbusCache implements INextbusCacheStore {
+public class NextbusCache implements INextbusCache {
 
     private static final String FILENAME = "nextbus";
 

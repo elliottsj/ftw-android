@@ -1,4 +1,4 @@
-package com.elliottsj.ttc_ftw.activities;
+package com.elliottsj.ftw.activities;
 
 
 import android.app.Activity;
@@ -12,7 +12,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import com.astuetz.PagerSlidingTabStrip;
-import com.elliottsj.ttc_ftw.R;
+import com.elliottsj.ftw.R;
 
 public class StopsActivity extends Activity {
 

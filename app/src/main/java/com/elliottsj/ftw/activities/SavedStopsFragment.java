@@ -1,11 +1,11 @@
-package com.elliottsj.ttc_ftw.activities;
+package com.elliottsj.ftw.activities;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.elliottsj.ttc_ftw.R;
+import com.elliottsj.ftw.R;
 
 /**
  *

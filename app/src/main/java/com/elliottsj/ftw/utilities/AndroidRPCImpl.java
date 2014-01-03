@@ -1,4 +1,4 @@
-package com.elliottsj.ttc_ftw.utilities;
+package com.elliottsj.ftw.utilities;
 
 import android.util.Log;
 import net.sf.nextbus.publicxmlfeed.impl.RPCImpl;

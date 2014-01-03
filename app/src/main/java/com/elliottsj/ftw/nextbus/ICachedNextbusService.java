@@ -1,4 +1,4 @@
-package com.elliottsj.ttc_ftw.nextbus;
+package com.elliottsj.ftw.nextbus;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;

@@ -1,10 +1,10 @@
-package com.elliottsj.ttc_ftw.activities;
+package com.elliottsj.ftw.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import com.elliottsj.ttc_ftw.R;
+import com.elliottsj.ftw.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;

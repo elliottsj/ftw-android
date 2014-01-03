@@ -1,4 +1,4 @@
-package com.elliottsj.ttc_ftw.nextbus;
+package com.elliottsj.ftw.nextbus;
 
 import net.sf.nextbus.publicxmlfeed.domain.*;
 import net.sf.nextbus.publicxmlfeed.service.INextbusService;
@@ -12,14 +12,14 @@ import java.util.*;
 public class CachedNextbusServiceAdapter extends Observable implements ICachedNextbusService {
 
     private INextbusService backing;
-    private INextbusCacheStore cache;
+    private INextbusCache cache;
 
     private static final long AGE_LIMIT_24HOURS = 24*60*60*1000;
 
     /** Cache age limit for static data (Route, RouteConfig, Schedule) */
     private long staticDataAgeLimit = AGE_LIMIT_24HOURS;
 
-    public CachedNextbusServiceAdapter(INextbusService backing, INextbusCacheStore cache, Observer progressObserver) {
+    public CachedNextbusServiceAdapter(INextbusService backing, INextbusCache cache, Observer progressObserver) {
         this.backing = backing;
         this.cache = cache;
         addObserver(progressObserver);

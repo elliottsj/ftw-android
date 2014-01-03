@@ -1,4 +1,4 @@
-package com.elliottsj.ttc_ftw.nextbus;
+package com.elliottsj.ftw.nextbus;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A cache used by a {@link com.elliottsj.ttc_ftw.nextbus.ICachedNextbusService}
+ * A cache used by a {@link com.elliottsj.ftw.nextbus.ICachedNextbusService}
  * to store and retrieve NextBus data
  */
-public interface INextbusCacheStore {
+public interface INextbusCache {
 
     /**
      * @return true iff agencies exist in this cache

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.elliottsj.ttc_ftw">
+    package="com.elliottsj.ftw">
 
     <!-- Google Maps API -->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.MapActivity"
-                  android:parentActivityName="com.elliottsj.ttc_ftw.activities.StopsActivity"/>
+                  android:parentActivityName=".activities.StopsActivity"/>
     </application>
 
 </manifest>

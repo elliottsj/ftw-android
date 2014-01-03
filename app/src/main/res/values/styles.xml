@@ -3,6 +3,7 @@
 
     <style name="AppTheme" parent="android:Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/action_bar</item>
+        <item name="android:background">@color/ttc_red</item>
     </style>
 
     <style name="action_bar" parent="android:Widget.Holo.Light.ActionBar">
@@ -12,10 +13,6 @@
 
     <style name="action_bar_title_text" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="route_card_header_title" parent="card_header_title">
-        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="route_card_title" parent="card_title">

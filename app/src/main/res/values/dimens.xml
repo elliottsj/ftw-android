@@ -2,7 +2,7 @@
 <resources>
 
     <!--<dimen name="card_header_padding_horizontal">8dp</dimen>-->
-    <!--<dimen name="card_header_title_margin_left">10dp</dimen>-->
-    <!--<dimen name="card_header">18sp</dimen>-->
+
+    <dimen name="card_header">18sp</dimen>
 
 </resources>

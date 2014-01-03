@@ -1,15 +1,15 @@
-package com.elliottsj.ttc_ftw.adapters;
+package com.elliottsj.ftw.adapters;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 import com.afollestad.cardsui.Card;
 import com.afollestad.cardsui.CardAdapter;
-import com.elliottsj.ttc_ftw.R;
-import com.elliottsj.ttc_ftw.cards.RouteCard;
+import com.elliottsj.ftw.R;
+import com.elliottsj.ftw.cards.RouteCard;
 
 /**
- * A {@link com.afollestad.cardsui.CardAdapter} that displays {@link com.elliottsj.ttc_ftw.cards.RouteCard} and
+ * A {@link com.afollestad.cardsui.CardAdapter} that displays {@link com.elliottsj.ftw.cards.RouteCard} and
  * {@link com.afollestad.cardsui.CardHeader} objects in a {@link com.afollestad.cardsui.CardListView}.
  */
 public class RouteCardAdapter extends CardAdapter<Card> {

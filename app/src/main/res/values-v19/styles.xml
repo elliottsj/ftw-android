@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/translucent_action_bar</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@color/ttc_red</item>
+
+        <!-- Remove action bar shadow -->
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+    </style>
+
+    <style name="translucent_action_bar" parent="android:Widget.Holo.Light.ActionBar">
+        <item name="android:titleTextStyle">@style/action_bar_title_text</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+</resources>

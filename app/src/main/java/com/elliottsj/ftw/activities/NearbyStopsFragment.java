@@ -1,4 +1,4 @@
-package com.elliottsj.ttc_ftw.activities;
+package com.elliottsj.ftw.activities;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,12 +17,12 @@ import android.widget.Toast;
 import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
-import com.elliottsj.ttc_ftw.R;
-import com.elliottsj.ttc_ftw.adapters.RouteCardAdapter;
-import com.elliottsj.ttc_ftw.cards.RouteCard;
-import com.elliottsj.ttc_ftw.nextbus.CachedNextbusServiceAdapter;
-import com.elliottsj.ttc_ftw.nextbus.NextbusCache;
-import com.elliottsj.ttc_ftw.utilities.AndroidRPCImpl;
+import com.elliottsj.ftw.R;
+import com.elliottsj.ftw.adapters.RouteCardAdapter;
+import com.elliottsj.ftw.cards.RouteCard;
+import com.elliottsj.ftw.nextbus.CachedNextbusServiceAdapter;
+import com.elliottsj.ftw.nextbus.NextbusCache;
+import com.elliottsj.ftw.utilities.AndroidRPCImpl;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -70,7 +70,7 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         //noinspection ConstantConditions
         mCardList = (CardListView) rootView.findViewById(R.id.card_list);
 
-        RouteCardAdapter cardAdapter = new RouteCardAdapter(getActivity(), R.layout.route_card);
+        RouteCardAdapter cardAdapter = new RouteCardAdapter(getActivity(), R.layout.route_list_item_card);
         cardAdapter.setAccentColorRes(R.color.ttc_red);
 
         cardAdapter.add(new CardHeader("College St At Beverly St").setAction("Save", this));
