@@ -54,14 +54,15 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
 
     private CardListView mCardList;
 
-    LocationClient mLocationClient;
+    private LocationClient mLocationClient;
 
     // Global variable to hold the current location
-    Location mCurrentLocation;
+    private Location mCurrentLocation;
 
-    CachedNextbusServiceAdapter mNextbusService;
+    private NextbusCache mNextbusCache;
+    private CachedNextbusServiceAdapter mNextbusService;
 
-    LoadNearbyStopsTask mLoadNearbyStopsTask;
+    private LoadNearbyStopsTask mLoadNearbyStopsTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,10 +98,6 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
          * handle callbacks.
          */
         mLocationClient = new LocationClient(getActivity(), this, this);
-
-        NextbusService backing = new NextbusService(new AndroidRPCImpl());
-        NextbusCache cache = new NextbusCache(getActivity().getCacheDir());
-        mNextbusService = new CachedNextbusServiceAdapter(backing, cache, mLoadNearbyStopsTask);
     }
 
     /*
@@ -120,6 +117,10 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     public void onStop() {
         // Disconnecting the client invalidates it.
         mLocationClient.disconnect();
+
+        if (mNextbusCache != null)
+            mNextbusCache.flush();
+
         super.onStop();
     }
 
@@ -145,7 +146,7 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         // Display the connection status
         Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT).show();
 
-        new LoadNearbyStopsTask().execute(mLocationClient.getLastLocation());
+        new InitializeCachedNextbusAdapter().execute();
     }
 
     /*
@@ -260,6 +261,22 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
+        }
+    }
+
+    private class InitializeCachedNextbusAdapter extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            NextbusService backing = new NextbusService(new AndroidRPCImpl());
+            mNextbusCache = new NextbusCache(getActivity().getCacheDir());
+            mNextbusService = new CachedNextbusServiceAdapter(backing, mNextbusCache, mLoadNearbyStopsTask);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new LoadNearbyStopsTask().execute(mLocationClient.getLastLocation());
         }
     }
 

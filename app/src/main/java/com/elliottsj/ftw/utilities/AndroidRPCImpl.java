@@ -64,7 +64,7 @@ public class AndroidRPCImpl implements RPCImpl {
             while ((line = rd.readLine()) != null) {
                 bytesReceived += line.length();
                 sb.append(line);
-                Log.i(TAG, "Read " + line.length() + " bytes from the HTTP input buffer");
+                Log.v(TAG, "Read " + line.length() + " bytes from the HTTP input buffer");
                 checkBandwidthLimits();
             }
 

@@ -1,6 +1,8 @@
 package com.elliottsj.ftw.nextbus;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
+
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
@@ -17,6 +19,7 @@ import java.util.Map;
  */
 public class NextbusCache implements INextbusCache {
 
+    private static final String TAG = "NextbusCache";
     private static final String FILENAME = "nextbus";
 
     private enum Command {
@@ -38,18 +41,13 @@ public class NextbusCache implements INextbusCache {
      * Constructs this cache in the given context.
      *
      * @param directory the directory where this cache will exist
-     * @throws IOException if reading or writing the cache directory fails
      */
     public NextbusCache(File directory) {
         file = new File(directory, FILENAME);
         if (file.exists() && file.canRead()) {
-            FileInputStream fis = null;
-            InputStream bis = null;
             ObjectInputStream ois = null;
             try {
-                fis = new FileInputStream(file);
-                bis = new BufferedInputStream(fis);
-                ois = new ObjectInputStream(bis);
+                ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 
                 try {
                     //noinspection unchecked
@@ -57,33 +55,43 @@ public class NextbusCache implements INextbusCache {
                 } catch (ClassNotFoundException e) {
                     if (!file.delete())
                         throw new ServiceException("Cache file is corrupted; unable to delete file", e);
-                } finally {
-                    ois.close();
                 }
-            } catch (Exception e) {
+            } catch (FileNotFoundException e) {
                 throw new RuntimeException("Exception when constructing cache", e);
+            } catch (StreamCorruptedException e) {
+                throw new RuntimeException("Exception when constructing cache", e);
+            } catch (OptionalDataException e) {
+                throw new RuntimeException("Exception when constructing cache", e);
+            } catch (IOException e) {
+                throw new RuntimeException("Exception when constructing cache", e);
+            } finally {
+                if (ois != null)
+                    try {
+                        ois.close();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Unable to close ObjectInputStream", e);
+                    }
             }
         } else {
             data = new HashMap<Command, Map<EntryType, Serializable>>();
         }
     }
 
-    private void writeToFile() {
+    public void flush() {
         ObjectOutputStream ois = null;
         try {
             ois = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-
             ois.writeObject(data);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Exception when flushing cache", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Exception when flushing cache", e);
         } finally {
             if (ois != null) {
                 try {
                     ois.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Unable to close ObjectOutputStream", e);
                 }
             }
         }
@@ -128,8 +136,6 @@ public class NextbusCache implements INextbusCache {
         agenciesData.put(EntryType.DATA, (Serializable) agenciesMap);
 
         data.put(Command.AGENCIES, agenciesData);
-
-        writeToFile();
     }
 
     @Override
@@ -177,8 +183,6 @@ public class NextbusCache implements INextbusCache {
         routesData.put(EntryType.DATA, (Serializable) routesMap);
 
         data.put(Command.ROUTES, routesData);
-
-        writeToFile();
     }
 
     @Override
@@ -225,8 +229,6 @@ public class NextbusCache implements INextbusCache {
         routesData.put(EntryType.DATA, (Serializable) routeConfigurationsMap);
 
         data.put(Command.ROUTE_CONFIGURATIONS, routesData);
-
-        writeToFile();
     }
 
     @Override
@@ -274,8 +276,6 @@ public class NextbusCache implements INextbusCache {
         routesData.put(EntryType.DATA, (Serializable) vehicleLocationsMap);
 
         data.put(Command.VEHICLE_LOCATIONS, routesData);
-
-        writeToFile();
     }
 
 }
