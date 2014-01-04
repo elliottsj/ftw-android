@@ -21,7 +21,7 @@ import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.adapters.RouteCardAdapter;
 import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.nextbus.CachedNextbusServiceAdapter;
-import com.elliottsj.ftw.nextbus.NextbusCache;
+import com.elliottsj.ftw.nextbus.cache.NextbusCache;
 import com.elliottsj.ftw.utilities.AndroidRPCImpl;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -146,7 +146,8 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         // Display the connection status
         Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT).show();
 
-        new InitializeCachedNextbusAdapter().execute();
+        if (mNextbusService == null)
+            new InitializeCachedNextbusAdapter().execute();
     }
 
     /*

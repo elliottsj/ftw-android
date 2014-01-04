@@ -1,5 +1,7 @@
 package com.elliottsj.ftw.nextbus;
 
+import com.elliottsj.ftw.nextbus.cache.INextbusCache;
+
 import net.sf.nextbus.publicxmlfeed.domain.*;
 import net.sf.nextbus.publicxmlfeed.service.INextbusService;
 import net.sf.nextbus.publicxmlfeed.service.ServiceException;

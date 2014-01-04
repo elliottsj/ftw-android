@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus;
+package com.elliottsj.ftw.nextbus.cache;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
@@ -27,7 +27,7 @@ public interface INextbusCache {
     /**
      * @return a map of agencies stored in this cache, indexed by agency id
      */
-    public Map<String, Agency> getAgencies();
+    public List<Agency> getAgencies();
 
     /**
      * Stores the given agencies in this cache.
