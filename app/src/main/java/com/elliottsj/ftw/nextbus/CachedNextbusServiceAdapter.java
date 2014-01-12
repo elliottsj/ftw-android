@@ -42,14 +42,14 @@ public class CachedNextbusServiceAdapter extends Observable implements ICachedNe
     public List<Agency> getAgencies() throws ServiceException {
         if (!cache.isAgenciesCached() || cache.getAgenciesAge() > staticDataAgeLimit)
             return cacheAgenciesFromNetwork();
-        return new ArrayList<Agency>(cache.getAgencies().values());
+        return cache.getAgencies();
     }
 
     @Override
-    public Agency getAgency(String id) throws ServiceException {
+    public Agency getAgency(String tag) throws ServiceException {
         if (!cache.isAgenciesCached() || cache.getAgenciesAge() > staticDataAgeLimit)
             cacheAgenciesFromNetwork();
-        return cache.getAgencies().get(id);
+        return cache.getAgency(tag);
     }
 
     private List<Agency> cacheAgenciesFromNetwork() {

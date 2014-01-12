@@ -15,6 +15,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.apache.commons:commons-lang3:3.2.+'
     compile 'com.google.android.gms:play-services:4.0.30'
     compile 'com.android.support:support-v13:18.0.+'
     compile 'com.afollestad.silk:library:1.0-SNAPSHOT@aar'
@@ -22,7 +23,6 @@ dependencies {
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'net.sf.nextbus.publicxmlfeed:nextbus-adapter:1.0.2-RELEASE'
     compile 'com.jakewharton:disklrucache:2.0.3-SNAPSHOT'
-//    compile files('libs/commons-io-2.4.jar')
 }
 
 

@@ -106,7 +106,8 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     @Override
     public void onStart() {
         super.onStart();
-        // Connect the client.
+
+        // Connect the location client
         mLocationClient.connect();
     }
 
@@ -115,25 +116,13 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
      */
     @Override
     public void onStop() {
-        // Disconnecting the client invalidates it.
+        // Disconnect the location client
         mLocationClient.disconnect();
 
-        if (mNextbusCache != null)
-            mNextbusCache.flush();
+        mNextbusCache.close();
+        mNextbusService = null;
 
         super.onStop();
-    }
-
-    @Override
-    public void onClick(CardHeader header) {
-        Toast.makeText(getActivity(), header.getTitle() + " saved", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onCardClick(int index, CardBase card, View view) {
-        Intent intent = new Intent(getActivity(), MapActivity.class);
-        intent.putExtra(MapActivity.ARG_ROUTE, "506 Carlton");
-        startActivity(intent);
     }
 
     /*
@@ -158,6 +147,18 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     public void onDisconnected() {
         // Display the connection status
         Toast.makeText(getActivity(), "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(CardHeader header) {
+        Toast.makeText(getActivity(), header.getTitle() + " saved", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCardClick(int index, CardBase card, View view) {
+        Intent intent = new Intent(getActivity(), MapActivity.class);
+        intent.putExtra(MapActivity.ARG_ROUTE, "506 Carlton");
+        startActivity(intent);
     }
 
     /*
@@ -270,7 +271,8 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         @Override
         protected Void doInBackground(Void... params) {
             NextbusService backing = new NextbusService(new AndroidRPCImpl());
-            mNextbusCache = new NextbusCache(getActivity().getCacheDir());
+            mNextbusCache = new NextbusCache(getActivity());
+            mNextbusCache.open();
             mNextbusService = new CachedNextbusServiceAdapter(backing, mNextbusCache, mLoadNearbyStopsTask);
             return null;
         }

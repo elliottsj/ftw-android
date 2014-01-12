@@ -1,19 +1,14 @@
 package com.elliottsj.ftw.nextbus.cache;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
 import net.sf.nextbus.publicxmlfeed.domain.VehicleLocation;
-import net.sf.nextbus.publicxmlfeed.service.ServiceException;
 
-import java.io.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Simple implementation of {@link INextbusCache} using SQLite
@@ -22,22 +17,14 @@ public class NextbusCache implements INextbusCache {
 
     private static final String TAG = "NextbusCache";
 
-    private AgenciesDataSource mAgenciesDataSource;
+    private SQLiteDatabase mDatabase;
+    private NextbusSQLiteHelper mDbHelper;
 
-    private enum Command {
-        AGENCIES,
-        ROUTES,
-        ROUTE_CONFIGURATIONS,
-        VEHICLE_LOCATIONS
-    }
+    private AgenciesHelper mAgenciesHelper;
+    private RoutesHelper mRoutesHelper;
+    private RouteConfigurationsHelper mRouteConfigurationsHelper;
 
-    private enum EntryType {
-        CREATE_TIME,
-        DATA
-    }
-
-    private File file;
-    private Map<Command, Map<EntryType, Serializable>> data;
+    private boolean isOpen;
 
     /**
      * Constructs this cache in the given context.
@@ -45,7 +32,9 @@ public class NextbusCache implements INextbusCache {
      * @param context the context where this cache will exist
      */
     public NextbusCache(Context context) {
-        mAgenciesDataSource = new AgenciesDataSource(context);
+        mDbHelper = new NextbusSQLiteHelper(context);
+
+        isOpen = false;
     }
 
     /*
@@ -53,7 +42,13 @@ public class NextbusCache implements INextbusCache {
      * This should be called in an activity's onResume() method.
      */
     public void open() {
-        mAgenciesDataSource.open();
+        mDatabase = mDbHelper.getWritableDatabase();
+
+        mAgenciesHelper = new AgenciesHelper(mDatabase);
+        mRoutesHelper = new RoutesHelper(mDatabase);
+        mRouteConfigurationsHelper = new RouteConfigurationsHelper(mDatabase);
+
+        isOpen = true;
     }
 
     /*
@@ -61,78 +56,105 @@ public class NextbusCache implements INextbusCache {
      * This should be called in an activity's onPause() method.
      */
     public void close() {
-        mAgenciesDataSource.close();
+        mDbHelper.close();
+
+        isOpen = false;
+    }
+
+    /**
+     * Deletes all data stored in this cache.
+     */
+    public void delete() {
+        mDbHelper.empty(mDatabase);
     }
 
     @Override
     public boolean isAgenciesCached() {
-        return !mAgenciesDataSource.isEmpty();
+        return mAgenciesHelper.isAgenciesCached();
     }
 
     @Override
     public long getAgenciesAge() {
-        if (!isAgenciesCached())
-            throw new ServiceException("Agencies are not cached");
-
-        return mAgenciesDataSource.getAnAgency().getObjectAge();
+        return mAgenciesHelper.getAgenciesAge();
     }
 
-    /**
-     * Gets the agencies in this cache in a map indexed by agency id.
-     *
-     * @return the agencies in this cache
-     */
     @Override
     public List<Agency> getAgencies() {
-        if (!isAgenciesCached())
-            throw new ServiceException("Agencies are not cached");
+        return mAgenciesHelper.getAgencies();
+    }
 
-        return mAgenciesDataSource.getAllAgencies();
+    @Override
+    public Agency getAgency(String tag) {
+        return mAgenciesHelper.getAgency(tag);
     }
 
     @Override
     public void putAgencies(List<Agency> agencies) {
-        mAgenciesDataSource.putAgencies(agencies);
+        mAgenciesHelper.putAgencies(agencies);
     }
 
     @Override
     public boolean isRoutesCached(Agency agency) {
-        return false;
+        if (!mAgenciesHelper.isAgencyCached(agency))
+            return false;
+
+        return mRoutesHelper.isRoutesCached(agency);
     }
 
     @Override
     public long getRoutesAge(Agency agency) {
-        return 0;
+        return mRoutesHelper.getRoutesAge(agency);
     }
 
     @Override
     public List<Route> getRoutes(Agency agency) {
-        return null;
+        return mRoutesHelper.getRoutes(agency);
     }
 
     @Override
     public void putRoutes(List<Route> routes) {
+        // Attempting to insert an empty list will do nothing
+        if (!routes.isEmpty()) {
+            Agency agency = routes.get(0).getAgency();
+            if (!mAgenciesHelper.isAgencyCached(agency))
+                mAgenciesHelper.putAgency(agency);
 
+            mRoutesHelper.putRoutes(routes);
+        }
     }
 
     @Override
     public boolean isRouteConfigurationCached(Route route) {
-        return false;
+        return mRoutesHelper.isRouteCached(route) && mRouteConfigurationsHelper.isRouteConfigurationCached(route);
+
     }
 
     @Override
     public long getRouteConfigurationAge(Route route) {
-        return 0;
+        return mRouteConfigurationsHelper.getRouteConfigurationAge(route);
     }
 
     @Override
     public RouteConfiguration getRouteConfiguration(Route route) {
-        return null;
+        return mRouteConfigurationsHelper.getRouteConfiguration(route);
     }
 
     @Override
     public void putRouteConfiguration(RouteConfiguration routeConfiguration) {
+        if (isRouteConfigurationCached(routeConfiguration.getRoute()))
+            mRouteConfigurationsHelper.deleteRouteConfiguration(routeConfiguration);
 
+        // Cache the agency if it is not already cached
+        Agency agency = routeConfiguration.getRoute().getAgency();
+        if (!mAgenciesHelper.isAgencyCached(agency))
+            mAgenciesHelper.putAgency(agency);
+
+        // Cache the route if it is not already cached
+        Route route = routeConfiguration.getRoute();
+        if (!mRoutesHelper.isRouteCached(route))
+            mRoutesHelper.putRoute(route);
+
+        mRouteConfigurationsHelper.putRouteConfiguration(routeConfiguration);
     }
 
     @Override
@@ -154,6 +176,5 @@ public class NextbusCache implements INextbusCache {
     public void putVehicleLocations(List<VehicleLocation> vehicleLocations) {
 
     }
-
 
 }

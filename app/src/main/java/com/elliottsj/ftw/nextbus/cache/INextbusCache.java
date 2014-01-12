@@ -6,7 +6,6 @@ import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
 import net.sf.nextbus.publicxmlfeed.domain.VehicleLocation;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * A cache used by a {@link com.elliottsj.ftw.nextbus.ICachedNextbusService}
@@ -30,7 +29,13 @@ public interface INextbusCache {
     public List<Agency> getAgencies();
 
     /**
-     * Stores the given agencies in this cache.
+     * @param tag the tag of the agency to retrieve
+     * @return the agency with the given tag
+     */
+    public Agency getAgency(String tag);
+
+    /**
+     * Deletes any agencies in this cache and stores the given agencies in this cache.
      *
      * @param agencies a list of agencies to store
      */
@@ -56,7 +61,7 @@ public interface INextbusCache {
     public List<Route> getRoutes(Agency agency);
 
     /**
-     * Stores the given routes in this cache
+     * Deletes routes owned by the given routes' agency from this cache and stores the given routes in this cache
      *
      * @param routes a list of routes to store
      */
