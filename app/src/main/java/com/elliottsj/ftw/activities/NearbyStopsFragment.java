@@ -296,7 +296,8 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
 
         @Override
         protected void onPostExecute(List<Stop> stops) {
-
+            for (Stop stop : stops)
+                Log.i(TAG, stop.toString());
         }
 
         @Override

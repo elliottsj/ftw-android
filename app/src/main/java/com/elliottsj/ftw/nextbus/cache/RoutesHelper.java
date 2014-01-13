@@ -132,8 +132,8 @@ public class RoutesHelper extends CacheHelper {
     private static Cursor getRouteCursor(SQLiteDatabase database, String tag) {
         Cursor cursor = database.query(NextbusSQLiteHelper.ROUTES.TABLE,
                                        ROUTES_COLUMNS,
-                                       NextbusSQLiteHelper.ROUTES.COLUMN_TAG + " = " + tag,
-                                       null, null, null, null, "1");
+                                       NextbusSQLiteHelper.ROUTES.COLUMN_TAG + " = ?", new String[] { tag },
+                                       null, null, null, "1");
 
         cursor.moveToFirst();
         return cursor;

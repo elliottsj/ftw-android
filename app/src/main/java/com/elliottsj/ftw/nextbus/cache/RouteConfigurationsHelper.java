@@ -80,8 +80,8 @@ public class RouteConfigurationsHelper extends CacheHelper {
                                         "A." + NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE + " = " +
                                         "B." + NextbusSQLiteHelper.ROUTES.COLUMN_AUTO_ID,
                                         new String[] { NextbusSQLiteHelper.ROUTES.COLUMN_TAG },
-                                        NextbusSQLiteHelper.ROUTES.COLUMN_TAG + " = " + route.getTag(),
-                                        null, null, null, null, "1");
+                                        NextbusSQLiteHelper.ROUTES.COLUMN_TAG + " = ?", new String[] { route.getTag() },
+                                        null, null, null, "1");
 
         int count = cursor.getCount();
         cursor.close();
