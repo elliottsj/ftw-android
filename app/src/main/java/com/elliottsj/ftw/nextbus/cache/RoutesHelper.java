@@ -54,7 +54,7 @@ public class RoutesHelper extends CacheHelper {
         Cursor cursor = getRoutesCursor(agency);
         Route route = getRouteFromCursor(cursor, agency);
         cursor.close();
-        return route.getObjectAge();
+        return route.getAge();
     }
 
     public List<Route> getRoutes(Agency agency) {
@@ -98,8 +98,8 @@ public class RoutesHelper extends CacheHelper {
      */
     public void putRoute(Route route) {
         ContentValues values = new ContentValues();
-        values.put(NextbusSQLiteHelper.ROUTES.COLUMN_COPYRIGHT, route.getCopyrightNotice());
-        values.put(NextbusSQLiteHelper.ROUTES.COLUMN_TIMESTAMP, route.getObjectTimestamp());
+        values.put(NextbusSQLiteHelper.ROUTES.COLUMN_COPYRIGHT, route.getCopyright());
+        values.put(NextbusSQLiteHelper.ROUTES.COLUMN_TIMESTAMP, route.getTimestamp());
         values.put(NextbusSQLiteHelper.ROUTES.COLUMN_AGENCY, AgenciesHelper.getAgencyAutoId(mDatabase, route.getAgency()));
         values.put(NextbusSQLiteHelper.ROUTES.COLUMN_TAG, route.getTag());
         values.put(NextbusSQLiteHelper.ROUTES.COLUMN_TITLE, route.getTitle());

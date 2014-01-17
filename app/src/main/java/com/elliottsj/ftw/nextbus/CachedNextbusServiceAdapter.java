@@ -11,76 +11,81 @@ import java.util.*;
 /**
  * An implementation of a cached NextBus service adapter.
  */
-public class CachedNextbusServiceAdapter extends Observable implements ICachedNextbusService {
+public class CachedNextbusServiceAdapter implements ICachedNextbusService {
 
-    private INextbusService backing;
-    private INextbusCache cache;
+    private INextbusService mBacking;
+    private INextbusCache mCache;
+    private Callbacks mCallbacks;
 
     private static final long AGE_LIMIT_24HOURS = 24*60*60*1000;
 
     /** Cache age limit for static data (Route, RouteConfig, Schedule) */
     private long staticDataAgeLimit = AGE_LIMIT_24HOURS;
 
-    public CachedNextbusServiceAdapter(INextbusService backing, INextbusCache cache, Observer progressObserver) {
-        this.backing = backing;
-        this.cache = cache;
-        addObserver(progressObserver);
+    public CachedNextbusServiceAdapter(INextbusService backing, INextbusCache cache, Callbacks callbacks) {
+        this.mBacking = backing;
+        this.mCache = cache;
+        this.mCallbacks = callbacks;
     }
 
     @Override
     public List<Stop> getAllStops(Agency agency) {
-        List<Stop> stops = new ArrayList<Stop>();
-        for (Route route : getRoutes(agency)) {
-            setChanged();
-            notifyObservers(String.format("Cached stops for %s", route.getTitle()));
-            stops.addAll(getRouteConfiguration(route).getStops());
+        final List<Stop> stops = new ArrayList<Stop>();
+        for (final Route route : getRoutes(agency)) {
+            new FetchRouteConfigurationTask(new FetchRouteConfigurationTask.Callbacks() {
+                @Override
+                public void onRouteConfigurationFetched(RouteConfiguration routeConfiguration) {
+                    stops.addAll(routeConfiguration.getStops());
+                    mCallbacks.onStopsCached(route);
+                }
+            }).execute(route);
         }
         return stops;
     }
 
     @Override
     public List<Agency> getAgencies() throws ServiceException {
-        if (!cache.isAgenciesCached() || cache.getAgenciesAge() > staticDataAgeLimit)
+        if (!mCache.isAgenciesCached() || mCache.getAgenciesAge() > staticDataAgeLimit)
             return cacheAgenciesFromNetwork();
-        return cache.getAgencies();
+        return mCache.getAgencies();
     }
 
     @Override
     public Agency getAgency(String tag) throws ServiceException {
-        if (!cache.isAgenciesCached() || cache.getAgenciesAge() > staticDataAgeLimit)
+        if (!mCache.isAgenciesCached() || mCache.getAgenciesAge() > staticDataAgeLimit)
             cacheAgenciesFromNetwork();
-        return cache.getAgency(tag);
+        return mCache.getAgency(tag);
     }
 
     private List<Agency> cacheAgenciesFromNetwork() {
-        List<Agency> backingResult = backing.getAgencies();
-        cache.putAgencies(backingResult);
+        List<Agency> backingResult = mBacking.getAgencies();
+        mCache.putAgencies(backingResult);
         return backingResult;
     }
 
     @Override
     public List<Route> getRoutes(Agency agency) throws ServiceException {
-        if (!cache.isRoutesCached(agency) || cache.getRoutesAge(agency) > staticDataAgeLimit)
+        if (!mCache.isRoutesCached(agency) || mCache.getRoutesAge(agency) > staticDataAgeLimit)
             return cacheRoutesFromNetwork(agency);
-        return cache.getRoutes(agency);
+        return mCache.getRoutes(agency);
     }
 
     private List<Route> cacheRoutesFromNetwork(Agency agency) {
-        List<Route> backingResult = backing.getRoutes(agency);
-        cache.putRoutes(backingResult);
+        List<Route> backingResult = mBacking.getRoutes(agency);
+        mCache.putRoutes(backingResult);
         return backingResult;
     }
 
     @Override
     public RouteConfiguration getRouteConfiguration(Route route) throws ServiceException {
-        if (!cache.isRouteConfigurationCached(route) || cache.getRouteConfigurationAge(route) > staticDataAgeLimit)
+        if (!mCache.isRouteConfigurationCached(route) || mCache.getRouteConfigurationAge(route) > staticDataAgeLimit)
             return cacheRouteConfigurationFromNetwork(route);
-        return cache.getRouteConfiguration(route);
+        return mCache.getRouteConfiguration(route);
     }
 
     private RouteConfiguration cacheRouteConfigurationFromNetwork(Route route) {
-        RouteConfiguration routeConfiguration = backing.getRouteConfiguration(route);
-        cache.putRouteConfiguration(routeConfiguration);
+        RouteConfiguration routeConfiguration = mBacking.getRouteConfiguration(route);
+        mCache.putRouteConfiguration(routeConfiguration);
         return routeConfiguration;
     }
 
@@ -98,7 +103,7 @@ public class CachedNextbusServiceAdapter extends Observable implements ICachedNe
         List<VehicleLocation> vehicleLocationsSinceTime = new ArrayList<VehicleLocation>(cachedVehicleLocations.size());
 
         for (VehicleLocation vehicleLocation : cachedVehicleLocations)
-            if (vehicleLocation.getObjectTimestamp() > timeOfLastUpdate)
+            if (vehicleLocation.getTimestamp() > timeOfLastUpdate)
                 vehicleLocationsSinceTime.add(vehicleLocation);
 
         return vehicleLocationsSinceTime;
@@ -117,49 +122,60 @@ public class CachedNextbusServiceAdapter extends Observable implements ICachedNe
      */
     private List<VehicleLocation> cacheVehicleLocationsFromNetwork(Route route) {
         List<VehicleLocation> cachedVehicleLocations;
-        if (cache.isVehicleLocationsCached(route))
-            cachedVehicleLocations = cache.getVehicleLocations(route);
+        if (mCache.isVehicleLocationsCached(route))
+            cachedVehicleLocations = mCache.getVehicleLocations(route);
         else
             cachedVehicleLocations = new ArrayList<VehicleLocation>();
 
         // Find the epoch time milliseconds when the cached locations were last updated
-        long timeOfLastUpdate = cache.getLatestVehicleLocationCreationTime(route);
+        long timeOfLastUpdate = mCache.getLatestVehicleLocationCreationTime(route);
 
-        List<VehicleLocation> networkVehicleLocations = backing.getVehicleLocations(route, timeOfLastUpdate);
+        List<VehicleLocation> networkVehicleLocations = mBacking.getVehicleLocations(route, timeOfLastUpdate);
 
         // Replace old vehicle locations with the updated ones
         // This works since VehicleLocation.equals() is composite only of the vehicle id, parent route, and direction
         cachedVehicleLocations.removeAll(networkVehicleLocations);
         cachedVehicleLocations.addAll(networkVehicleLocations);
 
-        cache.putVehicleLocations(cachedVehicleLocations);
+        mCache.putVehicleLocations(cachedVehicleLocations);
 
         return cachedVehicleLocations;
     }
 
     @Override
     public List<PredictionGroup> getPredictions(Stop s) throws ServiceException {
-        return backing.getPredictions(s);
+        return mBacking.getPredictions(s);
     }
 
     @Override
     public PredictionGroup getPredictions(Route r, Stop s) throws ServiceException {
-        return backing.getPredictions(r, s);
+        return mBacking.getPredictions(r, s);
     }
 
     @Override
     public List<PredictionGroup> getPredictions(Route route, Collection<Stop> stops) throws ServiceException {
-        return backing.getPredictions(route, stops);
+        return mBacking.getPredictions(route, stops);
     }
 
     @Override
     public List<PredictionGroup> getPredictions(Map<Route, Stop> stops) throws ServiceException {
-        return backing.getPredictions(stops);
+        return mBacking.getPredictions(stops);
     }
 
     @Override
     public List<Schedule> getSchedule(Route route) throws ServiceException {
-        return backing.getSchedule(route);
+        return mBacking.getSchedule(route);
+    }
+
+    public static interface Callbacks {
+
+        /**
+         * Called when the CachedNextbusServiceAdapter successfully caches stops for {@code route}
+         *
+         * @param route the route for which stops were cached
+         */
+        public abstract void onStopsCached(Route route);
+
     }
 
 }

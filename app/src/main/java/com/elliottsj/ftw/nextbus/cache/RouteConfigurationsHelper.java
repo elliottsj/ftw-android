@@ -58,6 +58,7 @@ public class RouteConfigurationsHelper extends CacheHelper {
 
     private static final String[] PATHS_COLUMNS =
             { NextbusSQLiteHelper.PATHS.COLUMN_AUTO_ID,
+              NextbusSQLiteHelper.PATHS.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.PATHS.COLUMN_ROUTE,
               NextbusSQLiteHelper.PATHS.COLUMN_PATH_ID,
               NextbusSQLiteHelper.PATHS.COLUMN_ROUTE_CONFIGURATION };
@@ -93,7 +94,7 @@ public class RouteConfigurationsHelper extends CacheHelper {
         Cursor cursor = getRouteConfigurationCursor(route);
         RouteConfiguration routeConfiguration = getRouteConfigurationFromCursor(cursor, route);
         cursor.close();
-        return routeConfiguration.getObjectAge();
+        return routeConfiguration.getAge();
     }
 
     public RouteConfiguration getRouteConfiguration(Route route) {
@@ -113,8 +114,8 @@ public class RouteConfigurationsHelper extends CacheHelper {
     public void putRouteConfiguration(RouteConfiguration routeConfiguration) {
         // Cache the route configuration
         ContentValues values = new ContentValues();
-        values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_COPYRIGHT, routeConfiguration.getCopyrightNotice());
-        values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_TIMESTAMP, routeConfiguration.getObjectTimestamp());
+        values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_COPYRIGHT, routeConfiguration.getCopyright());
+        values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_TIMESTAMP, routeConfiguration.getTimestamp());
         values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE, RoutesHelper.getRouteAutoId(mDatabase, routeConfiguration.getRoute()));
         values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_UI_COLOR, routeConfiguration.getUiColor().getHexColor());
         values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_UI_OPPOSITE_COLOR, routeConfiguration.getUiOppositeColor().getHexColor());
@@ -161,8 +162,7 @@ public class RouteConfigurationsHelper extends CacheHelper {
         mDatabase.execSQL("DELETE FROM " +
                           NextbusSQLiteHelper.DIRECTIONS.TABLE + " WHERE " +
                           NextbusSQLiteHelper.DIRECTIONS.COLUMN_ROUTE_CONFIGURATION + " = " +
-                          routeConfigurationAutoId +
-                          ")");
+                          routeConfigurationAutoId);
 
         // Delete the cached service area
         mDatabase.execSQL("DELETE FROM " +
@@ -180,8 +180,8 @@ public class RouteConfigurationsHelper extends CacheHelper {
         ContentValues values = new ContentValues();
         values.put(NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LAT_MIN, serviceArea.getLatMin());
         values.put(NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LAT_MAX, serviceArea.getLatMax());
-        values.put(NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LON_MIN, serviceArea.getLongMin());
-        values.put(NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LON_MAX, serviceArea.getLongMax());
+        values.put(NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LON_MIN, serviceArea.getLonMin());
+        values.put(NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LON_MAX, serviceArea.getLonMax());
         values.put(NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_ROUTE_CONFIGURATION, routeConfigAutoId);
 
         mDatabase.insert(NextbusSQLiteHelper.SERVICE_AREAS.TABLE, null, values);
@@ -190,8 +190,8 @@ public class RouteConfigurationsHelper extends CacheHelper {
     private void putStop(Stop stop, long routeConfigurationAutoId) {
         // Insert into stops table
         ContentValues values = new ContentValues();
-        values.put(NextbusSQLiteHelper.STOPS.COLUMN_COPYRIGHT, stop.getCopyrightNotice());
-        values.put(NextbusSQLiteHelper.STOPS.COLUMN_TIMESTAMP, stop.getObjectTimestamp());
+        values.put(NextbusSQLiteHelper.STOPS.COLUMN_COPYRIGHT, stop.getCopyright());
+        values.put(NextbusSQLiteHelper.STOPS.COLUMN_TIMESTAMP, stop.getTimestamp());
         values.put(NextbusSQLiteHelper.STOPS.COLUMN_AGENCY, AgenciesHelper.getAgencyAutoId(mDatabase, stop.getAgency()));
         values.put(NextbusSQLiteHelper.STOPS.COLUMN_TAG, stop.getTag());
         values.put(NextbusSQLiteHelper.STOPS.COLUMN_TITLE, stop.getTitle());
@@ -216,8 +216,8 @@ public class RouteConfigurationsHelper extends CacheHelper {
 
     private void putDirection(Direction direction, long routeConfigurationAutoId) {
         ContentValues values = new ContentValues();
-        values.put(NextbusSQLiteHelper.DIRECTIONS.COLUMN_COPYRIGHT, direction.getCopyrightNotice());
-        values.put(NextbusSQLiteHelper.DIRECTIONS.COLUMN_TIMESTAMP, direction.getObjectTimestamp());
+        values.put(NextbusSQLiteHelper.DIRECTIONS.COLUMN_COPYRIGHT, direction.getCopyright());
+        values.put(NextbusSQLiteHelper.DIRECTIONS.COLUMN_TIMESTAMP, direction.getTimestamp());
         values.put(NextbusSQLiteHelper.DIRECTIONS.COLUMN_ROUTE, RoutesHelper.getRouteAutoId(mDatabase, direction.getRoute()));
         values.put(NextbusSQLiteHelper.DIRECTIONS.COLUMN_TAG, direction.getTag());
         values.put(NextbusSQLiteHelper.DIRECTIONS.COLUMN_TITLE, direction.getTitle());
@@ -237,15 +237,14 @@ public class RouteConfigurationsHelper extends CacheHelper {
                                "(SELECT " +
                                NextbusSQLiteHelper.STOPS.COLUMN_AUTO_ID + " FROM " +
                                NextbusSQLiteHelper.STOPS.TABLE + " WHERE " +
-                               NextbusSQLiteHelper.STOPS.COLUMN_TAG + " = " +
-                               stop.getTag() + " LIMIT 1)" +
-                               ")",
-                               null);
+                               NextbusSQLiteHelper.STOPS.COLUMN_TAG + " = ? LIMIT 1))",
+                               new String[] { stop.getTag() });
         }
     }
 
     private void putPath(Path path, long routeConfigurationAutoId) {
         ContentValues values = new ContentValues();
+        values.put(NextbusSQLiteHelper.PATHS.COLUMN_COPYRIGHT, path.getCopyright());
         values.put(NextbusSQLiteHelper.PATHS.COLUMN_ROUTE, RoutesHelper.getRouteAutoId(mDatabase, path.getRoute()));
         values.put(NextbusSQLiteHelper.PATHS.COLUMN_PATH_ID, path.getPathId());
         values.put(NextbusSQLiteHelper.PATHS.COLUMN_ROUTE_CONFIGURATION, routeConfigurationAutoId);
@@ -444,9 +443,10 @@ public class RouteConfigurationsHelper extends CacheHelper {
 
     private Path getPathFromCursor(Cursor cursor, Route route) {
         int autoId = cursor.getInt(0);
+        String copyright = cursor.getString(1);
         String pathId = cursor.getString(2);
 
-        return new Path(route, pathId, getPointsForPath(autoId));
+        return new Path(route, pathId, getPointsForPath(autoId), copyright);
     }
 
     private List<Geolocation> getPointsForPath(int pathAutoId) {

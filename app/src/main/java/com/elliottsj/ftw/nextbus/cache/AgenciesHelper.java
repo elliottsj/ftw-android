@@ -47,7 +47,7 @@ public class AgenciesHelper extends CacheHelper {
         cursor.moveToFirst();
         Agency agency = getAgencyFromCursor(cursor);
         cursor.close();
-        return agency.getObjectAge();
+        return agency.getAge();
     }
 
     /**
@@ -93,8 +93,8 @@ public class AgenciesHelper extends CacheHelper {
 
     public void putAgency(Agency agency) {
         ContentValues values = new ContentValues();
-        values.put(NextbusSQLiteHelper.AGENCIES.COLUMN_COPYRIGHT, agency.getCopyrightNotice());
-        values.put(NextbusSQLiteHelper.AGENCIES.COLUMN_TIMESTAMP, agency.getObjectTimestamp());
+        values.put(NextbusSQLiteHelper.AGENCIES.COLUMN_COPYRIGHT, agency.getCopyright());
+        values.put(NextbusSQLiteHelper.AGENCIES.COLUMN_TIMESTAMP, agency.getTimestamp());
         values.put(NextbusSQLiteHelper.AGENCIES.COLUMN_TAG, agency.getTag());
         values.put(NextbusSQLiteHelper.AGENCIES.COLUMN_TITLE, agency.getTitle());
         values.put(NextbusSQLiteHelper.AGENCIES.COLUMN_SHORT_TITLE, agency.getShortTitle());

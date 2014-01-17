@@ -279,7 +279,7 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            new LoadNearbyStopsTask().execute(mLocationClient.getLastLocation());
+            mLoadNearbyStopsTask.execute(mLocationClient.getLastLocation());
         }
     }
 

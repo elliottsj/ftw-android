@@ -113,6 +113,7 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         public static final String TABLE = "paths";
 
         public static final String COLUMN_AUTO_ID = "_ID";
+        public static final String COLUMN_COPYRIGHT = "copyright";
         public static final String COLUMN_ROUTE = "route";
         public static final String COLUMN_PATH_ID = "path_id";
         public static final String COLUMN_ROUTE_CONFIGURATION = "route_configuration";
@@ -249,6 +250,7 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_PATHS =
             "CREATE TABLE " + PATHS.TABLE + " (" +
                 PATHS.COLUMN_AUTO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PATHS.COLUMN_COPYRIGHT + " TEXT NOT NULL, " +
                 PATHS.COLUMN_ROUTE + " INTEGER NOT NULL, " +
                 PATHS.COLUMN_PATH_ID + " TEXT NOT NULL, " +
                 PATHS.COLUMN_ROUTE_CONFIGURATION + " INTEGER NOT NULL, " +
