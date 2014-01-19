@@ -3,6 +3,7 @@ package com.elliottsj.ftw.nextbus.cache;
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
+import net.sf.nextbus.publicxmlfeed.domain.Stop;
 import net.sf.nextbus.publicxmlfeed.domain.VehicleLocation;
 
 import java.util.List;
@@ -116,5 +117,12 @@ public interface INextbusCache {
      * @param vehicleLocations the vehicle locations to store
      */
     public void putVehicleLocations(List<VehicleLocation> vehicleLocations);
+
+    /**
+     * Gets all stops stored in this cache.
+     *
+     * @return all stops stored in this cache
+     */
+    public List<Stop> getStops();
 
 }

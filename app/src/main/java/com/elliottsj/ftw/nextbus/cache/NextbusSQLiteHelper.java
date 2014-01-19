@@ -13,35 +13,35 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         public static final String TABLE = "agencies";
 
         public static final String COLUMN_AUTO_ID = "_ID";
-        public static final String COLUMN_COPYRIGHT = "copyright";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
-        public static final String COLUMN_TAG = "tag";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_SHORT_TITLE = "short_title";
-        public static final String COLUMN_REGION_TITLE = "region_title";
+        public static final String COLUMN_COPYRIGHT = "agency_copyright";
+        public static final String COLUMN_TIMESTAMP = "agency_timestamp";
+        public static final String COLUMN_TAG = "agency_tag";
+        public static final String COLUMN_TITLE = "agency_title";
+        public static final String COLUMN_SHORT_TITLE = "agency_short_title";
+        public static final String COLUMN_REGION_TITLE = "agency_region_title";
     }
 
     public static final class ROUTES {
         public static final String TABLE = "routes";
 
         public static final String COLUMN_AUTO_ID = "_ID";
-        public static final String COLUMN_COPYRIGHT = "copyright";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
-        public static final String COLUMN_AGENCY = "agency";
-        public static final String COLUMN_TAG = "tag";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_SHORT_TITLE = "short_title";
+        public static final String COLUMN_COPYRIGHT = "route_copyright";
+        public static final String COLUMN_TIMESTAMP = "route_timestamp";
+        public static final String COLUMN_AGENCY = "route_agency";
+        public static final String COLUMN_TAG = "route_tag";
+        public static final String COLUMN_TITLE = "route_title";
+        public static final String COLUMN_SHORT_TITLE = "route_short_title";
     }
 
     public static final class ROUTE_CONFIGURATIONS {
         public static final String TABLE = "route_configurations";
 
         public static final String COLUMN_AUTO_ID = "_ID";
-        public static final String COLUMN_COPYRIGHT = "copyright";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
-        public static final String COLUMN_ROUTE = "route";
-        public static final String COLUMN_UI_COLOR = "ui_color";
-        public static final String COLUMN_UI_OPPOSITE_COLOR = "ui_opposite_color";
+        public static final String COLUMN_COPYRIGHT = "route_configuration_copyright";
+        public static final String COLUMN_TIMESTAMP = "route_configuration_timestamp";
+        public static final String COLUMN_ROUTE = "route_configuration_route";
+        public static final String COLUMN_UI_COLOR = "route_configuration_ui_color";
+        public static final String COLUMN_UI_OPPOSITE_COLOR = "route_configuration_ui_opposite_color";
     }
 
     public static final class SERVICE_AREAS {
@@ -59,12 +59,12 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         public static final String TABLE = "stops";
 
         public static final String COLUMN_AUTO_ID = "_ID";
-        public static final String COLUMN_COPYRIGHT = "copyright";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
-        public static final String COLUMN_AGENCY = "agency";
-        public static final String COLUMN_TAG = "tag";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_SHORT_TITLE = "short_title";
+        public static final String COLUMN_COPYRIGHT = "stop_copyright";
+        public static final String COLUMN_TIMESTAMP = "stop_timestamp";
+        public static final String COLUMN_AGENCY = "stop_agency";
+        public static final String COLUMN_TAG = "stop_tag";
+        public static final String COLUMN_TITLE = "stop_title";
+        public static final String COLUMN_SHORT_TITLE = "stop_short_title";
         public static final String COLUMN_STOP_ID = "stop_id";
     }
 
@@ -77,7 +77,7 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         public static final String COLUMN_AUTO_ID = "_ID";
         public static final String COLUMN_LAT = "lat";
         public static final String COLUMN_LON = "lon";
-        public static final String COLUMN_STOP = "stop";
+        public static final String COLUMN_STOP = "geolocation_stop";
     }
 
     public static final class ROUTE_CONFIGURATIONS_STOPS {
@@ -92,13 +92,13 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         public static final String TABLE = "directions";
 
         public static final String COLUMN_AUTO_ID = "_ID";
-        public static final String COLUMN_COPYRIGHT = "copyright";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
-        public static final String COLUMN_ROUTE = "route";
-        public static final String COLUMN_TAG = "tag";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_ROUTE_CONFIGURATION = "route_configuration";
+        public static final String COLUMN_COPYRIGHT = "direction_copyright";
+        public static final String COLUMN_TIMESTAMP = "direction_timestamp";
+        public static final String COLUMN_ROUTE = "direction_route";
+        public static final String COLUMN_TAG = "direction_tag";
+        public static final String COLUMN_TITLE = "direction_title";
+        public static final String COLUMN_NAME = "direction_name";
+        public static final String COLUMN_ROUTE_CONFIGURATION = "direction_route_configuration";
     }
 
     public static final class DIRECTIONS_STOPS {
@@ -113,10 +113,10 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         public static final String TABLE = "paths";
 
         public static final String COLUMN_AUTO_ID = "_ID";
-        public static final String COLUMN_COPYRIGHT = "copyright";
-        public static final String COLUMN_ROUTE = "route";
+        public static final String COLUMN_COPYRIGHT = "path_copyright";
+        public static final String COLUMN_ROUTE = "path_route";
         public static final String COLUMN_PATH_ID = "path_id";
-        public static final String COLUMN_ROUTE_CONFIGURATION = "route_configuration";
+        public static final String COLUMN_ROUTE_CONFIGURATION = "path_route_configuration";
     }
 
     /**
@@ -128,22 +128,22 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         public static final String COLUMN_AUTO_ID = "_ID";
         public static final String COLUMN_LAT = "lat";
         public static final String COLUMN_LON = "lon";
-        public static final String COLUMN_PATH = "path";
+        public static final String COLUMN_PATH = "point_path";
     }
 
     public static final class VEHICLE_LOCATIONS {
         public static final String TABLE = "vehicle_locations";
 
         public static final String COLUMN_AUTO_ID = "_ID";
-        public static final String COLUMN_COPYRIGHT = "copyright";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
-        public static final String COLUMN_VEHICLE = "vehicle";
-        public static final String COLUMN_ROUTE = "route";
-        public static final String COLUMN_DIRECTION_ID = "direction_id";
-        public static final String COLUMN_PREDICTABLE = "predictable";
-        public static final String COLUMN_LOCATION = "location";
-        public static final String COLUMN_SPEED = "speed";
-        public static final String COLUMN_HEADING = "heading";
+        public static final String COLUMN_COPYRIGHT = "vehicle_location_copyright";
+        public static final String COLUMN_TIMESTAMP = "vehicle_location_timestamp";
+        public static final String COLUMN_VEHICLE = "vehicle_location_vehicle";
+        public static final String COLUMN_ROUTE = "vehicle_location_route";
+        public static final String COLUMN_DIRECTION_ID = "vehicle_location_direction_id";
+        public static final String COLUMN_PREDICTABLE = "vehicle_location_predictable";
+        public static final String COLUMN_LOCATION = "vehicle_location_location";
+        public static final String COLUMN_SPEED = "vehicle_location_speed";
+        public static final String COLUMN_HEADING = "vehicle_location_heading";
     }
 
     // CREATE TABLE statements

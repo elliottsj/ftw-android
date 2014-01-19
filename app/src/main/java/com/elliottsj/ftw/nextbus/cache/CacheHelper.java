@@ -10,10 +10,19 @@ public abstract class CacheHelper {
         this.mDatabase = database;
     }
 
-    protected static String toCommaDelimited(String prefix, String[] strings) {
-        String result = "";
-        for (int i = 0; i < strings.length; i++)
-            result += i == strings.length - 1 ? (prefix + strings[i]) : (prefix + strings[i] + ", ");
+    protected static String[] concatAll(String[]... arrays) {
+        int len = 0;
+        for (final String[] array : arrays)
+            len += array.length;
+
+        final String[] result = new String[len];
+
+        int currentPos = 0;
+        for (final String[] array : arrays) {
+            System.arraycopy(array, 0, result, currentPos, array.length);
+            currentPos += array.length;
+        }
+
         return result;
     }
 

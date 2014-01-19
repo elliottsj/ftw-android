@@ -25,7 +25,7 @@ public class AndroidRPCImpl implements RPCImpl {
 
     // Enforces advisory warnings on bandwidth use - NextBus spec says 2MB/20sec Max
     private static final long BANDWIDTH_LIMIT_INTERVAL_MILLISECONDS = 20*1000;
-    private static final long BANDWIDTH_LIMIT_INTERVAL_BYTES = 2^21;
+    private static final long BANDWIDTH_LIMIT_INTERVAL_BYTES = (long) Math.pow(2, 21);
 
     // State machine values for Sliding bandwidth monitor
     private long bwLimitIntervalStartTime;
@@ -109,7 +109,7 @@ public class AndroidRPCImpl implements RPCImpl {
      */
     private void checkBandwidthLimits() {
         // Reset the observation time window if needed
-        if (bwLimitIntervalStartTime == 0 || (System.currentTimeMillis()-bwLimitIntervalStartBytes) > BANDWIDTH_LIMIT_INTERVAL_MILLISECONDS) {
+        if (bwLimitIntervalStartTime == 0 || (System.currentTimeMillis()-bwLimitIntervalStartTime) > BANDWIDTH_LIMIT_INTERVAL_MILLISECONDS) {
             bwLimitIntervalStartTime = System.currentTimeMillis();
             bwLimitIntervalStartBytes += bytesReceived;
         }

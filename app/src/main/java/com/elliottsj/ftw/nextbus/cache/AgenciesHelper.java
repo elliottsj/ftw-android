@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AgenciesHelper extends CacheHelper {
 
-    private static final String[] AGENCIES_COLUMNS =
+    protected static final String[] AGENCIES_COLUMNS =
             { NextbusSQLiteHelper.AGENCIES.COLUMN_AUTO_ID,
               NextbusSQLiteHelper.AGENCIES.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.AGENCIES.COLUMN_TIMESTAMP,

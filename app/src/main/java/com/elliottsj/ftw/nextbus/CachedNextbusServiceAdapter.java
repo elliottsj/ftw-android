@@ -1,17 +1,38 @@
 package com.elliottsj.ftw.nextbus;
 
+import android.util.Log;
+
 import com.elliottsj.ftw.nextbus.cache.INextbusCache;
 
-import net.sf.nextbus.publicxmlfeed.domain.*;
+import net.sf.nextbus.publicxmlfeed.domain.Agency;
+import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
+import net.sf.nextbus.publicxmlfeed.domain.Route;
+import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
+import net.sf.nextbus.publicxmlfeed.domain.Schedule;
+import net.sf.nextbus.publicxmlfeed.domain.Stop;
+import net.sf.nextbus.publicxmlfeed.domain.VehicleLocation;
 import net.sf.nextbus.publicxmlfeed.service.INextbusService;
 import net.sf.nextbus.publicxmlfeed.service.ServiceException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * An implementation of a cached NextBus service adapter.
  */
 public class CachedNextbusServiceAdapter implements ICachedNextbusService {
+
+    private static final String TAG = "CachedNextbusServiceAdapter";
 
     private INextbusService mBacking;
     private INextbusCache mCache;
@@ -29,16 +50,50 @@ public class CachedNextbusServiceAdapter implements ICachedNextbusService {
     }
 
     @Override
-    public List<Stop> getAllStops(Agency agency) {
-        final List<Stop> stops = new ArrayList<Stop>();
+    public List<Stop> getAllStops(final Agency agency) {
+        List<Stop> stops = new ArrayList<Stop>();
+
+        CompletionService<List<Stop>> completionService = new ExecutorCompletionService<List<Stop>>(Executors.newFixedThreadPool(10));
+        Set<Future<List<Stop>>> futures = new HashSet<Future<List<Stop>>>();
+
         for (final Route route : getRoutes(agency)) {
-            new FetchRouteConfigurationTask(new FetchRouteConfigurationTask.Callbacks() {
+            futures.add(completionService.submit(new Callable<List<Stop>>() {
                 @Override
-                public void onRouteConfigurationFetched(RouteConfiguration routeConfiguration) {
-                    stops.addAll(routeConfiguration.getStops());
+                public List<Stop> call() throws Exception {
+                    Log.i(TAG, "Fetching stops for route: " + route.getTag());
+                    List<Stop> stopsForRoute = getRouteConfiguration(route).getStops();
                     mCallbacks.onStopsCached(route);
+                    return stopsForRoute;
                 }
-            }).execute(route);
+            }));
+        }
+
+        Future<List<Stop>> completedFuture;
+        boolean success = true;
+
+        while (!futures.isEmpty()) {
+            try {
+                // Get the next fetched list of stops
+                completedFuture = completionService.take();
+
+                // Remove it from the set of tasks
+                futures.remove(completedFuture);
+
+                // Add the list to the main list
+                stops.addAll(completedFuture.get());
+            } catch (ExecutionException e) {
+                Log.w(TAG, "Failed to get list of stops", e);
+                success = false;
+            } catch (InterruptedException e) {
+                Log.i(TAG, "Thread interrupted; cancelling fetching of stops", e);
+                success = false;
+            }
+            if (!success) {
+                // Cancel all other futures
+                for (Future<List<Stop>> f: futures)
+                    f.cancel(true);
+                break;
+            }
         }
         return stops;
     }
@@ -78,8 +133,11 @@ public class CachedNextbusServiceAdapter implements ICachedNextbusService {
 
     @Override
     public RouteConfiguration getRouteConfiguration(Route route) throws ServiceException {
-        if (!mCache.isRouteConfigurationCached(route) || mCache.getRouteConfigurationAge(route) > staticDataAgeLimit)
+        if (!mCache.isRouteConfigurationCached(route) || mCache.getRouteConfigurationAge(route) > staticDataAgeLimit) {
+            Log.i(TAG, "Route configuration for route " + route.getTag() + " not cached. Fetching from network.");
             return cacheRouteConfigurationFromNetwork(route);
+        }
+        Log.i(TAG, "Route configuration for route " + route.getTag() + " is cached. Fetching from cache.");
         return mCache.getRouteConfiguration(route);
     }
 

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
+import net.sf.nextbus.publicxmlfeed.domain.Stop;
 import net.sf.nextbus.publicxmlfeed.domain.VehicleLocation;
 
 import java.util.List;
@@ -175,6 +176,11 @@ public class NextbusCache implements INextbusCache {
     @Override
     public void putVehicleLocations(List<VehicleLocation> vehicleLocations) {
 
+    }
+
+    @Override
+    public List<Stop> getStops() {
+        return mRouteConfigurationsHelper.getStops();
     }
 
 }
