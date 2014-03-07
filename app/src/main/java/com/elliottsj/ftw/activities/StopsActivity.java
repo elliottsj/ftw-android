@@ -1,53 +1,99 @@
 package com.elliottsj.ftw.activities;
 
-
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentResolver;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+
 import com.astuetz.PagerSlidingTabStrip;
 import com.elliottsj.ftw.R;
+import com.elliottsj.ftw.provider.NextbusProvider;
+import com.elliottsj.ftw.sync.SyncAdapter;
 
 public class StopsActivity extends Activity {
 
-    PagerSlidingTabStrip mTabs;
-    ViewPager mViewPager;
-    StopsTabsAdapter mStopsTabsAdapter;
+    private static final String TAG = StopsActivity.class.getSimpleName();
 
-    private static final String TAG = "StopsActivity";
+    public static final String AUTHORITY = NextbusProvider.AUTHORITY;
+    public static final String ACCOUNT_TYPE = SyncAdapter.ACCOUNT_TYPE;
+    public static final String ACCOUNT = SyncAdapter.ACCOUNT;
 
-    /**
-     * Returns true iff a network connection is available.
-     */
-    public boolean isNetworkConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
-    }
+    private Account mAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops);
 
-        mTabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        // Initialize tab navigation
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        StopsTabsAdapter stopsTabsAdapter = new StopsTabsAdapter(getFragmentManager());
+        viewPager.setAdapter(stopsTabsAdapter);
+        tabs.setViewPager(viewPager);
 
-        mStopsTabsAdapter = new StopsTabsAdapter(getFragmentManager());
-        mViewPager.setAdapter(mStopsTabsAdapter);
-        mTabs.setViewPager(mViewPager);
+        // Account needed to request syncs
+        mAccount = getSyncAccount(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.stops, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                return true;
+            case R.id.sync:
+                // Force manual sync
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
+                return true;
+            case R.id.about:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Create a new dummy account for the sync adapter
+     *
+     * @param context The application context
+     */
+    public static Account getSyncAccount(Context context) {
+        // Get an instance of the Android account manager
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+
+        // Return the existing account if it exists
+        for (Account account : accountManager.getAccountsByType(ACCOUNT_TYPE))
+            if (account.name.equals(ACCOUNT))
+                return account;
+
+        // No account exists; create the default account
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            return newAccount;
+        } else {
+            // The account exists or some other error occurred
+            Log.e(TAG, "Error while creating sync account");
+            return null;
+        }
     }
 
     public static class StopsTabsAdapter extends FragmentPagerAdapter {

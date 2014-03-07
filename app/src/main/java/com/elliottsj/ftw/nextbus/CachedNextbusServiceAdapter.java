@@ -1,8 +1,12 @@
 package com.elliottsj.ftw.nextbus;
 
+import android.content.ContentProviderClient;
+import android.content.Context;
 import android.util.Log;
 
 import com.elliottsj.ftw.nextbus.cache.INextbusCache;
+import com.elliottsj.ftw.nextbus.cache.NextbusCache;
+import com.elliottsj.ftw.utilities.AndroidRPCImpl;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
@@ -11,29 +15,26 @@ import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
 import net.sf.nextbus.publicxmlfeed.domain.Schedule;
 import net.sf.nextbus.publicxmlfeed.domain.Stop;
 import net.sf.nextbus.publicxmlfeed.domain.VehicleLocation;
+import net.sf.nextbus.publicxmlfeed.impl.NextbusService;
 import net.sf.nextbus.publicxmlfeed.service.INextbusService;
 import net.sf.nextbus.publicxmlfeed.service.ServiceException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * An implementation of a cached NextBus service adapter.
  */
 public class CachedNextbusServiceAdapter implements ICachedNextbusService {
 
-    private static final String TAG = "CachedNextbusServiceAdapter";
+    private static final String TAG = CachedNextbusServiceAdapter.class.getSimpleName();
 
+    private Context mContext;
     private INextbusService mBacking;
     private INextbusCache mCache;
     private Callbacks mCallbacks;
@@ -43,59 +44,57 @@ public class CachedNextbusServiceAdapter implements ICachedNextbusService {
     /** Cache age limit for static data (Route, RouteConfig, Schedule) */
     private long staticDataAgeLimit = AGE_LIMIT_24HOURS;
 
-    public CachedNextbusServiceAdapter(INextbusService backing, INextbusCache cache, Callbacks callbacks) {
-        this.mBacking = backing;
-        this.mCache = cache;
-        this.mCallbacks = callbacks;
+    public CachedNextbusServiceAdapter(Context context, ContentProviderClient provider, Callbacks callbacks) {
+        mContext = context;
+        mCache = new NextbusCache(context, provider);
+        mBacking = new NextbusService(new AndroidRPCImpl());
+        mCallbacks = callbacks;
+
+        // Open the cache for reading/writing
+        mCache.open();
     }
 
     @Override
-    public List<Stop> getAllStops(final Agency agency) {
-        List<Stop> stops = new ArrayList<Stop>();
+    public void cacheRouteConfigurations(Agency agency) {
+        List<Route> cachedRoutes = mCache.getAllRouteConfigurationRoutes(agency);
+        List<Route> networkRoutes = mBacking.getRoutes(agency);
 
-        CompletionService<List<Stop>> completionService = new ExecutorCompletionService<List<Stop>>(Executors.newFixedThreadPool(10));
-        Set<Future<List<Stop>>> futures = new HashSet<Future<List<Stop>>>();
+        // Determine which route configurations are not cached
+        ArrayList<Route> uncachedRoutes = new ArrayList<Route>(networkRoutes);
+        uncachedRoutes.removeAll(cachedRoutes);
 
-        for (final Route route : getRoutes(agency)) {
-            futures.add(completionService.submit(new Callable<List<Stop>>() {
-                @Override
-                public List<Stop> call() throws Exception {
-                    Log.i(TAG, "Fetching stops for route: " + route.getTag());
-                    List<Stop> stopsForRoute = getRouteConfiguration(route).getStops();
-                    mCallbacks.onStopsCached(route);
-                    return stopsForRoute;
-                }
-            }));
-        }
+        if (!uncachedRoutes.isEmpty()) {
+            ExecutorService executorService = Executors.newFixedThreadPool(20);
+            List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
 
-        Future<List<Stop>> completedFuture;
-        boolean success = true;
+            for (final Route route : uncachedRoutes) {
+                tasks.add(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        // Download and cache route configuration
+                        mCache.putRouteConfiguration(mBacking.getRouteConfiguration(route));
 
-        while (!futures.isEmpty()) {
+                        // Report progress
+                        mCallbacks.onRouteConfigurationCached(route);
+
+                        return null;
+                    }
+                });
+            }
+
             try {
-                // Get the next fetched list of stops
-                completedFuture = completionService.take();
-
-                // Remove it from the set of tasks
-                futures.remove(completedFuture);
-
-                // Add the list to the main list
-                stops.addAll(completedFuture.get());
-            } catch (ExecutionException e) {
-                Log.w(TAG, "Failed to get list of stops", e);
-                success = false;
+                executorService.invokeAll(tasks);
             } catch (InterruptedException e) {
-                Log.i(TAG, "Thread interrupted; cancelling fetching of stops", e);
-                success = false;
-            }
-            if (!success) {
-                // Cancel all other futures
-                for (Future<List<Stop>> f: futures)
-                    f.cancel(true);
-                break;
+                Log.w(TAG, "Caching route configurations interrupted", e);
             }
         }
-        return stops;
+
+
+    }
+
+    @Override
+    public List<Stop> getAllStops(Agency agency) {
+        return mCache.getAllStops(agency);
     }
 
     @Override
@@ -121,14 +120,11 @@ public class CachedNextbusServiceAdapter implements ICachedNextbusService {
     @Override
     public List<Route> getRoutes(Agency agency) throws ServiceException {
         if (!mCache.isRoutesCached(agency) || mCache.getRoutesAge(agency) > staticDataAgeLimit)
-            return cacheRoutesFromNetwork(agency);
-        return mCache.getRoutes(agency);
-    }
+            // Routes need to be refreshed; fetch from network and store in cache
+            return mCache.putRoutes(mBacking.getRoutes(agency));
 
-    private List<Route> cacheRoutesFromNetwork(Agency agency) {
-        List<Route> backingResult = mBacking.getRoutes(agency);
-        mCache.putRoutes(backingResult);
-        return backingResult;
+        // Cached routes are valid
+        return mCache.getRoutes(agency);
     }
 
     @Override
@@ -232,7 +228,7 @@ public class CachedNextbusServiceAdapter implements ICachedNextbusService {
          *
          * @param route the route for which stops were cached
          */
-        public abstract void onStopsCached(Route route);
+        public void onRouteConfigurationCached(Route route);
 
     }
 

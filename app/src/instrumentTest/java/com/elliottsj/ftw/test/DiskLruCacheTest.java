@@ -27,6 +27,7 @@ public class DiskLruCacheTest extends AndroidTestCase {
         // Not sure if I'm using IsolatedContext properly since it writes into the app's main cache directory,
         // but it works for now
         Context context = getContext();
+        assert context != null;
         IsolatedContext isolatedContext = new IsolatedContext(context.getContentResolver(), context);
         mDiskLruCache = DiskLruCache.open(isolatedContext.getCacheDir(), 1, 1, (long) (20 * Math.pow(2, 20)));
     }

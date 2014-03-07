@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus.cache;
+package com.elliottsj.ftw.nextbus.cache.helpers;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -13,15 +13,14 @@ import java.util.List;
 public class AgenciesHelper extends CacheHelper {
 
     protected static final String[] AGENCIES_COLUMNS =
-            { NextbusSQLiteHelper.AGENCIES.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.AGENCIES.COLUMN_COPYRIGHT,
+            { NextbusSQLiteHelper.AGENCIES.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.AGENCIES.COLUMN_TIMESTAMP,
               NextbusSQLiteHelper.AGENCIES.COLUMN_TAG,
               NextbusSQLiteHelper.AGENCIES.COLUMN_TITLE,
               NextbusSQLiteHelper.AGENCIES.COLUMN_SHORT_TITLE,
               NextbusSQLiteHelper.AGENCIES.COLUMN_REGION_TITLE };
 
-    protected AgenciesHelper(SQLiteDatabase database) {
+    public AgenciesHelper(SQLiteDatabase database) {
         super(database);
     }
 
@@ -122,12 +121,12 @@ public class AgenciesHelper extends CacheHelper {
      * @return the agency on the current row of the given cursor
      */
     private Agency getAgencyFromCursor(Cursor cursor) {
-        String copyright = cursor.getString(1);
-        long timestamp = cursor.getLong(2);
-        String tag = cursor.getString(3);
-        String title = cursor.getString(4);
-        String shortTitle = cursor.getString(5);
-        String regionTitle = cursor.getString(6);
+        String copyright = cursor.getString(0);
+        long timestamp = cursor.getLong(1);
+        String tag = cursor.getString(2);
+        String title = cursor.getString(3);
+        String shortTitle = cursor.getString(4);
+        String regionTitle = cursor.getString(5);
 
         return new Agency(tag, title, shortTitle, regionTitle, copyright, timestamp);
     }
@@ -141,6 +140,69 @@ public class AgenciesHelper extends CacheHelper {
         int agencyAutoId = agencyCursor.getInt(0);
         agencyCursor.close();
         return agencyAutoId;
+    }
+
+    /**
+     * Specifies which columns in a cursor correspond to each property of an {@link net.sf.nextbus.publicxmlfeed.domain.Agency}
+     */
+    protected static class AgencyCursorColumns {
+        private final int tagColumn;
+        private final int titleColumn;
+        private final int shortTitleColumn;
+        private final int regionTitleColumn;
+        private final int copyrightColumn;
+        private final int timestampColumn;
+
+        private AgencyCursorColumns(int tagColumn, int titleColumn, int shortTitleColumn, int regionTitleColumn, int copyrightColumn, int timestampColumn) {
+            this.tagColumn = tagColumn;
+            this.titleColumn = titleColumn;
+            this.shortTitleColumn = shortTitleColumn;
+            this.regionTitleColumn = regionTitleColumn;
+            this.copyrightColumn = copyrightColumn;
+            this.timestampColumn = timestampColumn;
+        }
+
+        public static AgencyCursorColumns fromCursor(Cursor cursor) {
+            return new AgencyCursorColumns(cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.AGENCIES.COLUMN_TAG),
+                                           cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.AGENCIES.COLUMN_TITLE),
+                                           cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.AGENCIES.COLUMN_SHORT_TITLE),
+                                           cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.AGENCIES.COLUMN_REGION_TITLE),
+                                           cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.AGENCIES.COLUMN_COPYRIGHT),
+                                           cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.AGENCIES.COLUMN_TIMESTAMP));
+        }
+
+        public int getTagColumn() {
+            return tagColumn;
+        }
+
+        public int getTitleColumn() {
+            return titleColumn;
+        }
+
+        public int getShortTitleColumn() {
+            return shortTitleColumn;
+        }
+
+        public int getRegionTitleColumn() {
+            return regionTitleColumn;
+        }
+
+        public int getCopyrightColumn() {
+            return copyrightColumn;
+        }
+
+        public int getTimestampColumn() {
+            return timestampColumn;
+        }
+    }
+
+    protected static Agency agencyFromCursor(Cursor cursor, AgencyCursorColumns agencyCursorColumns) {
+        return new Agency(cursor.getString(agencyCursorColumns.getTagColumn()),
+                          cursor.getString(agencyCursorColumns.getTitleColumn()),
+                          cursor.getString(agencyCursorColumns.getShortTitleColumn()),
+                          cursor.getString(agencyCursorColumns.getRegionTitleColumn()),
+                          cursor.getString(agencyCursorColumns.getCopyrightColumn()),
+                          cursor.getLong(agencyCursorColumns.getTimestampColumn()));
     }
 
 }

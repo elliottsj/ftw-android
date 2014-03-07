@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus.cache;
+package com.elliottsj.ftw.nextbus.cache.helpers;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -13,16 +13,15 @@ import java.util.List;
 
 public class RoutesHelper extends CacheHelper {
 
-    private static final String[] ROUTES_COLUMNS =
-            { NextbusSQLiteHelper.ROUTES.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.ROUTES.COLUMN_COPYRIGHT,
+    protected static final String[] ROUTES_COLUMNS =
+            { NextbusSQLiteHelper.ROUTES.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.ROUTES.COLUMN_TIMESTAMP,
               NextbusSQLiteHelper.ROUTES.COLUMN_AGENCY,
               NextbusSQLiteHelper.ROUTES.COLUMN_TAG,
               NextbusSQLiteHelper.ROUTES.COLUMN_TITLE,
               NextbusSQLiteHelper.ROUTES.COLUMN_SHORT_TITLE };
 
-    protected RoutesHelper(SQLiteDatabase database) {
+    public RoutesHelper(SQLiteDatabase database) {
         super(database);
     }
 
@@ -162,6 +161,62 @@ public class RoutesHelper extends CacheHelper {
         int routeAutoId = routeCursor.getInt(0);
         routeCursor.close();
         return routeAutoId;
+    }
+
+    /**
+     * Specifies which columns in a cursor correspond to each property of an {@link net.sf.nextbus.publicxmlfeed.domain.Route}
+     */
+    protected static class RouteCursorColumns {
+        private final int tagColumn;
+        private final int titleColumn;
+        private final int shortTitleColumn;
+        private final int copyrightColumn;
+        private final int timestampColumn;
+
+        private RouteCursorColumns(int tagColumn, int titleColumn, int shortTitleColumn, int copyrightColumn, int timestampColumn) {
+            this.tagColumn = tagColumn;
+            this.titleColumn = titleColumn;
+            this.shortTitleColumn = shortTitleColumn;
+            this.copyrightColumn = copyrightColumn;
+            this.timestampColumn = timestampColumn;
+        }
+
+        public static RouteCursorColumns fromCursor(Cursor cursor) {
+            return new RouteCursorColumns(cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.ROUTES.COLUMN_TAG),
+                                          cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.ROUTES.COLUMN_TITLE),
+                                          cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.ROUTES.COLUMN_SHORT_TITLE),
+                                          cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.ROUTES.COLUMN_COPYRIGHT),
+                                          cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.ROUTES.COLUMN_TIMESTAMP));
+        }
+
+        public int getTagColumn() {
+            return tagColumn;
+        }
+
+        public int getTitleColumn() {
+            return titleColumn;
+        }
+
+        public int getShortTitleColumn() {
+            return shortTitleColumn;
+        }
+
+        public int getCopyrightColumn() {
+            return copyrightColumn;
+        }
+
+        public int getTimestampColumn() {
+            return timestampColumn;
+        }
+    }
+
+    protected static Route routeFromCursor(Cursor cursor, RouteCursorColumns routeCursorColumns, Agency agency) {
+        return new Route(agency,
+                         cursor.getString(routeCursorColumns.getTagColumn()),
+                         cursor.getString(routeCursorColumns.getTitleColumn()),
+                         cursor.getString(routeCursorColumns.getShortTitleColumn()),
+                         cursor.getString(routeCursorColumns.getCopyrightColumn()),
+                         cursor.getLong(routeCursorColumns.getTimestampColumn()));
     }
 
 }

@@ -15,6 +15,16 @@ import java.util.List;
 public interface INextbusCache {
 
     /**
+     * Open this cache for reading/writing; must be called before attempting to read/write
+     */
+    public void open();
+
+    /**
+     * Closes this cache for reading/writing.
+     */
+    public void close();
+
+    /**
      * @return true iff agencies exist in this cache
      */
     public boolean isAgenciesCached();
@@ -39,8 +49,9 @@ public interface INextbusCache {
      * Deletes any agencies in this cache and stores the given agencies in this cache.
      *
      * @param agencies a list of agencies to store
+     * @return the newly-cached agencies
      */
-    public void putAgencies(List<Agency> agencies);
+    public List<Agency> putAgencies(List<Agency> agencies);
 
 
     /**
@@ -65,12 +76,13 @@ public interface INextbusCache {
      * Deletes routes owned by the given routes' agency from this cache and stores the given routes in this cache
      *
      * @param routes a list of routes to store
+     * @return the newly-cached routes
      */
-    public void putRoutes(List<Route> routes);
+    public List<Route> putRoutes(List<Route> routes);
 
     /**
      * @param route the route corresponding to a configuration
-     * @return true iff the configuration for the given route is cached
+     * @return true iff the route and the configuration for the given route is cached
      */
     public boolean isRouteConfigurationCached(Route route);
 
@@ -90,8 +102,9 @@ public interface INextbusCache {
      * Stores the given route configuration in this cache
      *
      * @param routeConfiguration the route configuration to store
+     * @return the newly-cached route configuration
      */
-    public void putRouteConfiguration(RouteConfiguration routeConfiguration);
+    public RouteConfiguration putRouteConfiguration(RouteConfiguration routeConfiguration);
 
     /**
      * @param route the route which the vehicles are travelling on
@@ -115,14 +128,23 @@ public interface INextbusCache {
      * Stores the given vehicle locations in this cache
      *
      * @param vehicleLocations the vehicle locations to store
+     * @return the newly-cached vehicle locations
      */
-    public void putVehicleLocations(List<VehicleLocation> vehicleLocations);
+    public List<VehicleLocation> putVehicleLocations(List<VehicleLocation> vehicleLocations);
+
+    /**
+     * Gets all routes which have route configurations cached for the given agency.
+     *
+     * @param agency the agency which the route configuration belong to
+     * @return all routes which have route configurations cached for the given agency
+     */
+    public List<Route> getAllRouteConfigurationRoutes(Agency agency);
 
     /**
      * Gets all stops stored in this cache.
      *
      * @return all stops stored in this cache
      */
-    public List<Stop> getStops();
+    public List<Stop> getAllStops(Agency agency);
 
 }

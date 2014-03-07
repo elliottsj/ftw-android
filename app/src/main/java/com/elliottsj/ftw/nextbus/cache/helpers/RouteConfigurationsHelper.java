@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus.cache;
+package com.elliottsj.ftw.nextbus.cache.helpers;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -12,35 +12,31 @@ import net.sf.nextbus.publicxmlfeed.domain.Path;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
 import net.sf.nextbus.publicxmlfeed.domain.Stop;
-import net.sf.nextbus.publicxmlfeed.service.ServiceException;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("ConstantConditions")
 public class RouteConfigurationsHelper extends CacheHelper {
 
     private static final String[] ROUTE_CONFIGURATIONS_COLUMNS =
-            { NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_COPYRIGHT,
+            { NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_TIMESTAMP,
               NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE,
               NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_UI_COLOR,
               NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_UI_OPPOSITE_COLOR };
 
     private static final String[] SERVICE_AREAS_COLUMNS =
-            { NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LAT_MIN,
+            { NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LAT_MIN,
               NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LAT_MAX,
               NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LON_MIN,
               NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LON_MAX,
               NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_ROUTE_CONFIGURATION };
 
     private static final String[] STOPS_COLUMNS =
-            { NextbusSQLiteHelper.STOPS.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.STOPS.COLUMN_COPYRIGHT,
+            { NextbusSQLiteHelper.STOPS.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.STOPS.COLUMN_TIMESTAMP,
               NextbusSQLiteHelper.STOPS.COLUMN_AGENCY,
               NextbusSQLiteHelper.STOPS.COLUMN_TAG,
@@ -49,14 +45,12 @@ public class RouteConfigurationsHelper extends CacheHelper {
               NextbusSQLiteHelper.STOPS.COLUMN_STOP_ID };
 
     private static final String[] GEOLOCATIONS_COLUMNS =
-            { NextbusSQLiteHelper.STOPS.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_LAT,
+            { NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_LAT,
               NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_LON,
               NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_STOP };
 
     private static final String[] DIRECTIONS_COLUMNS =
-            { NextbusSQLiteHelper.DIRECTIONS.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.DIRECTIONS.COLUMN_COPYRIGHT,
+            { NextbusSQLiteHelper.DIRECTIONS.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.DIRECTIONS.COLUMN_TIMESTAMP,
               NextbusSQLiteHelper.DIRECTIONS.COLUMN_ROUTE,
               NextbusSQLiteHelper.DIRECTIONS.COLUMN_TAG,
@@ -65,32 +59,28 @@ public class RouteConfigurationsHelper extends CacheHelper {
               NextbusSQLiteHelper.DIRECTIONS.COLUMN_ROUTE_CONFIGURATION };
 
     private static final String[] PATHS_COLUMNS =
-            { NextbusSQLiteHelper.PATHS.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.PATHS.COLUMN_COPYRIGHT,
+            { NextbusSQLiteHelper.PATHS.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.PATHS.COLUMN_ROUTE,
               NextbusSQLiteHelper.PATHS.COLUMN_PATH_ID,
               NextbusSQLiteHelper.PATHS.COLUMN_ROUTE_CONFIGURATION };
 
     private static final String[] POINTS_COLUMNS =
-            { NextbusSQLiteHelper.POINTS.COLUMN_AUTO_ID,
-              NextbusSQLiteHelper.POINTS.COLUMN_LAT,
+            { NextbusSQLiteHelper.POINTS.COLUMN_LAT,
               NextbusSQLiteHelper.POINTS.COLUMN_LON,
               NextbusSQLiteHelper.POINTS.COLUMN_PATH };
 
-    protected RouteConfigurationsHelper(SQLiteDatabase database) {
+    private RouteConfiguration lastFetched;
+
+    public RouteConfigurationsHelper(SQLiteDatabase database) {
         super(database);
     }
 
+    private void truncateRouteConfigurations(Agency agency) {
+
+    }
+
     public boolean isRouteConfigurationCached(Route route) {
-        Cursor cursor = mDatabase.query("(SELECT " +
-                                        NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE + " FROM " +
-                                        NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.TABLE + ") AS A JOIN " +
-                                        NextbusSQLiteHelper.ROUTES.TABLE + " AS B ON " +
-                                        "A." + NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE + " = " +
-                                        "B." + NextbusSQLiteHelper.ROUTES.COLUMN_AUTO_ID,
-                                        new String[] { NextbusSQLiteHelper.ROUTES.COLUMN_TAG },
-                                        NextbusSQLiteHelper.ROUTES.COLUMN_TAG + " = ?", new String[] { route.getTag() },
-                                        null, null, null, "1");
+        Cursor cursor = getRouteConfigurationCursor(route);
 
         int count = cursor.getCount();
         cursor.close();
@@ -99,20 +89,21 @@ public class RouteConfigurationsHelper extends CacheHelper {
     }
 
     public long getRouteConfigurationAge(Route route) {
-        Cursor cursor = getRouteConfigurationCursor(route);
-        RouteConfiguration routeConfiguration = getRouteConfigurationFromCursor(cursor, route);
-        cursor.close();
-        return routeConfiguration.getAge();
+        if (lastFetched.getRoute().equals(route))
+            return lastFetched.getAge();
+
+        return getRouteConfiguration(route).getAge();
     }
 
     public RouteConfiguration getRouteConfiguration(Route route) {
-        if (!isRouteConfigurationCached(route))
-            throw new ServiceException("Route configuration is not cached for route: " + route);
+        if (lastFetched.getRoute().equals(route))
+            return lastFetched;
 
         Cursor cursor = getRouteConfigurationCursor(route);
 
         cursor.moveToFirst();
         RouteConfiguration routeConfiguration = getRouteConfigurationFromCursor(cursor, route);
+        lastFetched = routeConfiguration;
 
         cursor.close();
 
@@ -128,11 +119,10 @@ public class RouteConfigurationsHelper extends CacheHelper {
         values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_UI_COLOR, routeConfiguration.getUiColor().getHexColor());
         values.put(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_UI_OPPOSITE_COLOR, routeConfiguration.getUiOppositeColor().getHexColor());
 
-        long routeConfigurationAutoId = mDatabase.insert(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.TABLE, null, values);
+        long routeConfigurationAutoId = mDatabase.insertOrThrow(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.TABLE, null, values);
 
         // Cache the service area
         putServiceArea(routeConfiguration.getServiceArea(), routeConfigurationAutoId);
-
         // Cache the stops
         for (Stop stop : routeConfiguration.getStops())
             putStop(stop, routeConfigurationAutoId);
@@ -147,45 +137,68 @@ public class RouteConfigurationsHelper extends CacheHelper {
     }
 
     public void deleteRouteConfiguration(RouteConfiguration routeConfiguration) {
-        int routeConfigurationAutoId = getRouteConfigurationAutoId(routeConfiguration);
+        // First, construct the query to get the route's _ID
+        String routeIdQuery = SQLiteQueryBuilder.buildQueryString(false, NextbusSQLiteHelper.ROUTES.TABLE,
+                                                                  new String[] { NextbusSQLiteHelper.ROUTES.COLUMN_AUTO_ID },
+                                                                  NextbusSQLiteHelper.ROUTES.COLUMN_TAG + " = '" +
+                                                                  routeConfiguration.getRoute().getTag() + "'",
+                                                                  null, null, null, null);
 
-        // Delete the cached paths
-        mDatabase.execSQL("DELETE FROM " +
-                          NextbusSQLiteHelper.PATHS.TABLE + " WHERE " +
-                          NextbusSQLiteHelper.PATHS.COLUMN_ROUTE_CONFIGURATION + " = " +
-                          routeConfigurationAutoId);
-
-        // Delete the cached stops
-        mDatabase.execSQL("DELETE FROM " +
-                          NextbusSQLiteHelper.STOPS.TABLE + " WHERE " +
-                          NextbusSQLiteHelper.STOPS.COLUMN_AUTO_ID + " IN " +
-                          "(SELECT " +
-                          NextbusSQLiteHelper.ROUTE_CONFIGURATIONS_STOPS.COLUMN_STOP + " FROM " +
-                          NextbusSQLiteHelper.ROUTE_CONFIGURATIONS_STOPS.TABLE + " WHERE " +
-                          NextbusSQLiteHelper.ROUTE_CONFIGURATIONS_STOPS.COLUMN_ROUTE_CONFIGURATION + " = " +
-                          routeConfigurationAutoId);
-
-        // Delete the cached directions
-        mDatabase.execSQL("DELETE FROM " +
-                          NextbusSQLiteHelper.DIRECTIONS.TABLE + " WHERE " +
-                          NextbusSQLiteHelper.DIRECTIONS.COLUMN_ROUTE_CONFIGURATION + " = " +
-                          routeConfigurationAutoId);
-
-        // Delete the cached service area
-        mDatabase.execSQL("DELETE FROM " +
-                          NextbusSQLiteHelper.SERVICE_AREAS.TABLE + " WHERE " +
-                          NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_ROUTE_CONFIGURATION + " = " +
-                          routeConfigurationAutoId);
-
-        // Delete the cached route configuration
-        mDatabase.execSQL("DELETE FROM " + NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.TABLE + " WHERE " +
-                          NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_AUTO_ID + " = " + routeConfigurationAutoId);
+        // Delete the route configuration using sub-query routeIdQuery to find the _ID of the route
+        // Child rows in other tables will be cascade deleted
+        mDatabase.delete(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.TABLE,
+                         NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE + " = (" +
+                         routeIdQuery + ")", null);
     }
 
-    public List<Stop> getStops() {
-        List<Stop> stops = new ArrayList<Stop>();
+    /**
+     * Gets the list of all routes for which route configurations are cached.
+     *
+     * @return all routes that have route configurations cached
+     */
+    public List<Route> getAllRouteConfigurationRoutes(Agency agency) {
+        List<Route> routes = new ArrayList<Route>();
 
-        String[] columns = concatAll(STOPS_COLUMNS, AgenciesHelper.AGENCIES_COLUMNS, GEOLOCATIONS_COLUMNS);
+//        String[] columns = concatAll(ROUTE_CONFIGURATIONS_COLUMNS, RoutesHelper.ROUTES_COLUMNS);
+        String[] columns = RoutesHelper.ROUTES_COLUMNS;
+
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setTables(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.TABLE + ", " +
+                               NextbusSQLiteHelper.ROUTES.TABLE + ", " +
+                               NextbusSQLiteHelper.AGENCIES.TABLE);
+        queryBuilder.appendWhere(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE + " = " +
+                                 NextbusSQLiteHelper.ROUTES.TABLE + "." +
+                                 NextbusSQLiteHelper.ROUTES.COLUMN_AUTO_ID);
+        queryBuilder.appendWhere(" AND ");
+        queryBuilder.appendWhere(NextbusSQLiteHelper.ROUTES.COLUMN_AGENCY + " = " +
+                                 NextbusSQLiteHelper.AGENCIES.TABLE + "." +
+                                 NextbusSQLiteHelper.AGENCIES.COLUMN_AUTO_ID);
+        queryBuilder.appendWhere(" AND ");
+        queryBuilder.appendWhere(NextbusSQLiteHelper.AGENCIES.COLUMN_TAG + " = ?");
+        Cursor cursor = queryBuilder.query(mDatabase, columns, null, new String[] { agency.getTag() },
+                                           null, null, null);
+
+        // Keep references to the column positions of each property
+        RoutesHelper.RouteCursorColumns routeCursorColumns =
+                RoutesHelper.RouteCursorColumns.fromCursor(cursor);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            routes.add(RoutesHelper.routeFromCursor(cursor, routeCursorColumns, agency));
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        return routes;
+    }
+
+    /**
+     * Gets the list of all stops for all route configurations stored in this cache.
+     *
+     * @return all stops in this cache
+     */
+    public List<Stop> getAllStops(Agency agency) {
+        List<Stop> stops = new ArrayList<Stop>();
 
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(NextbusSQLiteHelper.STOPS.TABLE + ", " +
@@ -195,58 +208,28 @@ public class RouteConfigurationsHelper extends CacheHelper {
                                  NextbusSQLiteHelper.STOPS.COLUMN_AGENCY + " = " +
                                  NextbusSQLiteHelper.AGENCIES.TABLE + "." +
                                  NextbusSQLiteHelper.AGENCIES.COLUMN_AUTO_ID);
-        queryBuilder.appendWhere("AND");
+        queryBuilder.appendWhere(" AND ");
         queryBuilder.appendWhere(NextbusSQLiteHelper.GEOLOCATIONS.TABLE + "." +
                                  NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_STOP + " = " +
                                  NextbusSQLiteHelper.STOPS.TABLE + "." +
                                  NextbusSQLiteHelper.STOPS.COLUMN_AUTO_ID);
-        Cursor cursor = queryBuilder.query(mDatabase, columns, null, null, null, null, null);
+        Cursor cursor = queryBuilder.query(mDatabase,
+                                           concatAll(STOPS_COLUMNS, GEOLOCATIONS_COLUMNS),
+                                           NextbusSQLiteHelper.AGENCIES.COLUMN_TAG + " = ",
+                                           new String[] { agency.getTag() },
+                                           null, null, null);
 
+        // Keep references to the column positions of each property
+        GeolocationCursorColumns geolocationCursorColumns =
+                GeolocationCursorColumns.fromCursor(cursor);
+        StopCursorColumns stopCursorColumns =
+                StopCursorColumns.fromCursor(cursor);
 
-        // Create references to the column positions
-        List<String> columnList = Arrays.asList(columns);
-
-        int agencyTagColumn = columnList.indexOf(NextbusSQLiteHelper.AGENCIES.COLUMN_TAG);
-        int agencyTitleColumn = columnList.indexOf(NextbusSQLiteHelper.AGENCIES.COLUMN_TITLE);
-        int agencyShortTitleColumn = columnList.indexOf(NextbusSQLiteHelper.AGENCIES.COLUMN_SHORT_TITLE);
-        int agencyRegionTitleColumn = columnList.indexOf(NextbusSQLiteHelper.AGENCIES.COLUMN_REGION_TITLE);
-        int agencyCopyrightColumn = columnList.indexOf(NextbusSQLiteHelper.AGENCIES.COLUMN_COPYRIGHT);
-        int agencyTimestampColumn = columnList.indexOf(NextbusSQLiteHelper.AGENCIES.COLUMN_TIMESTAMP);
-
-        int geolocationLatColumn = columnList.indexOf(NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_LAT);
-        int geolocationLonColumn = columnList.indexOf(NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_LON);
-
-        int stopTagColumn = columnList.indexOf(NextbusSQLiteHelper.STOPS.COLUMN_TAG);
-        int stopTitleColumn = columnList.indexOf(NextbusSQLiteHelper.STOPS.COLUMN_TITLE);
-        int stopShortTitleColumn = columnList.indexOf(NextbusSQLiteHelper.STOPS.COLUMN_SHORT_TITLE);
-        int stopIdColumn = columnList.indexOf(NextbusSQLiteHelper.STOPS.COLUMN_STOP_ID);
-        int stopCopyrightColumn = columnList.indexOf(NextbusSQLiteHelper.STOPS.COLUMN_COPYRIGHT);
-        int stopTimestampColumn = columnList.indexOf(NextbusSQLiteHelper.STOPS.COLUMN_TIMESTAMP);
-
-
-        //noinspection ConstantConditions
+        // Iterate over the cursor to build the list of stops
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            Agency agency = new Agency(cursor.getString(agencyTagColumn),
-                                       cursor.getString(agencyTitleColumn),
-                                       cursor.getString(agencyShortTitleColumn),
-                                       cursor.getString(agencyRegionTitleColumn),
-                                       cursor.getString(agencyCopyrightColumn),
-                                       cursor.getLong(agencyTimestampColumn));
-
-            Geolocation geolocation = new Geolocation(cursor.getDouble(geolocationLatColumn),
-                                                      cursor.getDouble(geolocationLonColumn));
-
-            Stop stop = new Stop(agency,
-                                 cursor.getString(stopTagColumn),
-                                 cursor.getString(stopTitleColumn),
-                                 cursor.getString(stopShortTitleColumn),
-                                 cursor.getString(stopIdColumn),
-                                 geolocation,
-                                 cursor.getString(stopCopyrightColumn),
-                                 cursor.getLong(stopTimestampColumn));
-
-            stops.add(stop);
+            Geolocation geolocation = geolocationFromCursor(cursor, geolocationCursorColumns);
+            stops.add(stopFromCursor(cursor, stopCursorColumns, agency, geolocation));
 
             cursor.moveToNext();
         }
@@ -342,19 +325,19 @@ public class RouteConfigurationsHelper extends CacheHelper {
 
     /**
      * @param route a route
-     * @return a cursor pointing at the row of the route configuration of the given route
+     * @return a cursor containing the row of the route configuration of the given route
      */
     private Cursor getRouteConfigurationCursor(Route route) {
-        Cursor cursor = mDatabase.query(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.TABLE + " AS A JOIN " +
-                                        NextbusSQLiteHelper.ROUTES.TABLE + " AS B ON " +
-                                        "A." + NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE + " = " +
-                                        "B." + NextbusSQLiteHelper.ROUTES.COLUMN_AUTO_ID,
-                                        stringsWithPrefix("A.", ROUTE_CONFIGURATIONS_COLUMNS),
-                                        NextbusSQLiteHelper.ROUTES.COLUMN_TAG + " = ?", new String[] { route.getTag() },
-                                        null, null, null, "1");
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setTables(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.TABLE + ", " +
+                               NextbusSQLiteHelper.ROUTES.TABLE);
+        queryBuilder.appendWhere(NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_ROUTE + " = " +
+                                 NextbusSQLiteHelper.ROUTES.COLUMN_AUTO_ID);
 
-        cursor.moveToFirst();
-        return cursor;
+        return queryBuilder.query(mDatabase, ROUTE_CONFIGURATIONS_COLUMNS,
+                                  NextbusSQLiteHelper.ROUTES.COLUMN_TAG + " = ?",
+                                  new String[] { route.getTag() },
+                                  null, null, null, "1");
     }
 
     /**
@@ -378,17 +361,6 @@ public class RouteConfigurationsHelper extends CacheHelper {
                                       new RouteConfiguration.UIColor(uiOppositeColor),
                                       new RouteConfiguration.UIColor(uiColor),
                                       copyright, timestamp);
-    }
-
-    /**
-     * @param routeConfiguration a route configuration
-     * @return the primary key AUTO_ID of the given route
-     */
-    private int getRouteConfigurationAutoId(RouteConfiguration routeConfiguration) {
-        Cursor cursor = getRouteConfigurationCursor(routeConfiguration.getRoute());
-        int autoId = cursor.getInt(0);
-        cursor.close();
-        return autoId;
     }
 
     private List<Stop> getStopsForRouteConfiguration(int routeConfigurationAutoId, Agency agency) {
@@ -567,6 +539,102 @@ public class RouteConfigurationsHelper extends CacheHelper {
         cursor.close();
 
         return new RouteConfiguration.ServiceArea(latMin, latMax, lonMin, lonMax);
+    }
+
+    /**
+     * Specifies which columns in a cursor correspond to each property of an {@link net.sf.nextbus.publicxmlfeed.domain.Geolocation}
+     */
+    protected static class GeolocationCursorColumns {
+        private final int latColumn;
+        private final int lonColumn;
+
+        private GeolocationCursorColumns(int latColumn, int lonColumn) {
+            this.latColumn = latColumn;
+            this.lonColumn = lonColumn;
+        }
+
+        public static GeolocationCursorColumns fromCursor(Cursor cursor) {
+            return new GeolocationCursorColumns(cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_LAT),
+                                                cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.GEOLOCATIONS.COLUMN_LON));
+        }
+
+        public int getLatColumn() {
+            return latColumn;
+        }
+
+        public int getLonColumn() {
+            return lonColumn;
+        }
+    }
+
+    protected static Geolocation geolocationFromCursor(Cursor cursor, GeolocationCursorColumns geolocationCursorColumns) {
+        return new Geolocation(cursor.getDouble(geolocationCursorColumns.getLatColumn()),
+                               cursor.getDouble(geolocationCursorColumns.getLonColumn()));
+    }
+
+    /**
+     * Specifies which columns in a cursor correspond to each property of an {@link net.sf.nextbus.publicxmlfeed.domain.Stop}
+     */
+    protected static class StopCursorColumns {
+        private final int tagColumn;
+        private final int titleColumn;
+        private final int shortTitleColumn;
+        private final int stopIdColumn;
+        private final int copyrightColumn;
+        private final int timestampColumn;
+
+        private StopCursorColumns(int tagColumn, int titleColumn, int shortTitleColumn, int stopIdColumn, int copyrightColumn, int timestampColumn) {
+            this.tagColumn = tagColumn;
+            this.titleColumn = titleColumn;
+            this.shortTitleColumn = shortTitleColumn;
+            this.stopIdColumn = stopIdColumn;
+            this.copyrightColumn = copyrightColumn;
+            this.timestampColumn = timestampColumn;
+        }
+
+        public static StopCursorColumns fromCursor(Cursor cursor) {
+            return new StopCursorColumns(cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.STOPS.COLUMN_TAG),
+                                         cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.STOPS.COLUMN_TITLE),
+                                         cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.STOPS.COLUMN_SHORT_TITLE),
+                                         cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.STOPS.COLUMN_STOP_ID),
+                                         cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.STOPS.COLUMN_COPYRIGHT),
+                                         cursor.getColumnIndexOrThrow(NextbusSQLiteHelper.STOPS.COLUMN_TIMESTAMP));
+        }
+
+        public int getTagColumn() {
+            return tagColumn;
+        }
+
+        public int getTitleColumn() {
+            return titleColumn;
+        }
+
+        public int getShortTitleColumn() {
+            return shortTitleColumn;
+        }
+
+        public int getStopIdColumn() {
+            return stopIdColumn;
+        }
+
+        public int getCopyrightColumn() {
+            return copyrightColumn;
+        }
+
+        public int getTimestampColumn() {
+            return timestampColumn;
+        }
+    }
+
+    protected static Stop stopFromCursor(Cursor cursor, StopCursorColumns stopCursorColumns, Agency agency, Geolocation geolocation) {
+        return new Stop(agency,
+                        cursor.getString(stopCursorColumns.getTagColumn()),
+                        cursor.getString(stopCursorColumns.getTitleColumn()),
+                        cursor.getString(stopCursorColumns.getShortTitleColumn()),
+                        cursor.getString(stopCursorColumns.getStopIdColumn()),
+                        geolocation,
+                        cursor.getString(stopCursorColumns.getCopyrightColumn()),
+                        cursor.getLong(stopCursorColumns.getTimestampColumn()));
     }
 
 }

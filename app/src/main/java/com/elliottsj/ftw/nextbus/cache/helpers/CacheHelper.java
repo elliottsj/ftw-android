@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus.cache;
+package com.elliottsj.ftw.nextbus.cache.helpers;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,6 +10,12 @@ public abstract class CacheHelper {
         this.mDatabase = database;
     }
 
+    /**
+     * Concatenates all of the given arrays in a new array
+     *
+     * @param arrays arrays to concatenate
+     * @return the concatenation of all arrays
+     */
     protected static String[] concatAll(String[]... arrays) {
         int len = 0;
         for (final String[] array : arrays)

@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.Loader;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,8 +26,7 @@ import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.adapters.RouteCardAdapter;
 import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.nextbus.CachedNextbusServiceAdapter;
-import com.elliottsj.ftw.nextbus.cache.NextbusCache;
-import com.elliottsj.ftw.utilities.AndroidRPCImpl;
+import com.elliottsj.ftw.provider.NextbusProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -33,7 +36,6 @@ import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Geolocation;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.Stop;
-import net.sf.nextbus.publicxmlfeed.impl.NextbusService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +46,11 @@ import java.util.List;
 public class NearbyStopsFragment extends Fragment implements CardHeader.ActionListener,
                                                              CardListView.CardClickListener,
                                                              GooglePlayServicesClient.ConnectionCallbacks,
-                                                             GooglePlayServicesClient.OnConnectionFailedListener {
+                                                             GooglePlayServicesClient.OnConnectionFailedListener,
+                                                             LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "NearbyStopsFragment";
+    private static final String TAG = NearbyStopsFragment.class.getSimpleName();
+    private static final int NEXTBUS_LOADER = 0;
 
     /*
      * Define a request code to send to Google Play services
@@ -61,7 +65,6 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     // Global variable to hold the current location
     private Location mCurrentLocation;
 
-    private NextbusCache mNextbusCache;
     private CachedNextbusServiceAdapter mNextbusService;
 
     private LoadNearbyStopsTask mLoadNearbyStopsTask;
@@ -93,11 +96,14 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
-         * Create a new location client, using the enclosing class to
-         * handle callbacks.
-         */
+        // Initialize the location client
         mLocationClient = new LocationClient(getActivity(), this, this);
+
+        // Initialize the NextBus data loader
+        //noinspection ConstantConditions
+        getLoaderManager().initLoader(NEXTBUS_LOADER, null, this);
+
+
     }
 
     /*
@@ -107,7 +113,7 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     public void onStart() {
         super.onStart();
 
-        // Connect the location client
+        // Connect the location client. Once it's connected, onConnected() will be called.
         mLocationClient.connect();
 
         // Create a new task to load nearby stops
@@ -127,9 +133,6 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         // Cancel loading of nearby stops
         mLoadNearbyStopsTask.cancel(true);
 
-        // Close the cache
-        mNextbusCache.close();
-
         // Nullify the NextBus service
         mNextbusService = null;
 
@@ -143,9 +146,9 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
      */
     @Override
     public void onConnected(Bundle bundle) {
-        if (mNextbusService == null)
-            // Fragment has just started; load the service adapter and fetch stops
-            new InitializeCachedNextbusAdapter().execute();
+//        if (mNextbusService == null)
+//            // Fragment has just started; load the service adapter and fetch stops
+//            new InitializeCachedNextbusAdapter().execute();
     }
 
     /*
@@ -250,6 +253,27 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         }
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case NEXTBUS_LOADER:
+                // TODO: uncomment
+//                return new CursorLoader(getActivity());
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
 
@@ -279,10 +303,8 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
 
         @Override
         protected Void doInBackground(Void... params) {
-            NextbusService backing = new NextbusService(new AndroidRPCImpl());
-            mNextbusCache = new NextbusCache(getActivity());
-            mNextbusCache.open();
-            mNextbusService = new CachedNextbusServiceAdapter(backing, mNextbusCache, mLoadNearbyStopsTask);
+            ContentProviderClient provider = getActivity().getContentResolver().acquireContentProviderClient(NextbusProvider.AUTHORITY);
+            mNextbusService = new CachedNextbusServiceAdapter(getActivity(), provider, mLoadNearbyStopsTask);
             return null;
         }
 
@@ -327,7 +349,7 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         }
 
         @Override
-        public void onStopsCached(Route route) {
+        public void onRouteConfigurationCached(Route route) {
             publishProgress(route);
         }
 

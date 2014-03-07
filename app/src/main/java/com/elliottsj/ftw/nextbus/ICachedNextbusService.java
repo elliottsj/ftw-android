@@ -19,7 +19,15 @@ import java.util.List;
 public interface ICachedNextbusService extends INextbusService {
 
     /**
+     * Caches all route configurations from the network.
+     *
+     * @param agency the agency which owns the route configurations to cache
+     */
+    public void cacheRouteConfigurations(Agency agency);
+
+    /**
      * Gets all stops served by the given agency.
+     * (Only retrieves stops stored in the cache. Call {@code cacheRouteConfigurations()} first to cache stops.)
      *
      * @param agency the agency
      * @return all stops served by the given agency
