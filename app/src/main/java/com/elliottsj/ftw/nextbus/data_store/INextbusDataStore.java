@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus.cache;
+package com.elliottsj.ftw.nextbus.data_store;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
@@ -9,13 +9,14 @@ import net.sf.nextbus.publicxmlfeed.domain.VehicleLocation;
 import java.util.List;
 
 /**
- * A cache used by a {@link com.elliottsj.ftw.nextbus.ICachedNextbusService}
- * to store and retrieve NextBus data
+ * A data store used by a {@link com.elliottsj.ftw.nextbus.ICachedNextbusService}
+ * to store and retrieve NextBus data, and by {@link com.elliottsj.ftw.preferences.PreferencesDataSource}
+ * to store and retrieve preferred stops.
  */
-public interface INextbusCache {
+public interface INextbusDataStore {
 
     /**
-     * Open this cache for reading/writing; must be called before attempting to read/write
+     * Open this data store for reading/writing; must be called before attempting to read/write
      */
     public void open();
 
@@ -25,17 +26,17 @@ public interface INextbusCache {
     public void close();
 
     /**
-     * @return true iff agencies exist in this cache
+     * @return true iff agencies exist in this data store
      */
-    public boolean isAgenciesCached();
+    public boolean isAgenciesStored();
 
     /**
-     * @return the number of milliseconds since agencies were cached
+     * @return the number of milliseconds since agencies were stored
      */
     public long getAgenciesAge();
 
     /**
-     * @return a map of agencies stored in this cache, indexed by agency id
+     * @return a list of agencies stored in this data store
      */
     public List<Agency> getAgencies();
 
@@ -46,49 +47,50 @@ public interface INextbusCache {
     public Agency getAgency(String tag);
 
     /**
-     * Deletes any agencies in this cache and stores the given agencies in this cache.
+     * Deletes any agencies in this data store and stores the given agencies in this data store.
      *
      * @param agencies a list of agencies to store
-     * @return the newly-cached agencies
+     * @return the newly-stored agencies
      */
     public List<Agency> putAgencies(List<Agency> agencies);
 
 
     /**
      * @param agency the agency which the routes belong to
-     * @return true iff routes are cached for the given agency
+     * @return true iff routes are stored for the given agency
      */
     public boolean isRoutesCached(Agency agency);
 
     /**
      * @param agency the agency which the routes belong to
-     * @return the number of milliseconds since the routes were cached
+     * @return the number of milliseconds since the routes were stored
      */
     public long getRoutesAge(Agency agency);
 
     /**
      * @param agency the agency which the routes belong to
-     * @return the routes stored in this cache for the given agency
+     * @return the routes stored in this data store for the given agency
      */
     public List<Route> getRoutes(Agency agency);
 
     /**
-     * Deletes routes owned by the given routes' agency from this cache and stores the given routes in this cache
+     * Deletes routes owned by the given routes' agency from this data store and
+     * stores the given routes in this data store
      *
      * @param routes a list of routes to store
-     * @return the newly-cached routes
+     * @return the newly-stored routes
      */
     public List<Route> putRoutes(List<Route> routes);
 
     /**
      * @param route the route corresponding to a configuration
-     * @return true iff the route and the configuration for the given route is cached
+     * @return true iff the route and the configuration for the given route is stored
      */
     public boolean isRouteConfigurationCached(Route route);
 
     /**
      * @param route the route corresponding to a configuration
-     * @return the number of milliseconds since the route configuration was cached
+     * @return the number of milliseconds since the route configuration was stored
      */
     public long getRouteConfigurationAge(Route route);
 
@@ -99,10 +101,10 @@ public interface INextbusCache {
     public RouteConfiguration getRouteConfiguration(Route route);
 
     /**
-     * Stores the given route configuration in this cache
+     * Stores the given route configuration in this data store
      *
      * @param routeConfiguration the route configuration to store
-     * @return the newly-cached route configuration
+     * @return the newly-stored route configuration
      */
     public RouteConfiguration putRouteConfiguration(RouteConfiguration routeConfiguration);
 
@@ -143,8 +145,17 @@ public interface INextbusCache {
     /**
      * Gets all stops stored in this cache.
      *
+     * @param agency the agency for which to retrieve stops
      * @return all stops stored in this cache
      */
     public List<Stop> getAllStops(Agency agency);
+
+    /**
+     * Gets a list
+     *
+     * @param agency
+     * @return
+     */
+    public List<Stop> getPreferredStops(Agency agency);
 
 }

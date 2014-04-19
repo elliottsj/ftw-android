@@ -5,7 +5,6 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -56,13 +55,13 @@ public class StopsActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.settings:
                 return true;
-            case R.id.sync:
-                // Force manual sync
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
-                return true;
+//            case R.id.sync:
+//                // Force manual sync
+//                Bundle bundle = new Bundle();
+//                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+//                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+//                ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
+//                return true;
             case R.id.about:
                 return true;
             default:

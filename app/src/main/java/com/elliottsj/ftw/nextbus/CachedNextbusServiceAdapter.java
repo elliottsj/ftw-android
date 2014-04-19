@@ -4,8 +4,8 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.util.Log;
 
-import com.elliottsj.ftw.nextbus.cache.INextbusCache;
-import com.elliottsj.ftw.nextbus.cache.NextbusCache;
+import com.elliottsj.ftw.nextbus.data_store.INextbusDataStore;
+import com.elliottsj.ftw.nextbus.data_store.NextbusDataStore;
 import com.elliottsj.ftw.utilities.AndroidRPCImpl;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
@@ -36,7 +36,7 @@ public class CachedNextbusServiceAdapter implements ICachedNextbusService {
 
     private Context mContext;
     private INextbusService mBacking;
-    private INextbusCache mCache;
+    private INextbusDataStore mCache;
     private Callbacks mCallbacks;
 
     private static final long AGE_LIMIT_24HOURS = 24*60*60*1000;
@@ -46,7 +46,7 @@ public class CachedNextbusServiceAdapter implements ICachedNextbusService {
 
     public CachedNextbusServiceAdapter(Context context, ContentProviderClient provider, Callbacks callbacks) {
         mContext = context;
-        mCache = new NextbusCache(context, provider);
+        mCache = new NextbusDataStore(context, provider);
         mBacking = new NextbusService(new AndroidRPCImpl());
         mCallbacks = callbacks;
 
@@ -99,14 +99,14 @@ public class CachedNextbusServiceAdapter implements ICachedNextbusService {
 
     @Override
     public List<Agency> getAgencies() throws ServiceException {
-        if (!mCache.isAgenciesCached() || mCache.getAgenciesAge() > staticDataAgeLimit)
+        if (!mCache.isAgenciesStored() || mCache.getAgenciesAge() > staticDataAgeLimit)
             return cacheAgenciesFromNetwork();
         return mCache.getAgencies();
     }
 
     @Override
     public Agency getAgency(String tag) throws ServiceException {
-        if (!mCache.isAgenciesCached() || mCache.getAgenciesAge() > staticDataAgeLimit)
+        if (!mCache.isAgenciesStored() || mCache.getAgenciesAge() > staticDataAgeLimit)
             cacheAgenciesFromNetwork();
         return mCache.getAgency(tag);
     }

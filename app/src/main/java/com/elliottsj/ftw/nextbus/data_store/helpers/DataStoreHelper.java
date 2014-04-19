@@ -1,12 +1,12 @@
-package com.elliottsj.ftw.nextbus.cache.helpers;
+package com.elliottsj.ftw.nextbus.data_store.helpers;
 
 import android.database.sqlite.SQLiteDatabase;
 
-public abstract class CacheHelper {
+public abstract class DataStoreHelper {
 
     protected SQLiteDatabase mDatabase;
 
-    protected CacheHelper(SQLiteDatabase database) {
+    protected DataStoreHelper(SQLiteDatabase database) {
         this.mDatabase = database;
     }
 

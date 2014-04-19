@@ -8,7 +8,8 @@ import android.test.RenamingDelegatingContext;
 import android.test.mock.MockContentResolver;
 import android.test.mock.MockContext;
 
-import com.elliottsj.ftw.nextbus.cache.NextbusCache;
+import com.elliottsj.ftw.nextbus.data_store.NextbusDataStore;
+import com.elliottsj.ftw.provider.NextbusProvider;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Direction;
@@ -24,7 +25,7 @@ import java.util.List;
 
 public class NextbusCacheTest extends AndroidTestCase {
 
-    NextbusCache mCache;
+    NextbusDataStore mCache;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -36,7 +37,7 @@ public class NextbusCacheTest extends AndroidTestCase {
                 getContext(),      // The context that file methods are delegated to
                 filenamePrefix);
         Context context = new IsolatedContext(resolver, targetContextWrapper);
-        mCache = new NextbusCache(context);
+        mCache = new NextbusDataStore(context, context.getContentResolver().acquireContentProviderClient(NextbusProvider.AUTHORITY));
         mCache.open();
     }
 
@@ -155,20 +156,20 @@ public class NextbusCacheTest extends AndroidTestCase {
     }
 
     public void testIsAgenciesCached() throws Exception {
-        assertFalse("Agencies are cached.", mCache.isAgenciesCached());
+        assertFalse("Agencies are cached.", mCache.isAgenciesStored());
 
         mCache.putAgencies(sampleAgencies());
 
-        assertTrue("Agencies not cached", mCache.isAgenciesCached());
+        assertTrue("Agencies not cached", mCache.isAgenciesStored());
 
         // This should overwrite existing agencies
         mCache.putAgencies(new ArrayList<Agency>());
 
-        assertFalse("Agencies are cached.", mCache.isAgenciesCached());
+        assertFalse("Agencies are cached.", mCache.isAgenciesStored());
     }
 
     public void testGetAgenciesAge() throws Exception {
-        assertFalse("Agencies are cached.", mCache.isAgenciesCached());
+        assertFalse("Agencies are cached.", mCache.isAgenciesStored());
 
         mCache.putAgencies(sampleAgencies());
 
@@ -180,7 +181,7 @@ public class NextbusCacheTest extends AndroidTestCase {
     }
 
     public void testPutAgenciesGetAgencies() throws Exception {
-        assertFalse("Agencies are cached.", mCache.isAgenciesCached());
+        assertFalse("Agencies are cached.", mCache.isAgenciesStored());
 
         List<Agency> expected = sampleAgencies();
         mCache.putAgencies(expected);
@@ -191,7 +192,7 @@ public class NextbusCacheTest extends AndroidTestCase {
     }
 
     public void testPersistAgencies() throws Exception {
-        assertFalse("Agencies are cached.", mCache.isAgenciesCached());
+        assertFalse("Agencies are cached.", mCache.isAgenciesStored());
 
         List<Agency> expected = sampleAgencies();
         mCache.putAgencies(expected);

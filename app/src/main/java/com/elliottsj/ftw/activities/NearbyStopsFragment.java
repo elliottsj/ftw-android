@@ -17,13 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
 import com.elliottsj.ftw.R;
-import com.elliottsj.ftw.adapters.RouteCardAdapter;
 import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.nextbus.CachedNextbusServiceAdapter;
 import com.elliottsj.ftw.provider.NextbusProvider;
@@ -43,8 +42,7 @@ import java.util.List;
 /**
  * Displays nearby stops along with vehicle predictions.
  */
-public class NearbyStopsFragment extends Fragment implements CardHeader.ActionListener,
-                                                             CardListView.CardClickListener,
+public class NearbyStopsFragment extends Fragment implements CardListView.CardClickListener,
                                                              GooglePlayServicesClient.ConnectionCallbacks,
                                                              GooglePlayServicesClient.OnConnectionFailedListener,
                                                              LoaderManager.LoaderCallbacks<Cursor> {
@@ -76,15 +74,16 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
         //noinspection ConstantConditions
         mCardList = (CardListView) rootView.findViewById(R.id.card_list);
 
-        RouteCardAdapter cardAdapter = new RouteCardAdapter(getActivity(), R.layout.route_list_item_card);
-        cardAdapter.setAccentColorRes(R.color.ttc_red);
+        CardAdapter<CardBase> cardAdapter = new CardAdapter<CardBase>(getActivity());
 
-        cardAdapter.add(new CardHeader("College St At Beverly St").setAction("Save", this));
-        cardAdapter.add(new RouteCard("506 Carlton", "East to Main Street Station", 2));
+        cardAdapter.registerLayout(R.layout.route_card);
 
-        cardAdapter.add(new CardHeader("Eglinton Ave E At Redpath Ave").setAction("Save", this));
-        cardAdapter.add(new RouteCard("54 Lawrence E", "West to Eglinton Station", 3));
-        cardAdapter.add(new RouteCard("103 Mt Pleasant N", "South to Eglinton Station", 1));
+        cardAdapter.add(new CardHeader("College St At Beverly St"));
+        cardAdapter.add(new RouteCard("506 Carlton", "East to Main Street Station"));
+
+        cardAdapter.add(new CardHeader("Eglinton Ave E At Redpath Ave"));
+        cardAdapter.add(new RouteCard("54 Lawrence E", "West to Eglinton Station"));
+        cardAdapter.add(new RouteCard("103 Mt Pleasant N", "South to Eglinton Station"));
 
         mCardList.setAdapter(cardAdapter);
         mCardList.setOnCardClickListener(this);
@@ -158,11 +157,6 @@ public class NearbyStopsFragment extends Fragment implements CardHeader.ActionLi
     @Override
     public void onDisconnected() {
 
-    }
-
-    @Override
-    public void onClick(CardHeader header) {
-        Toast.makeText(getActivity(), header.getTitle() + " saved", Toast.LENGTH_SHORT).show();
     }
 
     @Override

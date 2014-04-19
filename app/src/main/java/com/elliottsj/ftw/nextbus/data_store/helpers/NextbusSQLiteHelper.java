@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus.cache.helpers;
+package com.elliottsj.ftw.nextbus.data_store.helpers;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -150,6 +150,13 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         public static final String COLUMN_HEADING = "vehicle_location_heading";
     }
 
+    public static final class SAVED_STOPS {
+        public static final String TABLE = "saved_stops";
+
+        public static final String COLUMN_AUTO_ID = "_ID";
+        public static final String COLUMN_STOP = "stop";
+    }
+
     // CREATE TABLE statements
 
     private static final String CREATE_TABLE_AGENCIES =
@@ -273,6 +280,12 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
                 VEHICLE_LOCATIONS.COLUMN_HEADING + " REAL NOT NULL" +
             ");";
 
+    private static final String CREATE_TABLE_SAVED_STOPS =
+            "CREATE TABLE " + SAVED_STOPS.TABLE + " (" +
+                SAVED_STOPS.COLUMN_AUTO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                SAVED_STOPS.COLUMN_STOP + " INTEGER NOT NULL, " +
+            ");";
+
     public NextbusSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -291,6 +304,7 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_PATHS);
         db.execSQL(CREATE_TABLE_POINTS);
         db.execSQL(CREATE_TABLE_VEHICLE_LOCATIONS);
+        db.execSQL(CREATE_TABLE_SAVED_STOPS);
     }
 
     @Override
@@ -320,6 +334,8 @@ public class NextbusSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + DIRECTIONS.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + PATHS.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + POINTS.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + VEHICLE_LOCATIONS.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + SAVED_STOPS.TABLE);
     }
 
 }

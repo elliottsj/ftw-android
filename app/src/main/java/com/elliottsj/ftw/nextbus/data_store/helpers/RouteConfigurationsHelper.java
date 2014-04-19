@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus.cache.helpers;
+package com.elliottsj.ftw.nextbus.data_store.helpers;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ConstantConditions")
-public class RouteConfigurationsHelper extends CacheHelper {
+public class RouteConfigurationsHelper extends DataStoreHelper {
 
     private static final String[] ROUTE_CONFIGURATIONS_COLUMNS =
             { NextbusSQLiteHelper.ROUTE_CONFIGURATIONS.COLUMN_COPYRIGHT,
@@ -35,7 +35,7 @@ public class RouteConfigurationsHelper extends CacheHelper {
               NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_LON_MAX,
               NextbusSQLiteHelper.SERVICE_AREAS.COLUMN_ROUTE_CONFIGURATION };
 
-    private static final String[] STOPS_COLUMNS =
+    public static final String[] STOPS_COLUMNS =
             { NextbusSQLiteHelper.STOPS.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.STOPS.COLUMN_TIMESTAMP,
               NextbusSQLiteHelper.STOPS.COLUMN_AGENCY,
@@ -73,10 +73,6 @@ public class RouteConfigurationsHelper extends CacheHelper {
 
     public RouteConfigurationsHelper(SQLiteDatabase database) {
         super(database);
-    }
-
-    private void truncateRouteConfigurations(Agency agency) {
-
     }
 
     public boolean isRouteConfigurationCached(Route route) {

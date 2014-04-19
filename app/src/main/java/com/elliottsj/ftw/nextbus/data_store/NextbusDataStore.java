@@ -1,13 +1,13 @@
-package com.elliottsj.ftw.nextbus.cache;
+package com.elliottsj.ftw.nextbus.data_store;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.elliottsj.ftw.nextbus.cache.helpers.AgenciesHelper;
-import com.elliottsj.ftw.nextbus.cache.helpers.NextbusSQLiteHelper;
-import com.elliottsj.ftw.nextbus.cache.helpers.RouteConfigurationsHelper;
-import com.elliottsj.ftw.nextbus.cache.helpers.RoutesHelper;
+import com.elliottsj.ftw.nextbus.data_store.helpers.AgenciesHelper;
+import com.elliottsj.ftw.nextbus.data_store.helpers.NextbusSQLiteHelper;
+import com.elliottsj.ftw.nextbus.data_store.helpers.RouteConfigurationsHelper;
+import com.elliottsj.ftw.nextbus.data_store.helpers.RoutesHelper;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
@@ -18,11 +18,11 @@ import net.sf.nextbus.publicxmlfeed.domain.VehicleLocation;
 import java.util.List;
 
 /**
- * Simple implementation of {@link INextbusCache} using SQLite
+ * Simple implementation of {@link INextbusDataStore} using SQLite
  */
-public class NextbusCache implements INextbusCache {
+public class NextbusDataStore implements INextbusDataStore {
 
-    private static final String TAG = "NextbusCache";
+    private static final String TAG = "NextbusDataStore";
 
     private SQLiteDatabase mDatabase;
     private NextbusSQLiteHelper mDbHelper;
@@ -37,7 +37,7 @@ public class NextbusCache implements INextbusCache {
      *
      * @param context the context where this cache will exist
      */
-    public NextbusCache(Context context, ContentProviderClient providerClient) {
+    public NextbusDataStore(Context context, ContentProviderClient providerClient) {
         mDbHelper = new NextbusSQLiteHelper(context);
         mProviderClient = providerClient;
     }
@@ -70,7 +70,7 @@ public class NextbusCache implements INextbusCache {
     }
 
     @Override
-    public boolean isAgenciesCached() {
+    public boolean isAgenciesStored() {
         return mAgenciesHelper.isAgenciesCached();
     }
 
@@ -137,7 +137,7 @@ public class NextbusCache implements INextbusCache {
     @Override
     public RouteConfiguration putRouteConfiguration(RouteConfiguration routeConfiguration) {
         // Delete the existing route configuration if it exists
-        mRouteConfigurationsHelper.deleteRouteConfiguration(routeConfiguration);mDatabase.be
+        mRouteConfigurationsHelper.deleteRouteConfiguration(routeConfiguration);
 
         // Cache the agency if it is not already cached
         Agency agency = routeConfiguration.getRoute().getAgency();
@@ -182,6 +182,11 @@ public class NextbusCache implements INextbusCache {
     @Override
     public List<Stop> getAllStops(Agency agency) {
         return mRouteConfigurationsHelper.getAllStops(agency);
+    }
+
+    @Override
+    public List<Stop> getPreferredStops(Agency agency) {
+        return null;
     }
 
 }

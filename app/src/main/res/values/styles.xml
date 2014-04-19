@@ -16,6 +16,7 @@
     </style>
 
     <style name="route_card_title" parent="card_title">
+        <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:textSize">30sp</item>
     </style>
 

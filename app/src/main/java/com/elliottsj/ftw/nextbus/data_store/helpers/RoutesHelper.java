@@ -1,4 +1,4 @@
-package com.elliottsj.ftw.nextbus.cache.helpers;
+package com.elliottsj.ftw.nextbus.data_store.helpers;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -11,9 +11,9 @@ import net.sf.nextbus.publicxmlfeed.service.ServiceException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoutesHelper extends CacheHelper {
+public class RoutesHelper extends DataStoreHelper {
 
-    protected static final String[] ROUTES_COLUMNS =
+    public static final String[] ROUTES_COLUMNS =
             { NextbusSQLiteHelper.ROUTES.COLUMN_COPYRIGHT,
               NextbusSQLiteHelper.ROUTES.COLUMN_TIMESTAMP,
               NextbusSQLiteHelper.ROUTES.COLUMN_AGENCY,
