@@ -31,15 +31,15 @@ public class RouteCard implements CardBase {
     }
 
     /**
-     * Create a RouteCard using columns from {@link com.elliottsj.ftw.provider.NextbusProvider.SAVED_STOPS_CURSOR}
+     * Create a RouteCard using columns from {@link com.elliottsj.ftw.provider.NextbusProvider.SAVED_STOPS}
      *
      * @param cursor a cursor created by {@link com.elliottsj.ftw.provider.NextbusProvider}
      * @return a RouteCard
      */
     public static RouteCard fromCursor(Cursor cursor) {
-        String stopTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS_CURSOR.COLUMN_STOP_TITLE));
-        String routeTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS_CURSOR.COLUMN_ROUTE_TITLE));
-        String direction = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS_CURSOR.COLUMN_DIRECTION));
+        String stopTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TITLE));
+        String routeTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_ROUTE_TITLE));
+        String direction = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_DIRECTION));
         return new RouteCard(routeTitle, direction);
     }
 

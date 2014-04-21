@@ -2,7 +2,6 @@ package com.elliottsj.ftw.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -18,7 +17,7 @@ import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.provider.NextbusProvider;
 import com.elliottsj.ftw.sync.SyncAdapter;
 
-public class StopsActivity extends Activity {
+public class StopsActivity extends TintedStatusBarActivity {
 
     private static final String TAG = StopsActivity.class.getSimpleName();
 
@@ -33,6 +32,8 @@ public class StopsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops);
 
+        Log.i(TAG, "onCreate called");
+
         // Initialize tab navigation
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
@@ -42,6 +43,12 @@ public class StopsActivity extends Activity {
 
         // Account needed to request syncs
         mAccount = getSyncAccount(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i(TAG, "onDestroy called");
+        super.onDestroy();
     }
 
     @Override

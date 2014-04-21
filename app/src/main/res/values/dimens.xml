@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--<dimen name="card_header_padding_horizontal">8dp</dimen>-->
+    <!-- <dimen name="card_header_padding_horizontal">8dp</dimen> -->
 
     <dimen name="card_header">18sp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 
 </resources>
