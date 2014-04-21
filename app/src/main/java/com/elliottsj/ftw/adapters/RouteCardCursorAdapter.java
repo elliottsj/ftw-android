@@ -59,7 +59,7 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
     public void populateArray(Cursor cursor) {
         String stopTitle = null;
         while (cursor.moveToNext()) {
-            String newStopTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS_CURSOR.COLUMN_STOP_TITLE));
+            String newStopTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TITLE));
             if (newStopTitle == null)
                 throw new RuntimeException("Stop title is null");
             if (!newStopTitle.equals(stopTitle)) {
