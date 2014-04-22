@@ -5,13 +5,11 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.Loader;
 import android.database.Cursor;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,20 +22,10 @@ import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
 import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.cards.RouteCard;
-import com.elliottsj.ftw.nextbus.CachedNextbusServiceAdapter;
-import com.elliottsj.ftw.provider.NextbusProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
-
-import net.sf.nextbus.publicxmlfeed.domain.Agency;
-import net.sf.nextbus.publicxmlfeed.domain.Geolocation;
-import net.sf.nextbus.publicxmlfeed.domain.Route;
-import net.sf.nextbus.publicxmlfeed.domain.Stop;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Displays nearby stops along with vehicle predictions.
@@ -62,10 +50,6 @@ public class NearbyStopsFragment extends Fragment implements CardListView.CardCl
 
     // Global variable to hold the current location
     private Location mCurrentLocation;
-
-    private CachedNextbusServiceAdapter mNextbusService;
-
-    private LoadNearbyStopsTask mLoadNearbyStopsTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -112,9 +96,6 @@ public class NearbyStopsFragment extends Fragment implements CardListView.CardCl
 
         // Connect the location client. Once it's connected, onConnected() will be called.
         mLocationClient.connect();
-
-        // Create a new task to load nearby stops
-        mLoadNearbyStopsTask = new LoadNearbyStopsTask();
     }
 
     /*
@@ -126,12 +107,6 @@ public class NearbyStopsFragment extends Fragment implements CardListView.CardCl
 
         // Disconnect the location client
         mLocationClient.disconnect();
-
-        // Cancel loading of nearby stops
-        mLoadNearbyStopsTask.cancel(true);
-
-        // Nullify the NextBus service
-        mNextbusService = null;
 
         super.onStop();
     }
@@ -287,62 +262,6 @@ public class NearbyStopsFragment extends Fragment implements CardListView.CardCl
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
-        }
-
-    }
-
-    private class InitializeCachedNextbusAdapter extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            ContentProviderClient provider = getActivity().getContentResolver().acquireContentProviderClient(NextbusProvider.AUTHORITY);
-            mNextbusService = new CachedNextbusServiceAdapter(getActivity(), provider, mLoadNearbyStopsTask);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            mLoadNearbyStopsTask.execute(mLocationClient.getLastLocation());
-        }
-    }
-
-    private class LoadNearbyStopsTask extends AsyncTask<Location, Route, List<Stop>> implements CachedNextbusServiceAdapter.Callbacks {
-
-        @Override
-        protected List<Stop> doInBackground(Location... locations) {
-            if (locations.length == 0)
-                return new ArrayList<Stop>(0);
-
-            Geolocation here = new Geolocation(locations[0].getLatitude(), locations[0].getLongitude());
-
-            Agency ttc = mNextbusService.getAgency("ttc");
-            List<Stop> stops = mNextbusService.getAllStops(ttc);
-
-            return Geolocation.sortedByClosest(stops, here, 10, 1);
-        }
-
-        @Override
-        protected void onPostExecute(List<Stop> stops) {
-            // All stops have been loaded
-            for (Stop stop : stops)
-                Log.i(TAG, stop.toString());
-        }
-
-        @Override
-        protected void onProgressUpdate(Route... values) {
-            // Stops have been loaded for the given routes(s)
-            for (Route route : values)
-                Log.i(TAG, "Stops cached for route: " + route.getTag());
-        }
-
-        @Override
-        protected void onCancelled(List<Stop> stops) {
-            Log.i(TAG, "Cancelled loading stops");
-        }
-
-        @Override
-        public void onRouteConfigurationCached(Route route) {
-            publishProgress(route);
         }
 
     }

@@ -88,13 +88,11 @@ public class SavedStopsFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        Log.i(TAG, "onLoadFinished: cursor.getCount() == " + String.valueOf(cursor.getCount()));
         mAdapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.i(TAG, "onLoaderReset");
         mAdapter.swapCursor(null);
     }
 

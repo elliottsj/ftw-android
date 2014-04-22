@@ -444,14 +444,12 @@ public class NextbusProvider extends ContentProvider {
                     SavedStop savedStop = new SavedStop(stop, direction);
                     getHelper().getSavedStopsDao().createIfNotExists(savedStop);
 
-                    String path = String.format("agencies/%s/routes/%s/directions/%s/stops/%s",
-                                                agencyTag, routeTag, directionTag, stopTag);
-                    Uri insertedUri = Uri.withAppendedPath(CONTENT_URI, path);
-
                     // Notify observers
                     getContext().getContentResolver().notifyChange(uri, null, false);
-                    getContext().getContentResolver().notifyChange(insertedUri, null, false);
-                    return insertedUri;
+
+                    String path = String.format("agencies/%s/routes/%s/directions/%s/stops/%s",
+                                                agencyTag, routeTag, directionTag, stopTag);
+                    return Uri.withAppendedPath(CONTENT_URI, path);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
