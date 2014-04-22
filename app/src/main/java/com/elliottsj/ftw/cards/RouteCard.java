@@ -21,8 +21,8 @@ public class RouteCard implements CardBase {
     private int prediction;
 
     public RouteCard(String routeTitle, String direction, boolean isHeader) {
-        this.routeTitle = routeTitle;
-        this.direction = direction;
+        this.routeTitle = formatRouteTitle(routeTitle);
+        this.direction = formatDirectionTitle(direction);
         this.isHeader = isHeader;
     }
 
@@ -37,9 +37,8 @@ public class RouteCard implements CardBase {
      * @return a RouteCard
      */
     public static RouteCard fromCursor(Cursor cursor) {
-        String stopTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TITLE));
         String routeTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_ROUTE_TITLE));
-        String direction = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_DIRECTION));
+        String direction = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_DIRECTION_TITLE));
         return new RouteCard(routeTitle, direction);
     }
 
@@ -50,7 +49,6 @@ public class RouteCard implements CardBase {
     public String getPrediction() {
         return String.format("%d minutes", prediction);
     }
-
 
     @Override
     public String getTitle() {
@@ -100,6 +98,14 @@ public class RouteCard implements CardBase {
     @Override
     public int getLayout() {
         return R.layout.route_card;
+    }
+
+    private static String formatRouteTitle(String nextbusTitle) {
+        return nextbusTitle.replaceAll("-", " ");
+    }
+
+    private static String formatDirectionTitle(String nextbusTitle) {
+        return nextbusTitle.replaceAll("-.*(?=towards)", "");
     }
 
 }

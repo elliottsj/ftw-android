@@ -5,8 +5,8 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.afollestad.cardsui.Card;
+import com.afollestad.cardsui.CardAdapter;
 import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardListView;
 import com.elliottsj.ftw.R;
@@ -27,7 +29,11 @@ import com.elliottsj.ftw.provider.NextbusProvider;
 public class SavedStopsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
                                                             CardListView.CardClickListener {
 
+    private static final String TAG = SavedStopsFragment.class.getSimpleName();
+
     private static final int STOPS_LOADER = 0;
+
+    private CardAdapter<Card> testAdapter;
 
     private RouteCardCursorAdapter mAdapter;
     private CardListView mCardList;
@@ -35,6 +41,7 @@ public class SavedStopsFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
 
         setHasOptionsMenu(true);
     }
@@ -42,6 +49,8 @@ public class SavedStopsFragment extends Fragment implements LoaderManager.Loader
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stops, container, false);
+
+        Log.i(TAG, "onCreateView");
 
         //noinspection ConstantConditions
         mCardList = (CardListView) rootView.findViewById(R.id.card_list);
@@ -53,21 +62,18 @@ public class SavedStopsFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.i(TAG, "onActivityCreated");
 
         mAdapter = new RouteCardCursorAdapter(getActivity());
-
-        MatrixCursor cursor = new MatrixCursor(NextbusProvider.SAVED_STOPS_CURSOR_COLUMNS);
-        cursor.addRow(new String[] { "ttc",
-                                     "2748",
-                                     "College St At Beverly St",
-                                     "506-Carlton", "506",
-                                     "West - 506 Carlton towards High Park" });
-
-        mAdapter.changeCursor(cursor);
         mCardList.setAdapter(mAdapter);
 
-        //noinspection ConstantConditions
         getLoaderManager().initLoader(STOPS_LOADER, null, this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart");
     }
 
     @Override
@@ -82,12 +88,14 @@ public class SavedStopsFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-//        mAdapter.changeCursor(cursor);
+        Log.i(TAG, "onLoadFinished: cursor.getCount() == " + String.valueOf(cursor.getCount()));
+        mAdapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-//        mAdapter.changeCursor(null);
+        Log.i(TAG, "onLoaderReset");
+        mAdapter.swapCursor(null);
     }
 
     @Override

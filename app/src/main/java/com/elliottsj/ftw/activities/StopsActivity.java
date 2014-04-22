@@ -2,22 +2,21 @@ package com.elliottsj.ftw.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.provider.NextbusProvider;
 import com.elliottsj.ftw.sync.SyncAdapter;
 
-public class StopsActivity extends TintedStatusBarActivity {
+public class StopsActivity extends Activity {
 
     private static final String TAG = StopsActivity.class.getSimpleName();
 
@@ -35,20 +34,20 @@ public class StopsActivity extends TintedStatusBarActivity {
         Log.i(TAG, "onCreate called");
 
         // Initialize tab navigation
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        StopsTabsAdapter stopsTabsAdapter = new StopsTabsAdapter(getFragmentManager());
-        viewPager.setAdapter(stopsTabsAdapter);
-        tabs.setViewPager(viewPager);
+//        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+//        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+//        StopsTabsAdapter stopsTabsAdapter = new StopsTabsAdapter(getFragmentManager());
+//        viewPager.setAdapter(stopsTabsAdapter);
+//        tabs.setViewPager(viewPager);
 
         // Account needed to request syncs
-        mAccount = getSyncAccount(this);
+//        mAccount = getSyncAccount(this);
     }
 
     @Override
     protected void onDestroy() {
-        Log.i(TAG, "onDestroy called");
         super.onDestroy();
+        Log.i(TAG, "onDestroy");
     }
 
     @Override

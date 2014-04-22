@@ -9,10 +9,9 @@
         <RelativeLayout android:id="@+id/titleFrame"
                         style="@style/card_title_frame">
 
-            <TextView
-                android:id="@android:id/title"
-                style="@style/route_card_title"
-                android:text="506 Carlton"/>
+            <TextView android:id="@android:id/title"
+                      android:text="@string/sample_route"
+                      style="@style/route_card_title"/>
 
             <!--suppress AndroidLintContentDescription -->
             <ImageButton android:id="@android:id/button1"
@@ -23,22 +22,25 @@
         <RelativeLayout android:layout_below="@id/titleFrame"
                         style="@style/route_card_content">
 
-                <TextView
-                    android:id="@+id/prediction"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:fontFamily="sans-serif-light"
-                    android:textSize="20sp"
-                    android:text="@string/sample_prediction"/>
+            <TextView
+                android:id="@+id/prediction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textSize="20sp"
+                android:text="@string/sample_prediction"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
 
-                <TextView
-                    android:id="@+id/direction"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/prediction"
-                    android:fontFamily="sans-serif-light"
-                    android:text="East towards Main Street Station"/>
+            <TextView
+                android:id="@+id/direction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:text="@string/sample_direction"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/prediction"/>
 
         </RelativeLayout>
 

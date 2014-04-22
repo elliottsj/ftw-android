@@ -1,15 +1,17 @@
 package com.elliottsj.ftw.activities;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
 import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.provider.NextbusProvider;
@@ -18,7 +20,7 @@ import net.sf.nextbus.publicxmlfeed.domain.Direction;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.Stop;
 
-public class AddStopActivity extends TintedStatusBarActivity {
+public class AddStopActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class AddStopActivity extends TintedStatusBarActivity {
             mAdapter.swapCursor(null);
         }
 
+        @SuppressWarnings("ConstantConditions")
         @Override
         public void onListItemClick(ListView listView, View view, int position, long id) {
             Cursor cursor = (Cursor) mAdapter.getItem(position);
@@ -130,6 +133,7 @@ public class AddStopActivity extends TintedStatusBarActivity {
             mAdapter.swapCursor(null);
         }
 
+        @SuppressWarnings("ConstantConditions")
         @Override
         public void onListItemClick(ListView listView, View view, int position, long id) {
             Cursor cursor = (Cursor) mAdapter.getItem(position);
@@ -193,15 +197,24 @@ public class AddStopActivity extends TintedStatusBarActivity {
             mAdapter.swapCursor(null);
         }
 
+        @SuppressWarnings("ConstantConditions")
         @Override
         public void onListItemClick(ListView listView, View view, int position, long id) {
             Cursor cursor = (Cursor) mAdapter.getItem(position);
             if (cursor != null) {
                 String stopTag = cursor.getString(cursor.getColumnIndexOrThrow(Stop.FIELD_TAG));
 
-                String message = String.format("Stop tag %s selected", stopTag);
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                ContentValues values = new ContentValues();
+                values.put(NextbusProvider.SAVED_STOPS.COLUMN_AGENCY_TAG, "ttc");
+                values.put(NextbusProvider.SAVED_STOPS.COLUMN_ROUTE_TAG, mRouteTag);
+                values.put(NextbusProvider.SAVED_STOPS.COLUMN_DIRECTION_TAG, mDirectionTag);
+                values.put(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TAG, stopTag);
+
+                ContentResolver resolver = getActivity().getContentResolver();
+                resolver.insert(NextbusProvider.insertSavedStopUri(), values);
             }
+
+            getActivity().finish();
         }
 
     }

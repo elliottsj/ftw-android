@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="GlobalTheme" parent="android:Theme.Holo.Light">
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/action_bar_red</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_ab_back_holo_dark_am</item>
         <item name="android:actionOverflowButtonStyle">@android:style/Widget.Holo.ActionButton.Overflow</item>
-    </style>
-
-    <style name="AppTheme" parent="GlobalTheme">
-        <!--<item name="android:background">@color/ttc_red</item>-->
     </style>
 
     <style name="action_bar_red" parent="android:Widget.Holo.Light.ActionBar">
@@ -22,7 +18,7 @@
 
     <style name="route_card_title" parent="card_title">
         <item name="android:fontFamily">sans-serif-condensed</item>
-        <item name="android:textSize">30sp</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="route_card_content" parent="card_content">

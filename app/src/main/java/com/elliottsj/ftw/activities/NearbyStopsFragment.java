@@ -101,8 +101,6 @@ public class NearbyStopsFragment extends Fragment implements CardListView.CardCl
         // Initialize the NextBus data loader
         //noinspection ConstantConditions
         getLoaderManager().initLoader(NEXTBUS_LOADER, null, this);
-
-
     }
 
     /*

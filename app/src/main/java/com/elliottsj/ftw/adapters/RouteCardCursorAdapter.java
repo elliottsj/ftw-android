@@ -58,6 +58,7 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
     @Override
     public void populateArray(Cursor cursor) {
         String stopTitle = null;
+        cursor.moveToFirst();
         while (cursor.moveToNext()) {
             String newStopTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TITLE));
             if (newStopTitle == null)

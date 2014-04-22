@@ -10,7 +10,8 @@
 
     <!-- Placeholder strings -->
     <string name="sample_stop">College St At Beverly St</string>
-    <string name="sample_route">506 Carlton towards Main Street Station</string>
+    <string name="sample_direction">West towards High Park</string>
+    <string name="sample_route">506 Carlton</string>
     <string name="sample_prediction">2 minutes</string>
 
     <!-- Strings related to StopsActivity -->
