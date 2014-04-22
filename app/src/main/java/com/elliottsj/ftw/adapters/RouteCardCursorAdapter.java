@@ -70,7 +70,7 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
             }
             // Add a route card
             add(RouteCard.fromCursor(cursor));
-            
+
             // Advance the cursor
             cursor.moveToNext();
         }

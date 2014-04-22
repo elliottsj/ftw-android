@@ -25,7 +25,7 @@ class NextbusSQLiteHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = NextbusSQLiteHelper.class.getName();
 
-    protected static final int DATABASE_VERSION = 1;
+    protected static final int DATABASE_VERSION = 2;
     protected static final String DATABASE_NAME = "nextbus.db";
 
     private ObjectCache objectCache = null;
@@ -64,9 +64,9 @@ class NextbusSQLiteHelper extends OrmLiteSqliteOpenHelper {
         try {
             Log.i(TAG, "Upgrading Nextbus tables...");
             TableUtils.dropTable(connectionSource, SavedStop.class, false);
-            TableUtils.dropTable(connectionSource, Geolocation.class, false);
             TableUtils.dropTable(connectionSource, DirectionStop.class, false);
             TableUtils.dropTable(connectionSource, Stop.class, false);
+            TableUtils.dropTable(connectionSource, Geolocation.class, false);
             TableUtils.dropTable(connectionSource, Direction.class, false);
             TableUtils.dropTable(connectionSource, Route.class, false);
             TableUtils.dropTable(connectionSource, Agency.class, false);
