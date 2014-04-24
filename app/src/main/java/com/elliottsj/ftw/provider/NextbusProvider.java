@@ -8,7 +8,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -56,14 +55,6 @@ public class NextbusProvider extends ContentProvider {
         public static final String COLUMN_DIRECTION_NAME = "direction_name";
     }
 
-    public static final class PREDICTIONS {
-        public static final String COLUMN_AGENCY_TAG = "agency_tag";
-        public static final String COLUMN_ROUTE_TAG = "route_tag";
-        public static final String COLUMN_DIRECTION_TAG = "direction_tag";
-        public static final String COLUMN_STOP_TAG = "stop_tag";
-        public static final String COLUMN_PREDICTION = "prediction";
-    }
-
     public static final String[] SAVED_STOPS_CURSOR_COLUMNS =
             { SAVED_STOPS.COLUMN_AGENCY_TAG,
               SAVED_STOPS.COLUMN_AGENCY_TITLE,
@@ -75,13 +66,6 @@ public class NextbusProvider extends ContentProvider {
               SAVED_STOPS.COLUMN_DIRECTION_TAG,
               SAVED_STOPS.COLUMN_DIRECTION_TITLE,
               SAVED_STOPS.COLUMN_DIRECTION_NAME };
-
-    public static final String[] PREDICTIONS_CURSOR_COLUMNS =
-            { PREDICTIONS.COLUMN_AGENCY_TAG,
-              PREDICTIONS.COLUMN_ROUTE_TAG,
-              PREDICTIONS.COLUMN_DIRECTION_TAG,
-              PREDICTIONS.COLUMN_STOP_TAG,
-              PREDICTIONS.COLUMN_PREDICTION };
 
     public static final String[] AGENCIES_CURSOR_COLUMNS =
             { Agency.FIELD_ID,
@@ -112,7 +96,6 @@ public class NextbusProvider extends ContentProvider {
 
     private static class URI_CODE {
         public static final int SAVED_STOPS = 0;
-        public static final int PREDICTIONS = 1;
         public static final int AGENCIES = 2;
         public static final int AGENCIES_TAG = 3;
         public static final int AGENCIES_ROUTES = 4;
@@ -139,7 +122,6 @@ public class NextbusProvider extends ContentProvider {
 
     static {
         sUriMatcher.addURI(AUTHORITY, "saved-stops", URI_CODE.SAVED_STOPS);
-        sUriMatcher.addURI(AUTHORITY, "agencies/*/predictions?*", URI_CODE.PREDICTIONS);
         sUriMatcher.addURI(AUTHORITY, "agencies", URI_CODE.AGENCIES);
         sUriMatcher.addURI(AUTHORITY, "agencies/*", URI_CODE.AGENCIES_TAG);
         sUriMatcher.addURI(AUTHORITY, "agencies/*/routes", URI_CODE.AGENCIES_ROUTES);
@@ -208,48 +190,6 @@ public class NextbusProvider extends ContentProvider {
                     cursor = matrixCursor;
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
-                }
-                break;
-            case URI_CODE.PREDICTIONS:
-                // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/predictions?stop=506|5013&stop=506|14260&stop=54|4697
-                pathSegments = uri.getPathSegments();
-                if (pathSegments != null) {
-                    String agencyTag = pathSegments.get(1);
-                    try {
-                        Map<Route, List<Stop>> stops = new HashMap<Route, List<Stop>>();
-                        for (String routeTagStopTag : uri.getQueryParameters("stop")) {
-                            String[] parts = routeTagStopTag.split("\\|");
-                            String routeTag = parts[0];
-                            String stopTag = parts[1];
-
-                            // Use a query builder to get the route info
-                            Route route = getQbFactory().routesQb(agencyTag, routeTag).queryForFirst();
-                            getHelper().getAgenciesDao().refresh(route.getAgency());
-
-                            // Use a query builder to select the stop from all directions of the route
-                            Stop stop = getQbFactory().stopsQb(agencyTag, routeTag, null, stopTag).queryForFirst();
-                            getHelper().getAgenciesDao().refresh(stop.getAgency());
-                            getHelper().getGeolocationsDao().refresh(stop.getGeolocation());
-
-                            // Insert the stop into the map to be passed to the nextbus api
-                            if (stops.get(route) == null)
-                                stops.put(route, new ArrayList<Stop>());
-                            stops.get(route).add(stop);
-                        }
-
-                        List<PredictionGroup> predictions = mNextbusService.getPredictions(stops);
-
-                        MatrixCursor matrixCursor = new MatrixCursor(PREDICTIONS_CURSOR_COLUMNS);
-                        for (PredictionGroup predictionGroup : predictions) {
-
-
-                            List<Object> row = new ArrayList<Object>(PREDICTIONS_CURSOR_COLUMNS.length);
-                            row.add(agencyTag);
-
-                        }
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
                 }
                 break;
             case URI_CODE.AGENCIES:
@@ -529,6 +469,33 @@ public class NextbusProvider extends ContentProvider {
         return 0;
     }
 
+    /**
+     * Get a list of predictions for the specified stops
+     *
+     * @param agencyTag unique agency tag
+     * @param stopTags a map of (route tag -> (direction tag -> stop tag))
+     * @return a list of PredictionGroups
+     */
+    public List<PredictionGroup> loadPredictions(String agencyTag, Map<String, List<String>> stopTags) {
+        try {
+            Map<Route, List<Stop>> stops = new HashMap<Route, List<Stop>>(stopTags.size());
+            for (Map.Entry<String, List<String>> entry : stopTags.entrySet()) {
+                String routeTag = entry.getKey();
+
+                if (getQbFactory().agenciesQb(agencyTag).countOf() == 0) {
+                    fetchAgencies();
+                }
+                Route route = getQbFactory().routesQb(agencyTag, routeTag).queryForFirst();
+                List<Stop> routeStops = getQbFactory().stopsQb(agencyTag, routeTag, null).query();
+
+                stops.put(route, routeStops);
+            }
+            return mNextbusService.getPredictions(stops);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load Nextbus objects while fetching predictions", e);
+        }
+    }
+
     private NextbusSQLiteHelper getHelper() {
         if (mDbHelper == null)
             mDbHelper = OpenHelperManager.getHelper(getContext(), NextbusSQLiteHelper.class);
@@ -680,111 +647,12 @@ public class NextbusProvider extends ContentProvider {
     }
 
     /**
-     * Get a cursor loader which loads predictions for the specified stops
-     *
-     * @param context context for the cursor loader
-     * @param agencyTag unique agency tag
-     * @param stops a map of (route tag -> (direction tag -> stop tag))
-     * @return a cursor loader
-     */
-    public static Loader<Cursor> predictionsLoader(Context context, String agencyTag, Map<String, Map<String, List<String>>> stops) {
-        return new CursorLoader(context, predictionsUri(agencyTag),
-                                PREDICTIONS_CURSOR_COLUMNS,
-                                predictionsSelection(agencyTag, stops), null, null);
-    }
-
-    /**
      * Get a uri that can be used to insert a saved stop into NextbusProvider
      *
      * @return a uri
      */
     public static Uri insertSavedStopUri() {
         return Uri.withAppendedPath(CONTENT_URI, "saved-stops");
-    }
-
-    /**
-     * Get a uri that can be used to query {@link #query(android.net.Uri, String[], String, String[], String)}
-     * to get predictions for stops
-     *
-     * @return a uri
-     */
-    public static Uri predictionsUri(String agencyTag) {
-        Uri.Builder uriBuilder = new Uri.Builder();
-        uriBuilder.scheme("content");
-        uriBuilder.authority(AUTHORITY);
-        uriBuilder.appendEncodedPath(String.format("agencies/%s/predictions", agencyTag));
-        return uriBuilder.build();
-    }
-
-    /**
-     * Get a selection string that can be passed to {@link #query(android.net.Uri, String[], String, String[], String)}
-     * to select predictions for specific stops
-     *
-     * For example:
-     * {@code agency_tag = 'ttc' AND
-     *        route_tag IN('506', '54', '103') AND
-     *        direction_tag IN ('506_1_501', '506_1_506', '54_1_54A', '54_1_54', '103_0_103') AND
-     *        stop_tag IN ('5013', '14260_ar', '4697')}
-     *
-     * @param agencyTag unique agency tag
-     * @param stops a map of (route tag -> (direction tag -> stop tag))
-     * @return a selection string
-     */
-    public static String predictionsSelection(String agencyTag, Map<String, Map<String, List<String>>> stops) {
-        StringBuilder result = new StringBuilder();
-
-        // Append agency tag clause
-        result.append(String.format("%s = '%s'", PREDICTIONS.COLUMN_AGENCY_TAG, agencyTag));
-        result.append(" AND ");
-
-        // Append route tag clause
-        result.append(String.format("%s IN (", PREDICTIONS.COLUMN_ROUTE_TAG));
-        for (String routeTag : stops.keySet())
-            result.append(String.format("'%s'", routeTag));
-        result.append(String.format(") AND "));
-
-        // Append direction tag clause
-
-
-        for (Map.Entry<String, Map<String, List<String>>> entry : stops.entrySet()) {
-            String routeTag = entry.getKey();
-            for (Map.Entry<String, List<String>> directionStopTags : entry.getValue().entrySet()) {
-                for (String stopTag : directionStopTags.getValue()) {
-
-                    uriBuilder.appendQueryParameter("stop", String.format("%s|%s", routeTag, stopTag));
-                }
-            }
-        }
-
-
-        return result.toString();
-    }
-
-    /**
-     * Get a list of predictions for the specified stops
-     *
-     * @param agencyTag unique agency tag
-     * @param stopTags a map of (route tag -> (direction tag -> stop tag))
-     * @return a list of PredictionGroups
-     */
-    public List<PredictionGroup> loadPredictions(String agencyTag, Map<String, List<String>> stopTags) {
-        try {
-            Map<Route, List<Stop>> stops = new HashMap<Route, List<Stop>>(stopTags.size());
-            for (Map.Entry<String, List<String>> entry : stopTags.entrySet()) {
-                String routeTag = entry.getKey();
-
-                if (getQbFactory().agenciesQb(agencyTag).countOf() == 0) {
-                    fetchAgencies();
-                }
-                Route route = getQbFactory().routesQb(agencyTag, routeTag).queryForFirst();
-                List<Stop> routeStops = getQbFactory().stopsQb(agencyTag, routeTag, null).query();
-
-                stops.put(route, routeStops);
-            }
-            return mNextbusService.getPredictions(stops);
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to load Nextbus objects while fetching predictions", e);
-        }
     }
 
 }

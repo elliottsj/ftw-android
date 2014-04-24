@@ -10,47 +10,47 @@ import net.sf.nextbus.publicxmlfeed.domain.Stop;
 
 import java.sql.SQLException;
 
-class NextbusQueryBuilderFactory {
+public class NextbusQueryBuilderFactory {
 
     private NextbusSQLiteHelper mDbHelper;
 
-    NextbusQueryBuilderFactory(NextbusSQLiteHelper mDbHelper) {
+    public NextbusQueryBuilderFactory(NextbusSQLiteHelper mDbHelper) {
         this.mDbHelper = mDbHelper;
     }
 
-    QueryBuilder<Agency, Integer> agenciesQb(String agencyTag) throws SQLException {
+    public QueryBuilder<Agency, Integer> agenciesQb(String agencyTag) throws SQLException {
         QueryBuilder<Agency, Integer> agenciesQb = mDbHelper.getAgenciesDao().queryBuilder();
         if (agencyTag != null) agenciesQb.where().eq(Agency.FIELD_TAG, agencyTag);
         return agenciesQb;
     }
 
-    QueryBuilder<Agency, Integer> agenciesQb() throws SQLException {
+    public QueryBuilder<Agency, Integer> agenciesQb() throws SQLException {
         return agenciesQb(null);
     }
 
-    QueryBuilder<Route, Integer> routesQb(String agencyTag, String routeTag) throws SQLException {
+    public QueryBuilder<Route, Integer> routesQb(String agencyTag, String routeTag) throws SQLException {
         QueryBuilder<Route, Integer> routesQb = mDbHelper.getRoutesDao().queryBuilder();
         routesQb.join(agenciesQb(agencyTag));
         if (routeTag != null) routesQb.where().eq(Route.FIELD_TAG, routeTag);
         return routesQb;
     }
 
-    QueryBuilder<Route, Integer> routesQb(String agencyTag) throws SQLException {
+    public QueryBuilder<Route, Integer> routesQb(String agencyTag) throws SQLException {
         return routesQb(agencyTag, null);
     }
 
-    QueryBuilder<Direction, Integer> directionsQb(String agencyTag, String routeTag, String directionTag) throws SQLException {
+    public QueryBuilder<Direction, Integer> directionsQb(String agencyTag, String routeTag, String directionTag) throws SQLException {
         QueryBuilder<Direction, Integer> directionsQb = mDbHelper.getDirectionsDao().queryBuilder();
         directionsQb.join(routesQb(agencyTag, routeTag));
         if (directionTag != null) directionsQb.where().eq(Direction.FIELD_TAG, directionTag);
         return directionsQb;
     }
 
-    QueryBuilder<Direction, Integer> directionsQb(String agencyTag, String routeTag) throws SQLException {
+    public QueryBuilder<Direction, Integer> directionsQb(String agencyTag, String routeTag) throws SQLException {
         return directionsQb(agencyTag, routeTag, null);
     }
 
-    QueryBuilder<Stop, Integer> stopsQb(String agencyTag, String routeTag, String directionTag, String stopTag) throws SQLException {
+    public QueryBuilder<Stop, Integer> stopsQb(String agencyTag, String routeTag, String directionTag, String stopTag) throws SQLException {
         QueryBuilder<DirectionStop, Integer> directionStopsQb = mDbHelper.getDirectionStopsDao().queryBuilder();
         directionStopsQb.join(directionsQb(agencyTag, routeTag, directionTag));
         QueryBuilder<Stop, Integer> stopsQb = mDbHelper.getStopsDao().queryBuilder();
@@ -59,7 +59,7 @@ class NextbusQueryBuilderFactory {
         return stopsQb;
     }
 
-    QueryBuilder<Stop, Integer> stopsQb(String agencyTag, String routeTag, String directionTag) throws SQLException {
+    public QueryBuilder<Stop, Integer> stopsQb(String agencyTag, String routeTag, String directionTag) throws SQLException {
         return stopsQb(agencyTag, routeTag, directionTag, null);
     }
 

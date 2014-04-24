@@ -23,6 +23,7 @@ import com.elliottsj.ftw.provider.NextbusProvider;
 import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -107,7 +108,10 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
             mAdapter.swapCursor(cursor);
 
             // Start loading predictions
-            getLoaderManager().initLoader(PREDICTIONS_LOADER, null, new PredictionsLoaderCallbacks());
+            Bundle bundle = new Bundle();
+            bundle.putString(PredictionsLoaderCallbacks.AGENCY_TAG, mAdapter.getAgencyTag());
+            bundle.putSerializable(PredictionsLoaderCallbacks.STOPS_MAP, mAdapter.getStopsMap());
+            getLoaderManager().initLoader(PREDICTIONS_LOADER, bundle, new PredictionsLoaderCallbacks());
         }
 
         @Override
@@ -119,9 +123,16 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
 
     private class PredictionsLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<PredictionGroup>> {
 
+        public static final String AGENCY_TAG = "agency_tag";
+        public static final String STOPS_MAP = "stops_map";
+
+        @SuppressWarnings("unchecked")
         @Override
         public Loader<List<PredictionGroup>> onCreateLoader(int id, Bundle args) {
-            return new PredictionsLoader(getActivity());
+            String agencyTag = args.getString(AGENCY_TAG);
+            Map<String, List<String>> stopsMap = (Map<String, List<String>>) args.getSerializable(STOPS_MAP);
+
+            return new PredictionsLoader(getActivity(), agencyTag, stopsMap);
         }
 
         @Override

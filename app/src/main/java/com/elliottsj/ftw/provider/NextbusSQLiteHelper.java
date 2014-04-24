@@ -21,7 +21,7 @@ import net.sf.nextbus.publicxmlfeed.domain.Stop;
 
 import java.sql.SQLException;
 
-class NextbusSQLiteHelper extends OrmLiteSqliteOpenHelper {
+public class NextbusSQLiteHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = NextbusSQLiteHelper.class.getName();
 

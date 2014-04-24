@@ -16,18 +16,30 @@ public class RouteCard implements CardBase {
 
     private boolean isHeader;
 
+    private String agencyTag;
+    private String routeTag;
+    private String directionTag;
+    private String stopTag;
     private String routeTitle;
     private String direction;
     private int prediction;
 
-    public RouteCard(String routeTitle, String direction, boolean isHeader) {
+    public RouteCard(String agencyTag, String routeTag, String directionTag, String stopTag, String routeTitle, String direction, boolean isHeader) {
+        this.agencyTag = agencyTag;
+        this.routeTag = routeTag;
+        this.directionTag = directionTag;
+        this.stopTag = stopTag;
         this.routeTitle = formatRouteTitle(routeTitle);
         this.direction = formatDirectionTitle(direction);
         this.isHeader = isHeader;
     }
 
+    public RouteCard(String agencyTag, String routeTag, String directionTag, String stopTag, String routeTitle, String direction) {
+        this(agencyTag, routeTag, directionTag, stopTag, routeTitle, direction, false);
+    }
+
     public RouteCard(String routeTitle, String direction) {
-        this(routeTitle, direction, false);
+        this(null, null, null, null, routeTitle, direction, false);
     }
 
     /**
@@ -37,17 +49,41 @@ public class RouteCard implements CardBase {
      * @return a RouteCard
      */
     public static RouteCard fromCursor(Cursor cursor) {
+        String agencyTag = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_AGENCY_TAG));
+        String routeTag = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_ROUTE_TAG));
+        String directionTag = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_DIRECTION_TAG));
+        String stopTag = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TAG));
         String routeTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_ROUTE_TITLE));
         String direction = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_DIRECTION_TITLE));
-        return new RouteCard(routeTitle, direction);
+        return new RouteCard(agencyTag, routeTag, directionTag, stopTag, routeTitle, direction);
+    }
+
+    public String getAgencyTag() {
+        return agencyTag;
+    }
+
+    public String getRouteTag() {
+        return routeTag;
+    }
+
+    public String getDirectionTag() {
+        return directionTag;
+    }
+
+    public String getStopTag() {
+        return stopTag;
     }
 
     public String getDirection() {
         return direction;
     }
 
-    public String getPrediction() {
+    public String getPredictionString() {
         return String.format("%d minutes", prediction);
+    }
+
+    public void setPrediction(int prediction) {
+        this.prediction = prediction;
     }
 
     @Override
