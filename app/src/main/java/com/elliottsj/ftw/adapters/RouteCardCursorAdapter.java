@@ -13,6 +13,10 @@ import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.provider.NextbusProvider;
 
+import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
+
+import java.util.List;
+
 /**
  * A {@link com.afollestad.cardsui.CardAdapter} that displays {@link com.elliottsj.ftw.cards.RouteCard} and
  * {@link com.afollestad.cardsui.CardHeader} objects in a {@link com.afollestad.cardsui.CardListView}.
@@ -74,6 +78,10 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
             // Advance the cursor
             cursor.moveToNext();
         }
+    }
+    
+    public void bindPredictions(List<PredictionGroup> predictions) {
+
     }
 
 }

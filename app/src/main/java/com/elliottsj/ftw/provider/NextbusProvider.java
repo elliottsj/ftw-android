@@ -8,6 +8,7 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -17,18 +18,23 @@ import com.elliottsj.ftw.provider.model.SavedStop;
 import com.elliottsj.ftw.utilities.AndroidNextbusService;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Direction;
 import net.sf.nextbus.publicxmlfeed.domain.DirectionStop;
+import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.Stop;
 import net.sf.nextbus.publicxmlfeed.impl.NextbusService;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class NextbusProvider extends ContentProvider {
 
@@ -50,6 +56,14 @@ public class NextbusProvider extends ContentProvider {
         public static final String COLUMN_DIRECTION_NAME = "direction_name";
     }
 
+    public static final class PREDICTIONS {
+        public static final String COLUMN_AGENCY_TAG = "agency_tag";
+        public static final String COLUMN_ROUTE_TAG = "route_tag";
+        public static final String COLUMN_DIRECTION_TAG = "direction_tag";
+        public static final String COLUMN_STOP_TAG = "stop_tag";
+        public static final String COLUMN_PREDICTION = "prediction";
+    }
+
     public static final String[] SAVED_STOPS_CURSOR_COLUMNS =
             { SAVED_STOPS.COLUMN_AGENCY_TAG,
               SAVED_STOPS.COLUMN_AGENCY_TITLE,
@@ -61,6 +75,13 @@ public class NextbusProvider extends ContentProvider {
               SAVED_STOPS.COLUMN_DIRECTION_TAG,
               SAVED_STOPS.COLUMN_DIRECTION_TITLE,
               SAVED_STOPS.COLUMN_DIRECTION_NAME };
+
+    public static final String[] PREDICTIONS_CURSOR_COLUMNS =
+            { PREDICTIONS.COLUMN_AGENCY_TAG,
+              PREDICTIONS.COLUMN_ROUTE_TAG,
+              PREDICTIONS.COLUMN_DIRECTION_TAG,
+              PREDICTIONS.COLUMN_STOP_TAG,
+              PREDICTIONS.COLUMN_PREDICTION };
 
     public static final String[] AGENCIES_CURSOR_COLUMNS =
             { Agency.FIELD_ID,
@@ -90,7 +111,8 @@ public class NextbusProvider extends ContentProvider {
               Stop.FIELD_SHORT_TITLE };
 
     private static class URI_CODE {
-        public static final int SAVED_STOPS = 1;
+        public static final int SAVED_STOPS = 0;
+        public static final int PREDICTIONS = 1;
         public static final int AGENCIES = 2;
         public static final int AGENCIES_TAG = 3;
         public static final int AGENCIES_ROUTES = 4;
@@ -111,11 +133,13 @@ public class NextbusProvider extends ContentProvider {
 
     private NextbusSQLiteHelper mDbHelper;
     private SQLiteDatabase mDatabase;
+    private NextbusQueryBuilderFactory mQueryBuilderFactory;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         sUriMatcher.addURI(AUTHORITY, "saved-stops", URI_CODE.SAVED_STOPS);
+        sUriMatcher.addURI(AUTHORITY, "agencies/*/predictions?*", URI_CODE.PREDICTIONS);
         sUriMatcher.addURI(AUTHORITY, "agencies", URI_CODE.AGENCIES);
         sUriMatcher.addURI(AUTHORITY, "agencies/*", URI_CODE.AGENCIES_TAG);
         sUriMatcher.addURI(AUTHORITY, "agencies/*/routes", URI_CODE.AGENCIES_ROUTES);
@@ -138,6 +162,7 @@ public class NextbusProvider extends ContentProvider {
         return true;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         // Helper classes: UriMatcher, ContentUris, Uri, Uri.Builder
@@ -150,20 +175,21 @@ public class NextbusProvider extends ContentProvider {
                 // e.g. content://com.elliottsj.ftw.provider/saved-stops
                 try {
                     MatrixCursor matrixCursor = new MatrixCursor(SAVED_STOPS_CURSOR_COLUMNS);
+
+                    // Add each saved stop to a MatrixCursor
                     for (SavedStop savedStop : getHelper().getSavedStopsDao()) {
+                        // Refresh each of the foreign fields in the saved stop
                         Stop stop = savedStop.getStop();
                         getHelper().getStopsDao().refresh(stop);
-
                         Agency agency = stop.getAgency();
                         getHelper().getAgenciesDao().refresh(agency);
-
                         Direction direction = savedStop.getDirection();
                         getHelper().getDirectionsDao().refresh(direction);
-
                         Route route = direction.getRoute();
                         getHelper().getRoutesDao().refresh(route);
 
-                        List<String> row = new ArrayList<String>(10);
+                        // Add relevant fields to the cursor according to SAVED_STOPS_CURSOR_COLUMNS
+                        List<String> row = new ArrayList<String>(SAVED_STOPS_CURSOR_COLUMNS.length);
                         row.add(agency.getTag());
                         row.add(agency.getTitle());
                         row.add(stop.getTag());
@@ -177,25 +203,57 @@ public class NextbusProvider extends ContentProvider {
 
                         matrixCursor.addRow(row);
                     }
+
+                    // Done loading saved stops; set the result cursor
                     cursor = matrixCursor;
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
                 break;
+            case URI_CODE.PREDICTIONS:
+                // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/predictions?stop=506|5013&stop=506|14260&stop=54|4697
+                pathSegments = uri.getPathSegments();
+                if (pathSegments != null) {
+                    String agencyTag = pathSegments.get(1);
+                    try {
+                        Map<Route, List<Stop>> stops = new HashMap<Route, List<Stop>>();
+                        for (String routeTagStopTag : uri.getQueryParameters("stop")) {
+                            String[] parts = routeTagStopTag.split("\\|");
+                            String routeTag = parts[0];
+                            String stopTag = parts[1];
+
+                            // Use a query builder to get the route info
+                            Route route = getQbFactory().routesQb(agencyTag, routeTag).queryForFirst();
+                            getHelper().getAgenciesDao().refresh(route.getAgency());
+
+                            // Use a query builder to select the stop from all directions of the route
+                            Stop stop = getQbFactory().stopsQb(agencyTag, routeTag, null, stopTag).queryForFirst();
+                            getHelper().getAgenciesDao().refresh(stop.getAgency());
+                            getHelper().getGeolocationsDao().refresh(stop.getGeolocation());
+
+                            // Insert the stop into the map to be passed to the nextbus api
+                            if (stops.get(route) == null)
+                                stops.put(route, new ArrayList<Stop>());
+                            stops.get(route).add(stop);
+                        }
+
+                        List<PredictionGroup> predictions = mNextbusService.getPredictions(stops);
+
+                        MatrixCursor matrixCursor = new MatrixCursor(PREDICTIONS_CURSOR_COLUMNS);
+                        for (PredictionGroup predictionGroup : predictions) {
+
+
+                            List<Object> row = new ArrayList<Object>(PREDICTIONS_CURSOR_COLUMNS.length);
+                            row.add(agencyTag);
+
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                break;
             case URI_CODE.AGENCIES:
                 // e.g. content://com.elliottsj.ftw.provider/agencies
-                try {
-                    Dao<Agency, Integer> agenciesDao = getHelper().getAgenciesDao();
-                    QueryBuilder<Agency, Integer> agenciesQb = agenciesDao.queryBuilder();
-                    if (agenciesQb.countOf() == 0) {
-                        // No agencies exist in the database; fetch from network and store in database
-                        for (Agency agency : mNextbusService.getAgencies())
-                            agenciesDao.create(agency);
-                    }
-                    cursor = OrmUtil.cursorFromQueryBuilder(agenciesQb, projection, selection, selectionArgs, sortOrder);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
                 break;
             case URI_CODE.AGENCIES_TAG:
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc
@@ -206,25 +264,12 @@ public class NextbusProvider extends ContentProvider {
                 if (pathSegments != null) {
                     String agencyTag = pathSegments.get(1);
                     try {
-                        Dao<Agency, Integer> agenciesDao = getHelper().getAgenciesDao();
-                        QueryBuilder<Agency, Integer> agenciesQb = agenciesDao.queryBuilder();
-                        agenciesQb.where().eq(Agency.FIELD_TAG, agencyTag);
-                        Dao<Route, Integer> routesDao = getHelper().getRoutesDao();
-                        QueryBuilder<Route, Integer> routesQb = routesDao.queryBuilder().join(agenciesQb);
-
-                        if (agenciesQb.countOf() == 0) {
-                            // Agency is not stored; fetch agencies from the network and store them
-                            fetchAgencies();
-                            fetchRoutes(agencyTag);
-                        } else if (routesQb.countOf() == 0) {
+                        if (getQbFactory().routesQb(agencyTag).countOf() == 0) {
                             // No routes found for agency; fetch them from the network and store in the database
                             fetchRoutes(agencyTag);
                         }
-                        agenciesQb.reset();
-                        agenciesQb.where().eq(Agency.FIELD_TAG, agencyTag);
-                        routesQb.reset();
-                        routesQb.join(agenciesQb);
-                        cursor = OrmUtil.cursorFromQueryBuilder(routesQb, projection, selection, selectionArgs, sortOrder);
+                        cursor = OrmUtil.cursorFromQueryBuilder(getQbFactory().routesQb(agencyTag),
+                                                                projection, selection, selectionArgs, sortOrder);
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
@@ -258,35 +303,12 @@ public class NextbusProvider extends ContentProvider {
                     String agencyTag = pathSegments.get(1);
                     String routeTag = pathSegments.get(3);
                     try {
-                        Dao<Agency, Integer> agenciesDao = getHelper().getAgenciesDao();
-                        QueryBuilder<Agency, Integer> agenciesQb = agenciesDao.queryBuilder();
-                        agenciesQb.where().eq(Agency.FIELD_TAG, agencyTag);
-                        QueryBuilder<Route, Integer> routesQb = getHelper().getRoutesDao().queryBuilder();
-                        routesQb.join(agenciesQb).where().eq(Route.FIELD_TAG, routeTag);
-                        QueryBuilder<Direction, Integer> directionsQb = getHelper().getDirectionsDao().queryBuilder();
-                        directionsQb.join(routesQb);
-
-                        if (agenciesQb.countOf() == 0) {
-                            // Agency is not stored; fetch agencies from the network and store them
-                            fetchAgencies();
-                            fetchRoutes(agencyTag);
-                            fetchDirections(agencyTag, routeTag);
-                        } else if (routesQb.countOf() == 0) {
-                            // No routes found for agency; fetch them from the network and store in the database
-                            fetchRoutes(agencyTag);
-                            fetchDirections(agencyTag, routeTag);
-                        } else if (directionsQb.countOf() == 0) {
+                        if (getQbFactory().directionsQb(agencyTag, routeTag).countOf() == 0) {
                             // No directions found for route; fetch them from the network and store them in the database
                             fetchDirections(agencyTag, routeTag);
                         }
-                        agenciesQb.reset();
-                        agenciesQb.where().eq(Agency.FIELD_TAG, agencyTag);
-                        routesQb.reset();
-                        routesQb.join(agenciesQb);
-                        routesQb.where().eq(Route.FIELD_TAG, routeTag);
-                        directionsQb.reset();
-                        directionsQb.join(routesQb);
-                        cursor = OrmUtil.cursorFromQueryBuilder(directionsQb, projection, selection, selectionArgs, sortOrder);
+                        cursor = OrmUtil.cursorFromQueryBuilder(getQbFactory().directionsQb(agencyTag, routeTag),
+                                                                projection, selection, selectionArgs, sortOrder);
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
@@ -302,47 +324,14 @@ public class NextbusProvider extends ContentProvider {
                     String agencyTag = pathSegments.get(1);
                     String routeTag = pathSegments.get(3);
                     String directionTag = pathSegments.get(5);
-
                     try {
-                        Dao<Agency, Integer> agenciesDao = getHelper().getAgenciesDao();
-                        QueryBuilder<Agency, Integer> agenciesQb = agenciesDao.queryBuilder();
-                        agenciesQb.where().eq(Agency.FIELD_TAG, agencyTag);
-                        Dao<Route, Integer> routesDao = getHelper().getRoutesDao();
-                        QueryBuilder<Route, Integer> routesQb = routesDao.queryBuilder();
-                        routesQb.join(agenciesQb).where().eq(Route.FIELD_TAG, routeTag);
-                        QueryBuilder<Direction, Integer> directionsQb = getHelper().getDirectionsDao().queryBuilder();
-                        directionsQb.join(routesQb).where().eq(Direction.FIELD_TAG, directionTag);
-                        QueryBuilder<DirectionStop, Integer> directionStopsQb = getHelper().getDirectionStopsDao().queryBuilder();
-                        directionStopsQb.join(directionsQb);
-                        QueryBuilder<Stop, Integer> stopsQb = getHelper().getStopsDao().queryBuilder();
-                        stopsQb.join(directionStopsQb);
-
-                        if (agenciesQb.countOf() == 0) {
-                            // Agency is not stored; fetch agencies from the network and store them
-                            fetchAgencies();
-                            fetchRoutes(agencyTag);
-                            fetchDirections(agencyTag, routeTag);
-                        } else if (routesQb.countOf() == 0) {
-                            // No routes found for agency; fetch them from the network and store in the database
-                            fetchRoutes(agencyTag);
-                            fetchDirections(agencyTag, routeTag);
-                        } else if (directionsQb.countOf() == 0 || stopsQb.countOf() == 0) {
+                        if (getQbFactory().directionsQb(agencyTag, routeTag).countOf() == 0 ||
+                            getQbFactory().stopsQb(agencyTag, routeTag, directionTag).countOf() == 0) {
                             // No directions or stops found for route; fetch them from the network and store them in the database
                             fetchDirections(agencyTag, routeTag);
                         }
-                        agenciesQb.reset();
-                        agenciesQb.where().eq(Agency.FIELD_TAG, agencyTag);
-                        routesQb.reset();
-                        routesQb.join(agenciesQb);
-                        routesQb.where().eq(Route.FIELD_TAG, routeTag);
-                        directionsQb.reset();
-                        directionsQb.join(routesQb);
-                        directionsQb.where().eq(Direction.FIELD_TAG, directionTag);
-                        directionStopsQb.reset();
-                        directionStopsQb.join(directionsQb);
-                        stopsQb.reset();
-                        stopsQb.join(directionStopsQb);
-                        cursor = OrmUtil.cursorFromQueryBuilder(stopsQb, projection, selection, selectionArgs, sortOrder);
+                        cursor = OrmUtil.cursorFromQueryBuilder(getQbFactory().stopsQb(agencyTag, routeTag, directionTag),
+                                                                projection, selection, selectionArgs, sortOrder);
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
@@ -415,6 +404,7 @@ public class NextbusProvider extends ContentProvider {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         List<String> pathSegments;
@@ -545,23 +535,47 @@ public class NextbusProvider extends ContentProvider {
         return mDbHelper;
     }
 
+    private NextbusQueryBuilderFactory getQbFactory() {
+        if (mQueryBuilderFactory == null)
+            mQueryBuilderFactory = new NextbusQueryBuilderFactory(getHelper());
+        return mQueryBuilderFactory;
+    }
+
     private void fetchAgencies() throws SQLException {
-        Dao<Agency, Integer> agenciesDao = getHelper().getAgenciesDao();
-        for (Agency agency : mNextbusService.getAgencies())
-            agenciesDao.createIfNotExists(agency);
+        final Dao<Agency, Integer> agenciesDao = getHelper().getAgenciesDao();
+        final List<Agency> networkAgencies = mNextbusService.getAgencies();
+        TransactionManager.callInTransaction(getHelper().getConnectionSource(), new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                for (Agency agency : networkAgencies)
+                    agenciesDao.createIfNotExists(agency);
+                return null;
+            }
+        });
     }
 
     private void fetchRoutes(String agencyTag) throws SQLException {
-        Dao<Agency, Integer> agenciesDao = getHelper().getAgenciesDao();
-        Dao<Route, Integer> routesDao = getHelper().getRoutesDao();
-        Agency agency = agenciesDao.queryBuilder()
+        // Fetch agencies if necessary
+        if (getQbFactory().agenciesQb(agencyTag).countOf() == 0) {
+            fetchAgencies();
+        }
+
+        final Dao<Route, Integer> routesDao = getHelper().getRoutesDao();
+        final Agency agency = getHelper().getAgenciesDao().queryBuilder()
                .where()
                .eq(Agency.FIELD_TAG, agencyTag)
                .queryForFirst();
-        for (Route route : mNextbusService.getRoutes(agency)) {
-            route.setAgency(agency);
-            routesDao.create(route);
-        }
+        final List<Route> networkRoutes = mNextbusService.getRoutes(agency);
+        TransactionManager.callInTransaction(getHelper().getConnectionSource(), new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                for (Route route : networkRoutes) {
+                    route.setAgency(agency);
+                    routesDao.create(route);
+                }
+                return null;
+            }
+        });
     }
 
     /**
@@ -572,35 +586,45 @@ public class NextbusProvider extends ContentProvider {
      * @throws SQLException
      */
     private void fetchDirections(String agencyTag, String routeTag) throws SQLException {
-        Dao<Agency, Integer> agenciesDao = getHelper().getAgenciesDao();
-        Dao<Route, Integer> routesDao = getHelper().getRoutesDao();
-        Dao<Direction, Integer> directionsDao = getHelper().getDirectionsDao();
-        Dao<Stop, Integer> stopsDao = getHelper().getStopsDao();
-        Dao<DirectionStop, Integer> directionStopsDao = getHelper().getDirectionStopsDao();
+        // Fetch routes if necessary
+        if (getQbFactory().routesQb(agencyTag, routeTag).countOf() == 0) {
+            fetchRoutes(agencyTag);
+        }
 
-        QueryBuilder<Agency, Integer> agenciesQb = agenciesDao.queryBuilder();
+        final Dao<Direction, Integer> directionsDao = getHelper().getDirectionsDao();
+        final Dao<Stop, Integer> stopsDao = getHelper().getStopsDao();
+        final Dao<DirectionStop, Integer> directionStopsDao = getHelper().getDirectionStopsDao();
+
+        QueryBuilder<Agency, Integer> agenciesQb = getHelper().getAgenciesDao().queryBuilder();
         agenciesQb.where().eq(Agency.FIELD_TAG, agencyTag);
-        Agency agency = agenciesQb.queryForFirst();
+        final Agency agency = agenciesQb.queryForFirst();
 
-        QueryBuilder<Route, Integer> routesQb = routesDao.queryBuilder();
+        QueryBuilder<Route, Integer> routesQb = getHelper().getRoutesDao().queryBuilder();
         routesQb.join(agenciesQb).where().eq(Route.FIELD_TAG, routeTag);
-        Route route = routesQb.queryForFirst();
+        final Route route = routesQb.queryForFirst();
         route.setAgency(agency);
 
         // Fetch directions from network
-        for (Direction direction : mNextbusService.getRouteConfiguration(route).getDirections()) {
-            // Store the direction in the database
-            direction.setRoute(route);
-            directionsDao.create(direction);
+        final List<Direction> networkDirections = mNextbusService.getRouteConfiguration(route).getDirections();
+        TransactionManager.callInTransaction(getHelper().getConnectionSource(), new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                for (Direction direction : networkDirections) {
+                    // Store the direction in the database
+                    direction.setRoute(route);
+                    directionsDao.create(direction);
 
-            // Store each stop in the database
-            for (Stop stop : direction.getStops()) {
-                stop.setAgency(agency);
-                stopsDao.createIfNotExists(stop);
-                DirectionStop directionStop = new DirectionStop(direction, stop);
-                directionStopsDao.create(directionStop);
+                    // Store each stop in the database
+                    for (Stop stop : direction.getStops()) {
+                        stop.setAgency(agency);
+                        stopsDao.createIfNotExists(stop);
+                        DirectionStop directionStop = new DirectionStop(direction, stop);
+                        directionStopsDao.create(directionStop);
+                    }
+                }
+                return null;
             }
-        }
+        });
     }
 
     /**
@@ -656,12 +680,111 @@ public class NextbusProvider extends ContentProvider {
     }
 
     /**
+     * Get a cursor loader which loads predictions for the specified stops
+     *
+     * @param context context for the cursor loader
+     * @param agencyTag unique agency tag
+     * @param stops a map of (route tag -> (direction tag -> stop tag))
+     * @return a cursor loader
+     */
+    public static Loader<Cursor> predictionsLoader(Context context, String agencyTag, Map<String, Map<String, List<String>>> stops) {
+        return new CursorLoader(context, predictionsUri(agencyTag),
+                                PREDICTIONS_CURSOR_COLUMNS,
+                                predictionsSelection(agencyTag, stops), null, null);
+    }
+
+    /**
      * Get a uri that can be used to insert a saved stop into NextbusProvider
      *
      * @return a uri
      */
     public static Uri insertSavedStopUri() {
         return Uri.withAppendedPath(CONTENT_URI, "saved-stops");
+    }
+
+    /**
+     * Get a uri that can be used to query {@link #query(android.net.Uri, String[], String, String[], String)}
+     * to get predictions for stops
+     *
+     * @return a uri
+     */
+    public static Uri predictionsUri(String agencyTag) {
+        Uri.Builder uriBuilder = new Uri.Builder();
+        uriBuilder.scheme("content");
+        uriBuilder.authority(AUTHORITY);
+        uriBuilder.appendEncodedPath(String.format("agencies/%s/predictions", agencyTag));
+        return uriBuilder.build();
+    }
+
+    /**
+     * Get a selection string that can be passed to {@link #query(android.net.Uri, String[], String, String[], String)}
+     * to select predictions for specific stops
+     *
+     * For example:
+     * {@code agency_tag = 'ttc' AND
+     *        route_tag IN('506', '54', '103') AND
+     *        direction_tag IN ('506_1_501', '506_1_506', '54_1_54A', '54_1_54', '103_0_103') AND
+     *        stop_tag IN ('5013', '14260_ar', '4697')}
+     *
+     * @param agencyTag unique agency tag
+     * @param stops a map of (route tag -> (direction tag -> stop tag))
+     * @return a selection string
+     */
+    public static String predictionsSelection(String agencyTag, Map<String, Map<String, List<String>>> stops) {
+        StringBuilder result = new StringBuilder();
+
+        // Append agency tag clause
+        result.append(String.format("%s = '%s'", PREDICTIONS.COLUMN_AGENCY_TAG, agencyTag));
+        result.append(" AND ");
+
+        // Append route tag clause
+        result.append(String.format("%s IN (", PREDICTIONS.COLUMN_ROUTE_TAG));
+        for (String routeTag : stops.keySet())
+            result.append(String.format("'%s'", routeTag));
+        result.append(String.format(") AND "));
+
+        // Append direction tag clause
+
+
+        for (Map.Entry<String, Map<String, List<String>>> entry : stops.entrySet()) {
+            String routeTag = entry.getKey();
+            for (Map.Entry<String, List<String>> directionStopTags : entry.getValue().entrySet()) {
+                for (String stopTag : directionStopTags.getValue()) {
+
+                    uriBuilder.appendQueryParameter("stop", String.format("%s|%s", routeTag, stopTag));
+                }
+            }
+        }
+
+
+        return result.toString();
+    }
+
+    /**
+     * Get a list of predictions for the specified stops
+     *
+     * @param agencyTag unique agency tag
+     * @param stopTags a map of (route tag -> (direction tag -> stop tag))
+     * @return a list of PredictionGroups
+     */
+    public List<PredictionGroup> loadPredictions(String agencyTag, Map<String, List<String>> stopTags) {
+        try {
+            Map<Route, List<Stop>> stops = new HashMap<Route, List<Stop>>(stopTags.size());
+            for (Map.Entry<String, List<String>> entry : stopTags.entrySet()) {
+                String routeTag = entry.getKey();
+
+                if (getQbFactory().agenciesQb(agencyTag).countOf() == 0) {
+                    fetchAgencies();
+                }
+                Route route = getQbFactory().routesQb(agencyTag, routeTag).queryForFirst();
+                List<Stop> routeStops = getQbFactory().stopsQb(agencyTag, routeTag, null).query();
+
+                stops.put(route, routeStops);
+            }
+            return mNextbusService.getPredictions(stops);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load Nextbus objects while fetching predictions", e);
+        }
     }
 
 }

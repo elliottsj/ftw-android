@@ -25,7 +25,7 @@ class NextbusSQLiteHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = NextbusSQLiteHelper.class.getName();
 
-    protected static final int DATABASE_VERSION = 2;
+    protected static final int DATABASE_VERSION = 3;
     protected static final String DATABASE_NAME = "nextbus.db";
 
     private ObjectCache objectCache = null;
