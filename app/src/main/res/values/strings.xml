@@ -15,16 +15,18 @@
     <string name="sample_prediction">2 minutes</string>
 
     <!-- Strings related to StopsActivity -->
+    <string name="refresh">Refresh</string>
     <string name="settings">Settings</string>
-    <string name="sync">Sync</string>
     <string name="about">About</string>
     <string name="nearby_stops">Nearby Stops</string>
     <string name="saved_stops">Saved Stops</string>
+    <string name="delete">Delete</string>
 
     <!-- Strings related to SavedStopsFragment -->
     <string name="add_stop">Add stop</string>
 
     <!-- Strings related to AddStopActivity -->
     <string name="title_activity_add_stop">Add stop</string>
+
 
 </resources>

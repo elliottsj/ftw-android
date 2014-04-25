@@ -2,6 +2,7 @@ package com.elliottsj.ftw.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -57,11 +58,19 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
         return view;
     }
 
-    //    @Override
-//    protected boolean onProcessTitle(TextView title, Card card, int accentColor) {
-//        // Ignore accentColor; just use the title's current color
-//        return super.onProcessTitle(title, card, title.getCurrentTextColor());
-//    }
+    public void removeCard(RouteCard card) {
+        int cardCount = getCount();
+        if (cardCount <= 2) {
+            clear();
+        } else {
+            int cardPosition = getPosition(card);
+            // If previous card is a header and the next card is a header (or there is no next card),
+            // then delete the header too
+            if (getItem(cardPosition - 1).isHeader() && (cardPosition == cardCount - 1 || getItem(cardPosition + 1).isHeader()))
+                remove(getItem(cardPosition - 1));
+            remove(card);
+        }
+    }
 
     @Override
     public void populateArray(Cursor cursor) {
@@ -85,22 +94,47 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
     }
     
     public void bindPredictions(List<PredictionGroup> predictions) {
-        Map<String, Map<String, Map<String, Map<String, Integer>>>> predictionsMap = PredictionsLoader.predictionsAsMap(predictions);
+        if (predictions == null) {
+            int cardCount = getCount();
+            for (int i = 0; i < cardCount; i++) {
+                CardBase card = getItem(i);
+                if (card instanceof RouteCard) {
+                    RouteCard routeCard = (RouteCard) card;
+                    routeCard.setPrediction(-1);
+                }
+            }
+        } else {
+            Map<String, Map<String, Map<String, Map<String, List<Integer>>>>> predictionsMap = PredictionsLoader.predictionsAsMap(predictions);
 
-        int cardCount = getCount();
-        for (int i = 0; i < cardCount; i++) {
-            CardBase card = getItem(i);
-            if (card instanceof RouteCard) {
-                RouteCard routeCard = (RouteCard) card;
-                String agencyTag = routeCard.getAgencyTag();
-                String routeTag = routeCard.getRouteTag();
-                String directionTag = routeCard.getDirectionTag();
-                String stopTag = routeCard.getStopTag();
+            int cardCount = getCount();
+            for (int i = 0; i < cardCount; i++) {
+                CardBase card = getItem(i);
+                if (card instanceof RouteCard) {
+                    RouteCard routeCard = (RouteCard) card;
+                    String agencyTag = routeCard.getAgencyTag();
+                    String routeTag = routeCard.getRouteTag();
+                    String directionTag = routeCard.getDirectionTag();
+                    String stopTag = routeCard.getStopTag();
 
-                int prediction = predictionsMap.get(agencyTag).get(routeTag).get(directionTag).get(stopTag);
-                routeCard.setPrediction(prediction);
+                    Map<String, Map<String, List<Integer>>> directionMap = predictionsMap.get(agencyTag).get(routeTag);
+                    if (directionMap != null) {
+                        Map<String, List<Integer>> stopMap = directionMap.get(directionTag);
+                        if (stopMap != null) {
+                            // Predictions are available for this direction
+                            List<Integer> stopPredictions = stopMap.get(stopTag);
+                            if (!stopPredictions.isEmpty()) {
+                                int prediction = stopPredictions.get(0);
+                                routeCard.setPrediction(prediction);
+                            }
+                        } else {
+                            // There are no predictions for this direction
+                            routeCard.setPrediction(-1);
+                        }
+                    }
+                }
             }
         }
+        notifyDataSetChanged();
     }
 
     /**

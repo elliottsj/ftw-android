@@ -17,6 +17,7 @@ import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardListView;
 import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.adapters.RouteCardCursorAdapter;
+import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.loaders.PredictionsLoader;
 import com.elliottsj.ftw.provider.NextbusProvider;
 
@@ -28,7 +29,7 @@ import java.util.Map;
 /**
  *
  */
-public class SavedStopsFragment extends Fragment implements CardListView.CardClickListener {
+public class SavedStopsFragment extends Fragment implements CardListView.CardClickListener, CardBase.CardMenuListener<CardBase> {
 
     @SuppressWarnings("UnusedDeclaration")
     private static final String TAG = SavedStopsFragment.class.getSimpleName();
@@ -62,6 +63,7 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
         super.onActivityCreated(savedInstanceState);
 
         mAdapter = new RouteCardCursorAdapter(getActivity());
+        mAdapter.setPopupMenu(R.menu.route_card_popup, this);
         mCardList.setAdapter(mAdapter);
 
         getLoaderManager().initLoader(STOPS_LOADER, null, new SavedStopsLoaderCallbacks());
@@ -80,6 +82,9 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
                 Intent intent = new Intent(getActivity(), AddStopActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.refresh:
+                loadPredictions();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -88,6 +93,34 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
     @Override
     public void onCardClick(int index, CardBase card, View view) {
 //        Toast.makeText(getActivity(), "Card clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public void onMenuItemClick(CardBase card, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete:
+                RouteCard routeCard = (RouteCard) card;
+                mAdapter.removeCard(routeCard);
+                NextbusProvider.deleteSavedStop(getActivity().getContentResolver(),
+                                                routeCard.getAgencyTag(),
+                                                routeCard.getRouteTag(),
+                                                routeCard.getDirectionTag(),
+                                                routeCard.getStopTag());
+                break;
+            default:
+                break;
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void loadPredictions() {
+        mAdapter.bindPredictions(null);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(PredictionsLoaderCallbacks.AGENCY_TAG, mAdapter.getAgencyTag());
+        bundle.putSerializable(PredictionsLoaderCallbacks.STOPS_MAP, mAdapter.getStopsMap());
+        getLoaderManager().restartLoader(PREDICTIONS_LOADER, bundle, new PredictionsLoaderCallbacks());
     }
 
     private class SavedStopsLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -108,10 +141,7 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
             mAdapter.swapCursor(cursor);
 
             // Start loading predictions
-            Bundle bundle = new Bundle();
-            bundle.putString(PredictionsLoaderCallbacks.AGENCY_TAG, mAdapter.getAgencyTag());
-            bundle.putSerializable(PredictionsLoaderCallbacks.STOPS_MAP, mAdapter.getStopsMap());
-            getLoaderManager().initLoader(PREDICTIONS_LOADER, bundle, new PredictionsLoaderCallbacks());
+            loadPredictions();
         }
 
         @Override

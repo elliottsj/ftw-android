@@ -32,6 +32,7 @@ public class RouteCard implements CardBase {
         this.routeTitle = formatRouteTitle(routeTitle);
         this.direction = formatDirectionTitle(direction);
         this.isHeader = isHeader;
+        this.prediction = -1;
     }
 
     public RouteCard(String agencyTag, String routeTag, String directionTag, String stopTag, String routeTitle, String direction) {
@@ -79,7 +80,7 @@ public class RouteCard implements CardBase {
     }
 
     public String getPredictionString() {
-        return String.format("%d minutes", prediction);
+        return prediction == -1 ? "" : String.format("%d minutes", prediction);
     }
 
     public void setPrediction(int prediction) {

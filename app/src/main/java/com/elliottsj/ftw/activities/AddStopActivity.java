@@ -211,7 +211,7 @@ public class AddStopActivity extends Activity {
                 values.put(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TAG, stopTag);
 
                 ContentResolver resolver = getActivity().getContentResolver();
-                resolver.insert(NextbusProvider.insertSavedStopUri(), values);
+                resolver.insert(NextbusProvider.savedStopUri(), values);
             }
 
             getActivity().finish();

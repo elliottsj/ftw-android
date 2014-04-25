@@ -36,11 +36,11 @@ dependencies {
     compile 'com.google.android.gms:play-services:4.3.23'
     compile 'com.android.support:support-v13:19.+'
     compile 'org.apache.commons:commons-lang3:3.2.+'
+    compile 'com.google.guava:guava:17.+'
     compile 'com.j256.ormlite:ormlite-core:4.47'
     compile 'com.j256.ormlite:ormlite-android:4.47'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
-    compile 'net.sf.nextbus.publicxmlfeed:nextbus-adapter:1.0.+'
+    compile 'net.sf.nextbus.publicxmlfeed:nextbus-adapter:1.0.3-SNAPSHOT'
     compile 'com.afollestad.cardsui:lib:1.0-SNAPSHOT@aar'
-    compile 'com.jakewharton:disklrucache:2.0.3-SNAPSHOT'
     compile 'com.getpebble.android.kit:library:1.0-SNAPSHOT@aar'
 }
