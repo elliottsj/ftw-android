@@ -115,8 +115,10 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
 
     @SuppressWarnings("ConstantConditions")
     private void loadPredictions() {
+        // Clear predictions in the adapter
         mAdapter.bindPredictions(null);
 
+        // Load predictions using a PredictionsLoader
         Bundle bundle = new Bundle();
         bundle.putString(PredictionsLoaderCallbacks.AGENCY_TAG, mAdapter.getAgencyTag());
         bundle.putSerializable(PredictionsLoaderCallbacks.STOPS_MAP, mAdapter.getStopsMap());
@@ -127,12 +129,7 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            switch (id) {
-                case STOPS_LOADER:
-                    return NextbusProvider.savedStopsLoader(getActivity());
-                default:
-                    return null;
-            }
+            return NextbusProvider.savedStopsLoader(getActivity());
         }
 
         @SuppressWarnings("ConstantConditions")

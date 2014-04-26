@@ -52,7 +52,7 @@ public class StopsActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.stops, menu);
+        getMenuInflater().inflate(R.menu.stops, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

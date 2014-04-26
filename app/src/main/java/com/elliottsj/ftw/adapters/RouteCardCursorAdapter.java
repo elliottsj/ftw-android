@@ -72,24 +72,19 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
         }
     }
 
+    /**
+     * Populate this adapter with route cards from a cursor obtained via
+     * {@link com.elliottsj.ftw.provider.NextbusProvider} with columns
+     * {@link com.elliottsj.ftw.provider.NextbusProvider#SAVED_STOPS_CURSOR_COLUMNS}
+     *
+     * @param cursor a cursor obtained from {@link com.elliottsj.ftw.provider.NextbusProvider}
+     */
     @Override
     public void populateArray(Cursor cursor) {
-        String stopTitle = null;
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            String newStopTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TITLE));
-            if (newStopTitle == null)
-                throw new RuntimeException("Stop title is null");
-            if (!newStopTitle.equals(stopTitle)) {
-                stopTitle = newStopTitle;
-                // Add a header card
-                add(new CardHeader(stopTitle));
-            }
-            // Add a route card
-            add(RouteCard.fromCursor(cursor));
-
-            // Advance the cursor
-            cursor.moveToNext();
+        for (Map.Entry<String, List<RouteCard>> entry : getStopRouteGroups(cursor).entrySet()) {
+            add(new CardHeader(entry.getKey()));
+            for (RouteCard routeCard : entry.getValue())
+                add(routeCard);
         }
     }
     
@@ -178,6 +173,29 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
         }
 
         return stopsMap;
+    }
+
+    /**
+     * Get a map of route cards, grouped by stop title
+     *
+     * @param cursor a cursor obtained from {@link com.elliottsj.ftw.provider.NextbusProvider} pointing at
+     *               a row with columns specified by {@link com.elliottsj.ftw.provider.NextbusProvider#SAVED_STOPS_CURSOR_COLUMNS}
+     * @return a map of (stop title -> (list of RouteCard))
+     */
+    private static Map<String, List<RouteCard>> getStopRouteGroups(Cursor cursor) {
+        Map<String, List<RouteCard>> result = new HashMap<String, List<RouteCard>>();
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            String stopTitle = cursor.getString(cursor.getColumnIndexOrThrow(NextbusProvider.SAVED_STOPS.COLUMN_STOP_TITLE));
+            if (!result.containsKey(stopTitle))
+                result.put(stopTitle, new ArrayList<RouteCard>());
+
+            result.get(stopTitle).add(RouteCard.fromCursor(cursor));
+            cursor.moveToNext();
+        }
+
+        return result;
     }
 
 }
