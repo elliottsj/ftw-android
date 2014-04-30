@@ -2,10 +2,8 @@ package com.elliottsj.ftw.loaders;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.util.Log;
 
-import com.elliottsj.ftw.provider.NextbusProvider;
 import com.elliottsj.ftw.provider.NextbusQueryHelper;
 
 import net.sf.nextbus.publicxmlfeed.domain.Prediction;
@@ -16,13 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PredictionsLoader extends AsyncTaskLoader<List<PredictionGroup>> {
+public class PredictionsLoader extends AsyncTaskLoader<Map<String, Map<String, List<Prediction>>>> {
 
     private static final String TAG = PredictionsLoader.class.getSimpleName();
 
     private String mAgencyTag;
     private Map<String, List<String>> mStops;
-    private List<PredictionGroup> mPredictions;
+    private Map<String, Map<String, List<Prediction>>> mPredictions;
 
     public PredictionsLoader(Context context, String agencyTag, Map<String, List<String>> stops) {
         super(context);
@@ -31,13 +29,14 @@ public class PredictionsLoader extends AsyncTaskLoader<List<PredictionGroup>> {
     }
 
     @Override
-    public List<PredictionGroup> loadInBackground() {
+    public Map<String, Map<String, List<Prediction>>> loadInBackground() {
         Log.i(TAG, "loadInBackground");
-        return new NextbusQueryHelper(getContext()).loadPredictions(mAgencyTag, mStops);
+        List<PredictionGroup> predictionGroups = new NextbusQueryHelper(getContext()).loadPredictions(mAgencyTag, mStops);
+        return predictionsAsMap(predictionGroups);
     }
 
     @Override
-    public void deliverResult(List<PredictionGroup> data) {
+    public void deliverResult(Map<String, Map<String, List<Prediction>>> data) {
         Log.i(TAG, "deliverResult");
         if (isReset()) {
             // The loader has been reset; ignore the result
@@ -84,53 +83,44 @@ public class PredictionsLoader extends AsyncTaskLoader<List<PredictionGroup>> {
     }
 
     @Override
-    public void onCanceled(List<PredictionGroup> data) {
+    public void onCanceled(Map<String, Map<String, List<Prediction>>> data) {
         Log.i(TAG, "onCanceled");
         // Attempt to cancel the current asynchronous load
         super.onCanceled(data);
     }
 
     /**
-     * Get a map of predictions, indexed by agency tag, route tag, direction tag, and stop tag
+     * Get a map of predictions, indexed by route tag and stop tag
      *
      * @param predictionGroups prediction groups as returned by the nextbus api
-     * @return a map of (agency tag -> (route tag -> (direction tag -> (stop tag -> (list of integer)))))
+     * @return a map of (route tag -> (stop tag -> (list of prediction)))
      */
-    public static Map<String, Map<String, Map<String, Map<String, List<Integer>>>>> predictionsAsMap(List<PredictionGroup> predictionGroups) {
+    public static Map<String, Map<String, List<Prediction>>> predictionsAsMap(List<PredictionGroup> predictionGroups) {
         // Each PredictionGroup represents a set of predictions for a particular route and stop, with possibly multiple directions
 
-        Map<String, Map<String, Map<String, Map<String, List<Integer>>>>> predictionMap = new HashMap<String, Map<String, Map<String, Map<String, List<Integer>>>>>();
+        Map<String, Map<String, List<Prediction>>> predictionMap = new HashMap<String, Map<String, List<Prediction>>>();
 
         for (PredictionGroup predictionGroup : predictionGroups) {
-            String agencyTag = predictionGroup.getRoute().getAgency().getTag();
             String routeTag = predictionGroup.getRoute().getTag();
             String stopTag = predictionGroup.getStop().getTag();
 
-            // Create map for agency if it doesn't exist
-            if (!predictionMap.containsKey(agencyTag))
-                predictionMap.put(agencyTag, new HashMap<String, Map<String, Map<String, List<Integer>>>>());
-
             // Create map for route if it doesn't exist
-            Map<String, Map<String, Map<String, List<Integer>>>> routeMap = predictionMap.get(agencyTag);
-            if (!routeMap.containsKey(routeTag))
-                routeMap.put(routeTag, new HashMap<String, Map<String, List<Integer>>>());
+            if (!predictionMap.containsKey(routeTag))
+                predictionMap.put(routeTag, new HashMap<String, List<Prediction>>());
 
             for (PredictionGroup.PredictionDirection predictionDirection : predictionGroup.getDirections()) {
                 for (Prediction prediction : predictionDirection.getPredictions()) {
-                    String directionTag = prediction.getDirectionTag();
-
-                    // Create map for direction if it doesn't exist
-                    Map<String, Map<String, List<Integer>>> directionMap = routeMap.get(routeTag);
-                    if (!directionMap.containsKey(directionTag))
-                        directionMap.put(directionTag, new HashMap<String, List<Integer>>());
+                    // Thanks to NextBus, the direction tag here doesn't always match a direction in routeConfig,
+                    // so we'll ignore it for now
+                    //String directionTag = prediction.getDirectionTag();
 
                     // Create a list of stop predictions if necessary
-                    Map<String, List<Integer>> stopMap = directionMap.get(directionTag);
+                    Map<String, List<Prediction>> stopMap = predictionMap.get(routeTag);
                     if (!stopMap.containsKey(stopTag))
-                        stopMap.put(stopTag, new ArrayList<Integer>());
+                        stopMap.put(stopTag, new ArrayList<Prediction>());
 
                     // Add the prediction to the list of predictions for this stop
-                    stopMap.get(stopTag).add(prediction.getMinutes());
+                    stopMap.get(stopTag).add(prediction);
                 }
 
             }

@@ -15,18 +15,16 @@ import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.loaders.PredictionsLoader;
 import com.elliottsj.ftw.provider.NextbusProvider;
 
+import net.sf.nextbus.publicxmlfeed.domain.Prediction;
 import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A {@link com.afollestad.cardsui.CardAdapter} that displays {@link com.elliottsj.ftw.cards.RouteCard} and
  * {@link com.afollestad.cardsui.CardHeader} objects in a {@link com.afollestad.cardsui.CardListView}.
  */
-public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
+public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> implements Iterable<RouteCard> {
 
     /**
      * Initializes a new CardAdapter instance.
@@ -68,6 +66,8 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
             // then delete the header too
             if (getItem(cardPosition - 1).isHeader() && (cardPosition == cardCount - 1 || getItem(cardPosition + 1).isHeader()))
                 remove(getItem(cardPosition - 1));
+
+            // Remove the card
             remove(card);
         }
     }
@@ -88,44 +88,28 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
         }
     }
     
-    public void bindPredictions(List<PredictionGroup> predictions) {
+    public void bindPredictions(Map<String, Map<String, List<Prediction>>> predictions) {
         if (predictions == null) {
-            int cardCount = getCount();
-            for (int i = 0; i < cardCount; i++) {
-                CardBase card = getItem(i);
-                if (card instanceof RouteCard) {
-                    RouteCard routeCard = (RouteCard) card;
-                    routeCard.setPrediction(-1);
-                }
+            // Reset the predictions in existing cards
+            for (RouteCard routeCard : this) {
+                routeCard.setPrediction(-1);
             }
         } else {
-            Map<String, Map<String, Map<String, Map<String, List<Integer>>>>> predictionsMap = PredictionsLoader.predictionsAsMap(predictions);
+            for (RouteCard routeCard : this) {
+                String routeTag = routeCard.getRouteTag();
+                String stopTag = routeCard.getStopTag();
 
-            int cardCount = getCount();
-            for (int i = 0; i < cardCount; i++) {
-                CardBase card = getItem(i);
-                if (card instanceof RouteCard) {
-                    RouteCard routeCard = (RouteCard) card;
-                    String agencyTag = routeCard.getAgencyTag();
-                    String routeTag = routeCard.getRouteTag();
-                    String directionTag = routeCard.getDirectionTag();
-                    String stopTag = routeCard.getStopTag();
-
-                    Map<String, Map<String, List<Integer>>> directionMap = predictionsMap.get(agencyTag).get(routeTag);
-                    if (directionMap != null) {
-                        Map<String, List<Integer>> stopMap = directionMap.get(directionTag);
-                        if (stopMap != null) {
-                            // Predictions are available for this direction
-                            List<Integer> stopPredictions = stopMap.get(stopTag);
-                            if (!stopPredictions.isEmpty()) {
-                                int prediction = stopPredictions.get(0);
-                                routeCard.setPrediction(prediction);
-                            }
-                        } else {
-                            // There are no predictions for this direction
-                            routeCard.setPrediction(-1);
-                        }
+                Map<String, List<Prediction>> stopMap = predictions.get(routeTag);
+                if (stopMap != null) {
+                    // Predictions are available for this route
+                    List<Prediction> stopPredictions = stopMap.get(stopTag);
+                    if (stopPredictions != null && !stopPredictions.isEmpty()) {
+                        Prediction firstPrediction = stopPredictions.get(0);
+                        routeCard.setPrediction(firstPrediction.getMinutes());
                     }
+                } else {
+                    // There are no predictions for this route
+                    routeCard.setPrediction(-1);
                 }
             }
         }
@@ -135,15 +119,10 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
     /**
      * @return the agency tag of a card in this adapter, or null if there is none
      */
+    @SuppressWarnings("LoopStatementThatDoesntLoop")
     public String getAgencyTag() {
-        int cardCount = getCount();
-        for (int i = 0; i < cardCount; i++) {
-            CardBase card = getItem(i);
-            if (card instanceof RouteCard) {
-                RouteCard routeCard = (RouteCard) card;
-                return routeCard.getAgencyTag();
-            }
-        }
+        for (RouteCard routeCard : this)
+            return routeCard.getAgencyTag();
 
         return null;
     }
@@ -196,6 +175,38 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> {
         }
 
         return result;
+    }
+
+    @Override
+    public Iterator<RouteCard> iterator() {
+        return new Iterator<RouteCard>() {
+
+            private int index = -1;
+
+            @Override
+            public boolean hasNext() {
+                return index < getCount() - 1;
+            }
+
+            @Override
+            public RouteCard next() {
+                CardBase card = getItem(index + 1);
+                if (card instanceof RouteCard) {
+                    // Next card is a RouteCard, so increment the index by 1 and return the card
+                    index++;
+                    return (RouteCard) card;
+                } else {
+                    // Next card is a header, so increment the index by 2 and return the card after the header
+                    index += 2;
+                    return (RouteCard) getItem(index);
+                }
+            }
+
+            @Override
+            public void remove() {
+                removeCard((RouteCard) getItem(index));
+            }
+        };
     }
 
 }

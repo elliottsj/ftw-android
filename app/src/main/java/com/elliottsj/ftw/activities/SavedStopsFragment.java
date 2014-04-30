@@ -21,6 +21,7 @@ import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.loaders.PredictionsLoader;
 import com.elliottsj.ftw.provider.NextbusProvider;
 
+import net.sf.nextbus.publicxmlfeed.domain.Prediction;
 import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
 
 import java.util.List;
@@ -115,14 +116,16 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
 
     @SuppressWarnings("ConstantConditions")
     private void loadPredictions() {
-        // Clear predictions in the adapter
-        mAdapter.bindPredictions(null);
+        if (mAdapter.getCount() > 0) {
+            // Clear predictions in the adapter
+            mAdapter.bindPredictions(null);
 
-        // Load predictions using a PredictionsLoader
-        Bundle bundle = new Bundle();
-        bundle.putString(PredictionsLoaderCallbacks.AGENCY_TAG, mAdapter.getAgencyTag());
-        bundle.putSerializable(PredictionsLoaderCallbacks.STOPS_MAP, mAdapter.getStopsMap());
-        getLoaderManager().restartLoader(PREDICTIONS_LOADER, bundle, new PredictionsLoaderCallbacks());
+            // Load predictions using a PredictionsLoader
+            Bundle bundle = new Bundle();
+            bundle.putString(PredictionsLoaderCallbacks.AGENCY_TAG, mAdapter.getAgencyTag());
+            bundle.putSerializable(PredictionsLoaderCallbacks.STOPS_MAP, mAdapter.getStopsMap());
+            getLoaderManager().restartLoader(PREDICTIONS_LOADER, bundle, new PredictionsLoaderCallbacks());
+        }
     }
 
     private class SavedStopsLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -148,14 +151,14 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
 
     }
 
-    private class PredictionsLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<PredictionGroup>> {
+    private class PredictionsLoaderCallbacks implements LoaderManager.LoaderCallbacks<Map<String, Map<String, List<Prediction>>>> {
 
         public static final String AGENCY_TAG = "agency_tag";
         public static final String STOPS_MAP = "stops_map";
 
         @SuppressWarnings("unchecked")
         @Override
-        public Loader<List<PredictionGroup>> onCreateLoader(int id, Bundle args) {
+        public Loader<Map<String, Map<String, List<Prediction>>>> onCreateLoader(int id, Bundle args) {
             String agencyTag = args.getString(AGENCY_TAG);
             Map<String, List<String>> stopsMap = (Map<String, List<String>>) args.getSerializable(STOPS_MAP);
 
@@ -163,12 +166,12 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
         }
 
         @Override
-        public void onLoadFinished(Loader<List<PredictionGroup>> loader, List<PredictionGroup> predictions) {
+        public void onLoadFinished(Loader<Map<String, Map<String, List<Prediction>>>> loader, Map<String, Map<String, List<Prediction>>> predictions) {
             mAdapter.bindPredictions(predictions);
         }
 
         @Override
-        public void onLoaderReset(Loader<List<PredictionGroup>> loader) {
+        public void onLoaderReset(Loader<Map<String, Map<String, List<Prediction>>>> loader) {
             mAdapter.bindPredictions(null);
         }
 
