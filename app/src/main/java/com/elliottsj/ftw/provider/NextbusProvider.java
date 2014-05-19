@@ -20,17 +20,13 @@ import com.j256.ormlite.stmt.QueryBuilder;
 
 import net.sf.nextbus.publicxmlfeed.domain.Agency;
 import net.sf.nextbus.publicxmlfeed.domain.Direction;
-import net.sf.nextbus.publicxmlfeed.domain.DirectionStop;
-import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
 import net.sf.nextbus.publicxmlfeed.domain.Route;
 import net.sf.nextbus.publicxmlfeed.domain.Stop;
 import net.sf.nextbus.publicxmlfeed.impl.NextbusService;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class NextbusProvider extends ContentProvider {
 
@@ -150,7 +146,7 @@ public class NextbusProvider extends ContentProvider {
         List<String> pathSegments;
         int match = sUriMatcher.match(uri);
         switch (match) {
-            case URI_CODE.SAVED_STOPS:
+            case URI_CODE.SAVED_STOPS: {
                 // e.g. content://com.elliottsj.ftw.provider/saved-stops
                 try {
                     MatrixCursor matrixCursor = new MatrixCursor(SAVED_STOPS_CURSOR_COLUMNS);
@@ -189,13 +185,16 @@ public class NextbusProvider extends ContentProvider {
                     throw new RuntimeException(e);
                 }
                 break;
-            case URI_CODE.AGENCIES:
+            }
+            case URI_CODE.AGENCIES: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies
                 break;
-            case URI_CODE.AGENCIES_TAG:
+            }
+            case URI_CODE.AGENCIES_TAG: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc
                 break;
-            case URI_CODE.AGENCIES_ROUTES:
+            }
+            case URI_CODE.AGENCIES_ROUTES: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes
                 pathSegments = uri.getPathSegments();
                 if (pathSegments != null) {
@@ -210,28 +209,36 @@ public class NextbusProvider extends ContentProvider {
                     }
                 }
                 break;
-            case URI_CODE.AGENCIES_ROUTES_TAG:
+            }
+            case URI_CODE.AGENCIES_ROUTES_TAG: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506
                 break;
-            case URI_CODE.AGENCIES_ROUTES_SERVICE_AREA:
+            }
+            case URI_CODE.AGENCIES_ROUTES_SERVICE_AREA: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/stops/5292
                 break;
-            case URI_CODE.AGENCIES_ROUTES_PATHS:
+            }
+            case URI_CODE.AGENCIES_ROUTES_PATHS: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/paths
                 break;
-            case URI_CODE.AGENCIES_ROUTES_PATHS_ID:
+            }
+            case URI_CODE.AGENCIES_ROUTES_PATHS_ID: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/paths/56
                 break;
-            case URI_CODE.AGENCIES_ROUTES_VEHICLE_LOCATIONS:
+            }
+            case URI_CODE.AGENCIES_ROUTES_VEHICLE_LOCATIONS: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/vehicle-locations
                 break;
-            case URI_CODE.AGENCIES_ROUTES_STOPS:
+            }
+            case URI_CODE.AGENCIES_ROUTES_STOPS: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/stops
                 break;
-            case URI_CODE.AGENCIES_ROUTES_STOPS_TAG:
+            }
+            case URI_CODE.AGENCIES_ROUTES_STOPS_TAG: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/stops/5292
                 break;
-            case URI_CODE.AGENCIES_ROUTES_DIRECTIONS:
+            }
+            case URI_CODE.AGENCIES_ROUTES_DIRECTIONS: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/directions
                 pathSegments = uri.getPathSegments();
                 if (pathSegments != null) {
@@ -247,10 +254,12 @@ public class NextbusProvider extends ContentProvider {
                     }
                 }
                 break;
-            case URI_CODE.AGENCIES_ROUTES_DIRECTIONS_TAG:
+            }
+            case URI_CODE.AGENCIES_ROUTES_DIRECTIONS_TAG: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/directions/506_1_506Sun
                 break;
-            case URI_CODE.AGENCIES_ROUTES_DIRECTIONS_STOPS:
+            }
+            case URI_CODE.AGENCIES_ROUTES_DIRECTIONS_STOPS: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/directions/506_1_506Sun/stops
                 pathSegments = uri.getPathSegments();
                 if (pathSegments != null) {
@@ -267,9 +276,11 @@ public class NextbusProvider extends ContentProvider {
                     }
                 }
                 break;
-            case URI_CODE.AGENCIES_ROUTES_DIRECTIONS_STOPS_TAG:
+            }
+            case URI_CODE.AGENCIES_ROUTES_DIRECTIONS_STOPS_TAG: {
                 // e.g. content://com.elliottsj.ftw.provider/agencies/ttc/routes/506/directions/506_1_506Sun/stops/5292
                 break;
+            }
             default:
                 Log.w(TAG, "No match found for uri: " + uri.toString());
                 break;

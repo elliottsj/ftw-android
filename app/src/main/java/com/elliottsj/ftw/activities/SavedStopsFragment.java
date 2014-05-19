@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * Displays saved stops in a card list view
  */
 public class SavedStopsFragment extends Fragment implements CardListView.CardClickListener, CardBase.CardMenuListener<CardBase> {
 

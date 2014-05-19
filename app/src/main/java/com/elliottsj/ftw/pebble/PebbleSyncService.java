@@ -142,10 +142,14 @@ public class PebbleSyncService extends Service {
                 stopsMap.put(routeTag, Arrays.asList(stopTag));
                 List<PredictionGroup> predictionGroups = new NextbusQueryHelper(PebbleSyncService.this).loadPredictions("ttc", stopsMap);
                 List<Prediction> predictions = PredictionsLoader.predictionsAsMap(predictionGroups).get(routeTag).get(stopTag);
-                List<Integer> predictionsMinutes = new ArrayList<Integer>(predictions.size());
-                for (Prediction prediction : predictions)
-                    predictionsMinutes.add(prediction.getMinutes());
-                return predictionsMinutes;
+                if (predictions != null) {
+                    List<Integer> predictionsMinutes = new ArrayList<Integer>(predictions.size());
+                    for (Prediction prediction : predictions)
+                        predictionsMinutes.add(prediction.getMinutes());
+                    return predictionsMinutes;
+                } else {
+                    return new ArrayList<Integer>(0);
+                }
             }
 
             @Override
