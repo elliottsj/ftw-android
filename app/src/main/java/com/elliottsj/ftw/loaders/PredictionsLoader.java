@@ -2,7 +2,6 @@ package com.elliottsj.ftw.loaders;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.util.Log;
 
 import com.elliottsj.ftw.provider.NextbusQueryHelper;
 
@@ -14,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @see <a href="http://www.androiddesignpatterns.com/2012/08/implementing-loaders.html">http://www.androiddesignpatterns.com/2012/08/implementing-loaders.html</a>
+ */
 public class PredictionsLoader extends AsyncTaskLoader<Map<String, Map<String, List<Prediction>>>> {
 
     private static final String TAG = PredictionsLoader.class.getSimpleName();
@@ -28,16 +30,20 @@ public class PredictionsLoader extends AsyncTaskLoader<Map<String, Map<String, L
         mStops = stops;
     }
 
+    /**
+     * Load predictions in the background
+     *
+     * @return a map of (route tag -> (stop tag -> (list of prediction)))
+     */
     @Override
     public Map<String, Map<String, List<Prediction>>> loadInBackground() {
-        Log.i(TAG, "loadInBackground");
+        // Load predictions from the network, first loading existing models from the cache
         List<PredictionGroup> predictionGroups = new NextbusQueryHelper(getContext()).loadPredictions(mAgencyTag, mStops);
         return predictionsAsMap(predictionGroups);
     }
 
     @Override
     public void deliverResult(Map<String, Map<String, List<Prediction>>> data) {
-        Log.i(TAG, "deliverResult");
         if (isReset()) {
             // The loader has been reset; ignore the result
             return;
@@ -54,8 +60,6 @@ public class PredictionsLoader extends AsyncTaskLoader<Map<String, Map<String, L
 
     @Override
     protected void onStartLoading() {
-        Log.i(TAG, "onStartLoading");
-
         if (mPredictions != null) {
             // Deliver previously-loaded data immediately
             deliverResult(mPredictions);
@@ -66,15 +70,12 @@ public class PredictionsLoader extends AsyncTaskLoader<Map<String, Map<String, L
 
     @Override
     protected void onStopLoading() {
-        Log.i(TAG, "onStopLoading");
         // The loader is in a stopped state, so we should attempt to cancel the current load (if there is one)
         cancelLoad();
     }
 
     @Override
     protected void onReset() {
-        Log.i(TAG, "onReset");
-
         // Ensure that the loader has been stopped
         onStopLoading();
 
@@ -84,7 +85,6 @@ public class PredictionsLoader extends AsyncTaskLoader<Map<String, Map<String, L
 
     @Override
     public void onCanceled(Map<String, Map<String, List<Prediction>>> data) {
-        Log.i(TAG, "onCanceled");
         // Attempt to cancel the current asynchronous load
         super.onCanceled(data);
     }

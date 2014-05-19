@@ -2,7 +2,6 @@ package com.elliottsj.ftw.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,13 +11,15 @@ import com.afollestad.cardsui.CardCursorAdapter;
 import com.afollestad.cardsui.CardHeader;
 import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.cards.RouteCard;
-import com.elliottsj.ftw.loaders.PredictionsLoader;
 import com.elliottsj.ftw.provider.NextbusProvider;
 
 import net.sf.nextbus.publicxmlfeed.domain.Prediction;
-import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link com.afollestad.cardsui.CardAdapter} that displays {@link com.elliottsj.ftw.cards.RouteCard} and

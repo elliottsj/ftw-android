@@ -18,13 +18,13 @@
 //
 //    public static final int MESSAGE_TYPE = 0;
 //
-//    public static final int MESSAGE_STOPS_METADATA = 0;
+//    public static final int MESSAGE_SECTION_DATA = 0;
 //    public static final int MESSAGE_STOP_DATA = 1;
 //
 //    public static final long APP_OPENED = 1;
 //    public static final long STOP_SELECTED = 2;
 //
-//    public static final int STOP_INDEX = 3;
+//    public static final int SECTION_STOP_INDEX = 3;
 //
 //    private static final UUID WATCHAPP_UUID = UUID.fromString("f407f26b-2d3c-4de5-b7fb-71c9eeaaf261");
 //
@@ -49,7 +49,7 @@
 //            onAppOpened(context);
 //        } else if (messageType == STOP_SELECTED) {
 //            PebbleKit.sendAckToPebble(context, transactionId);
-//            onStopSelected(context, data.getUnsignedInteger(STOP_INDEX));
+//            onStopSelected(context, data.getUnsignedInteger(SECTION_STOP_INDEX));
 //        } else {
 //            PebbleKit.sendNackToPebble(context, transactionId);
 //        }
@@ -58,7 +58,7 @@
 //    /**
 //     * Send saved stop data to watchapp. First dictionary sent:
 //     *
-//     * 0: message type: MESSAGE_STOPS_METADATA == 0
+//     * 0: message type: MESSAGE_SECTION_DATA == 0
 //     * 1: total number of stops n
 //     * 2: number of data fields per stop (currently 4)
 //     *
@@ -78,12 +78,12 @@
 //        for (Direction direction : mPreferencesDataSource.getStops())
 //            stopCount += direction.getStops().size();
 //
-//        first.addUint32(MESSAGE_TYPE, MESSAGE_STOPS_METADATA);
+//        first.addUint32(MESSAGE_TYPE, MESSAGE_SECTION_DATA);
 //        first.addUint32(1, stopCount);
 //        first.addUint32(2, 4);
 //
 //        // Send initial dictionary
-//        PebbleKit.sendDataToPebbleWithTransactionId(context, WATCHAPP_UUID, first, MESSAGE_STOPS_METADATA);
+//        PebbleKit.sendDataToPebbleWithTransactionId(context, WATCHAPP_UUID, first, MESSAGE_SECTION_DATA);
 //
 //        PebbleKit.registerReceivedAckHandler(context, new PebbleKit.PebbleAckReceiver(WATCHAPP_UUID) {
 //            /**
@@ -92,7 +92,7 @@
 //            @Override
 //            public void receiveAck(Context context, int transactionId) {
 //                switch (transactionId) {
-//                    case MESSAGE_STOPS_METADATA:
+//                    case MESSAGE_SECTION_DATA:
 //
 //                        break;
 //                    case MESSAGE_STOP_DATA:

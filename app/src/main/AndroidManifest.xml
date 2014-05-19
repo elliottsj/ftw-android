@@ -33,7 +33,7 @@
         <activity
             android:name="com.elliottsj.ftw.activities.StopsActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,6 +42,10 @@
         </activity>
         <activity
             android:name="com.elliottsj.ftw.activities.MapActivity"
+            android:parentActivityName="com.elliottsj.ftw.activities.StopsActivity" />
+        <activity
+            android:name="com.elliottsj.ftw.activities.AddStopActivity"
+            android:label="@string/title_activity_add_stop"
             android:parentActivityName="com.elliottsj.ftw.activities.StopsActivity" />
 
         <provider
@@ -73,10 +77,18 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-        <activity
-            android:name="com.elliottsj.ftw.activities.AddStopActivity"
-            android:label="@string/title_activity_add_stop"
-            android:parentActivityName=".activities.StopsActivity" />
+        <receiver
+            android:name=".pebble.PebbleDataReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.getpebble.action.app.RECEIVE" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".pebble.PebbleSyncService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

@@ -1,9 +1,9 @@
 package com.elliottsj.ftw.provider;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.elliottsj.ftw.utilities.AndroidNextbusService;
-import com.google.common.collect.Collections2;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.misc.TransactionManager;
@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class NextbusQueryHelper {
+
+    private static final String TAG = NextbusQueryHelper.class.getSimpleName();
 
     private Context mContext;
     private NextbusService mNextbusService;
@@ -150,6 +152,7 @@ public class NextbusQueryHelper {
      * @return a list of PredictionGroups
      */
     public List<PredictionGroup> loadPredictions(String agencyTag, Map<String, List<String>> stopTagMap) {
+        Log.i(TAG, "Loading predictions; stopTagMap: " + stopTagMap.toString());
         try {
             Map<Route, List<Stop>> stops = new HashMap<Route, List<Stop>>(stopTagMap.size());
             for (Map.Entry<String, List<String>> entry : stopTagMap.entrySet()) {

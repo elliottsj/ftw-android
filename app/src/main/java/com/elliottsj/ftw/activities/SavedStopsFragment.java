@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardListView;
@@ -20,9 +21,9 @@ import com.elliottsj.ftw.adapters.RouteCardCursorAdapter;
 import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.loaders.PredictionsLoader;
 import com.elliottsj.ftw.provider.NextbusProvider;
+import com.elliottsj.ftw.utilities.Util;
 
 import net.sf.nextbus.publicxmlfeed.domain.Prediction;
-import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
 
 import java.util.List;
 import java.util.Map;
@@ -117,6 +118,11 @@ public class SavedStopsFragment extends Fragment implements CardListView.CardCli
     @SuppressWarnings("ConstantConditions")
     private void loadPredictions() {
         if (mAdapter.getCount() > 0) {
+            if (!Util.isNetworkConnected(getActivity())) {
+                Toast.makeText(getActivity(), "Not connected to the internet", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             // Clear predictions in the adapter
             mAdapter.bindPredictions(null);
 
