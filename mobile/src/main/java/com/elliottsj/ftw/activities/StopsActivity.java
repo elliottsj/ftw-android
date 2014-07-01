@@ -6,14 +6,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.provider.NextbusProvider;
 import com.elliottsj.ftw.sync.SyncAdapter;
@@ -36,11 +36,11 @@ public class StopsActivity extends Activity {
         Log.i(TAG, "onCreate called");
 
         // Initialize tab navigation
-//        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-//        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-//        StopsTabsAdapter stopsTabsAdapter = new StopsTabsAdapter(getFragmentManager());
-//        viewPager.setAdapter(stopsTabsAdapter);
-//        tabs.setViewPager(viewPager);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        StopsTabsAdapter stopsTabsAdapter = new StopsTabsAdapter(getFragmentManager());
+        viewPager.setAdapter(stopsTabsAdapter);
+        tabs.setViewPager(viewPager);
 
         // Account needed to request syncs
 //        mAccount = getSyncAccount(this);
