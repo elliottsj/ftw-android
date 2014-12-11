@@ -12,12 +12,10 @@
 *.class
 
 # generated files
-bin/
-gen/
-build/
+/build/
 
 # Local configuration file (sdk path, etc)
-local.properties
+/local.properties
 
 # Eclipse project files
 .classpath
@@ -31,4 +29,3 @@ proguard/
 *.ipr
 *.iws
 .idea/
-Thumbs.db
