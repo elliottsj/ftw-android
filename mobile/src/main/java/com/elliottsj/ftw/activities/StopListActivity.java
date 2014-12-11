@@ -18,9 +18,9 @@ import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.provider.NextbusProvider;
 import com.elliottsj.ftw.sync.SyncAdapter;
 
-public class StopsActivity extends Activity {
+public class StopListActivity extends Activity {
 
-    private static final String TAG = StopsActivity.class.getSimpleName();
+    private static final String TAG = StopListActivity.class.getSimpleName();
 
     public static final String AUTHORITY = NextbusProvider.AUTHORITY;
     public static final String ACCOUNT_TYPE = SyncAdapter.ACCOUNT_TYPE;
@@ -125,10 +125,10 @@ public class StopsActivity extends Activity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new NearbyStopsFragment();
+                    return new NearbyStopListFragment();
                 case 1:
                 default:
-                    return new SavedStopsFragment();
+                    return new SavedStopListFragment();
             }
         }
     }

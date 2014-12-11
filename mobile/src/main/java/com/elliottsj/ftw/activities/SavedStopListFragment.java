@@ -31,10 +31,10 @@ import java.util.Map;
 /**
  * Displays saved stops in a card list view
  */
-public class SavedStopsFragment extends Fragment implements CardListView.CardClickListener, CardBase.CardMenuListener<CardBase> {
+public class SavedStopListFragment extends Fragment implements CardListView.CardClickListener, CardBase.CardMenuListener<CardBase> {
 
     @SuppressWarnings("UnusedDeclaration")
-    private static final String TAG = SavedStopsFragment.class.getSimpleName();
+    private static final String TAG = SavedStopListFragment.class.getSimpleName();
 
     private static final int STOPS_LOADER = 0;
     private static final int PREDICTIONS_LOADER = 1;

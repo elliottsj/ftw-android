@@ -33,11 +33,11 @@ import com.google.android.gms.location.LocationClient;
 /**
  * Displays nearby stops along with vehicle predictions.
  */
-public class NearbyStopsFragment extends Fragment implements GooglePlayServicesClient.ConnectionCallbacks,
+public class NearbyStopListFragment extends Fragment implements GooglePlayServicesClient.ConnectionCallbacks,
                                                              GooglePlayServicesClient.OnConnectionFailedListener,
                                                              LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = NearbyStopsFragment.class.getSimpleName();
+    private static final String TAG = NearbyStopListFragment.class.getSimpleName();
     private static final int NEXTBUS_LOADER = 0;
 
     /*
