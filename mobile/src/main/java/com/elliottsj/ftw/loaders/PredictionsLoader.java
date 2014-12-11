@@ -42,6 +42,11 @@ public class PredictionsLoader extends AsyncTaskLoader<Map<String, Map<String, L
         return predictionsAsMap(predictionGroups);
     }
 
+    /**
+     * When there is new data to be delivered to the client, this is called on the main thread
+     *
+     * @param data newly-loaded data to be delivered
+     */
     @Override
     public void deliverResult(Map<String, Map<String, List<Prediction>>> data) {
         if (isReset()) {
@@ -58,6 +63,9 @@ public class PredictionsLoader extends AsyncTaskLoader<Map<String, Map<String, L
         }
     }
 
+    /**
+     * Handles a request to start the loader
+     */
     @Override
     protected void onStartLoading() {
         if (mPredictions != null) {

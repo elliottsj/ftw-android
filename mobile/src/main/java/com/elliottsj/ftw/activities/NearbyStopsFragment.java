@@ -11,6 +11,8 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.afollestad.cardsui.CardBase;
 import com.afollestad.cardsui.CardHeader;
 import com.afollestad.cardsui.CardListView;
 import com.elliottsj.ftw.R;
+import com.elliottsj.ftw.adapters.RecyclerCardAdapter;
 import com.elliottsj.ftw.cards.RouteCard;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -30,8 +33,7 @@ import com.google.android.gms.location.LocationClient;
 /**
  * Displays nearby stops along with vehicle predictions.
  */
-public class NearbyStopsFragment extends Fragment implements CardListView.CardClickListener,
-                                                             GooglePlayServicesClient.ConnectionCallbacks,
+public class NearbyStopsFragment extends Fragment implements GooglePlayServicesClient.ConnectionCallbacks,
                                                              GooglePlayServicesClient.OnConnectionFailedListener,
                                                              LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -44,7 +46,9 @@ public class NearbyStopsFragment extends Fragment implements CardListView.CardCl
      */
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
-    private CardListView mCardList;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     private LocationClient mLocationClient;
 
@@ -53,10 +57,15 @@ public class NearbyStopsFragment extends Fragment implements CardListView.CardCl
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_stops, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_nearby_stops, container, false);
 
-        //noinspection ConstantConditions
-        mCardList = (CardListView) rootView.findViewById(R.id.card_list);
+        mRecyclerView = (RecyclerView) rootView.findViewById(android.R.id.list);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new RecyclerCardAdapter();
 
         CardAdapter<CardBase> cardAdapter = new CardAdapter<CardBase>(getActivity());
 

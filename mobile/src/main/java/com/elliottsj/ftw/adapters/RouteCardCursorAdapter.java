@@ -35,6 +35,7 @@ public class RouteCardCursorAdapter extends CardCursorAdapter<CardBase> implemen
     public RouteCardCursorAdapter(Context context) {
         super(context);
         registerLayout(R.layout.route_card);
+
     }
 
     @Override
