@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--suppress AndroidLintUselessParent -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              style="@style/card_outer">
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
 
-    <RelativeLayout android:id="@+id/inner_frame"
-                    style="@style/card_inner">
+    <RelativeLayout
+        android:id="@+id/inner_frame"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
 
-        <RelativeLayout android:id="@+id/titleFrame"
-                        style="@style/card_title_frame">
+        <RelativeLayout
+            android:id="@+id/titleFrame"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
 
             <TextView android:id="@android:id/title"
                       android:text="@string/sample_route"
                       style="@style/route_card_title"/>
 
-            <!--suppress AndroidLintContentDescription -->
-            <ImageButton android:id="@android:id/button1"
-                         style="@style/card_popup_anchor"/>
+            <ImageButton
+                android:id="@android:id/button1"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
 
         </RelativeLayout>
 
@@ -45,8 +51,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
-    <!--suppress AndroidLintContentDescription -->
-    <ImageView style="@style/card_shadow"/>
 
 </LinearLayout>

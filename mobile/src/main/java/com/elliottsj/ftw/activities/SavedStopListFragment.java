@@ -12,16 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.afollestad.cardsui.CardBase;
-import com.afollestad.cardsui.CardListView;
 import com.elliottsj.ftw.R;
-import com.elliottsj.ftw.adapters.RouteCardCursorAdapter;
-import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.loaders.PredictionsLoader;
 import com.elliottsj.ftw.provider.NextbusProvider;
-import com.elliottsj.ftw.utilities.Util;
 
 import net.sf.nextbus.publicxmlfeed.domain.Prediction;
 
@@ -31,16 +25,12 @@ import java.util.Map;
 /**
  * Displays saved stops in a card list view
  */
-public class SavedStopListFragment extends Fragment implements CardListView.CardClickListener, CardBase.CardMenuListener<CardBase> {
+public class SavedStopListFragment extends Fragment {
 
-    @SuppressWarnings("UnusedDeclaration")
     private static final String TAG = SavedStopListFragment.class.getSimpleName();
 
     private static final int STOPS_LOADER = 0;
     private static final int PREDICTIONS_LOADER = 1;
-
-    private RouteCardCursorAdapter mAdapter;
-    private CardListView mCardList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,9 +43,6 @@ public class SavedStopListFragment extends Fragment implements CardListView.Card
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stops, container, false);
 
-        mCardList = (CardListView) rootView.findViewById(R.id.card_list);
-        mCardList.setOnCardClickListener(this);
-
         return rootView;
     }
 
@@ -63,10 +50,6 @@ public class SavedStopListFragment extends Fragment implements CardListView.Card
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        mAdapter = new RouteCardCursorAdapter(getActivity());
-        mAdapter.setPopupMenu(R.menu.route_card_popup, this);
-        mCardList.setAdapter(mAdapter);
 
         getLoaderManager().initLoader(STOPS_LOADER, null, new SavedStopsLoaderCallbacks());
     }
@@ -92,46 +75,22 @@ public class SavedStopListFragment extends Fragment implements CardListView.Card
         }
     }
 
-    @Override
-    public void onCardClick(int index, CardBase card, View view) {
-//        Toast.makeText(getActivity(), "Card clicked", Toast.LENGTH_SHORT).show();
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Override
-    public void onMenuItemClick(CardBase card, MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.delete:
-                RouteCard routeCard = (RouteCard) card;
-                mAdapter.removeCard(routeCard);
-                NextbusProvider.deleteSavedStop(getActivity().getContentResolver(),
-                                                routeCard.getAgencyTag(),
-                                                routeCard.getRouteTag(),
-                                                routeCard.getDirectionTag(),
-                                                routeCard.getStopTag());
-                break;
-            default:
-                break;
-        }
-    }
-
-    @SuppressWarnings("ConstantConditions")
     private void loadPredictions() {
-        if (mAdapter.getCount() > 0) {
-            if (!Util.isNetworkConnected(getActivity())) {
-                Toast.makeText(getActivity(), "Not connected to the internet", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Clear predictions in the adapter
-            mAdapter.bindPredictions(null);
-
-            // Load predictions using a PredictionsLoader
-            Bundle bundle = new Bundle();
-            bundle.putString(PredictionsLoaderCallbacks.AGENCY_TAG, mAdapter.getAgencyTag());
-            bundle.putSerializable(PredictionsLoaderCallbacks.STOPS_MAP, mAdapter.getStopsMap());
-            getLoaderManager().restartLoader(PREDICTIONS_LOADER, bundle, new PredictionsLoaderCallbacks());
-        }
+//        if (mAdapter.getCount() > 0) {
+//            if (!Util.isNetworkConnected(getActivity())) {
+//                Toast.makeText(getActivity(), "Not connected to the internet", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//
+//            // Clear predictions in the adapter
+//            mAdapter.bindPredictions(null);
+//
+//            // Load predictions using a PredictionsLoader
+//            Bundle bundle = new Bundle();
+//            bundle.putString(PredictionsLoaderCallbacks.AGENCY_TAG, mAdapter.getAgencyTag());
+//            bundle.putSerializable(PredictionsLoaderCallbacks.STOPS_MAP, mAdapter.getStopsMap());
+//            getLoaderManager().restartLoader(PREDICTIONS_LOADER, bundle, new PredictionsLoaderCallbacks());
+//        }
     }
 
     private class SavedStopsLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -144,7 +103,7 @@ public class SavedStopListFragment extends Fragment implements CardListView.Card
         @SuppressWarnings("ConstantConditions")
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            mAdapter.swapCursor(cursor);
+//            mAdapter.swapCursor(cursor);
 
             // Start loading predictions
             loadPredictions();
@@ -152,7 +111,7 @@ public class SavedStopListFragment extends Fragment implements CardListView.Card
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-            mAdapter.swapCursor(null);
+//            mAdapter.swapCursor(null);
         }
 
     }
@@ -173,12 +132,12 @@ public class SavedStopListFragment extends Fragment implements CardListView.Card
 
         @Override
         public void onLoadFinished(Loader<Map<String, Map<String, List<Prediction>>>> loader, Map<String, Map<String, List<Prediction>>> predictions) {
-            mAdapter.bindPredictions(predictions);
+//            mAdapter.bindPredictions(predictions);
         }
 
         @Override
         public void onLoaderReset(Loader<Map<String, Map<String, List<Prediction>>>> loader) {
-            mAdapter.bindPredictions(null);
+//            mAdapter.bindPredictions(null);
         }
 
     }

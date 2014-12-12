@@ -16,12 +16,12 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="route_card_title" parent="card_title">
+    <style name="route_card_title">
         <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:textSize">24sp</item>
     </style>
 
-    <style name="route_card_content" parent="card_content">
+    <style name="route_card_content">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>

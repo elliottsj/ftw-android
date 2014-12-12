@@ -18,12 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.afollestad.cardsui.CardAdapter;
-import com.afollestad.cardsui.CardBase;
-import com.afollestad.cardsui.CardHeader;
-import com.afollestad.cardsui.CardListView;
 import com.elliottsj.ftw.R;
-import com.elliottsj.ftw.adapters.RecyclerCardAdapter;
 import com.elliottsj.ftw.cards.RouteCard;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;

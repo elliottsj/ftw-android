@@ -1,8 +1,17 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.champeau.gradle.groovy-android'
 
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.1"
+
+    dexOptions {
+        javaMaxHeapSize "2G"
+    }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+    }
 
     defaultConfig {
         applicationId "com.elliottsj.ftw"
@@ -10,7 +19,9 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -19,9 +30,18 @@ android {
     }
 }
 
+//androidGroovy {
+//    options {
+//        sourceCompatibility = '1.7'
+//        targetCompatibility = '1.7'
+//    }
+//}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     wearApp project(':wear')
+    compile 'org.codehaus.groovy:groovy:2.4.0-beta-4:grooid'
+    compile 'com.android.support:multidex:1.0.0'
     compile 'com.android.support:support-v4:21.0.2'
     compile 'com.android.support:appcompat-v7:21.0.2'
     compile 'com.android.support:support-v13:20.0.0'
@@ -32,9 +52,6 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'net.sf.nextbus.publicxmlfeed:nextbus-adapter:latest.integration'
+    compile 'com.elliottsj:nextbusapi:+'
     compile 'com.getpebble:pebblekit:2.6.0'
-    compile 'org.roboguice:roboguice:3.+'
-
-    provided 'org.roboguice:roboblender:3.+'
 }
