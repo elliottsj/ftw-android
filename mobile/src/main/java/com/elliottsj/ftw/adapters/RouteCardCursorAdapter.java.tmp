@@ -13,7 +13,7 @@ import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.cards.RouteCard;
 import com.elliottsj.ftw.provider.NextbusProvider;
 
-import net.sf.nextbus.publicxmlfeed.domain.Prediction;
+import com.elliottsj.nextbus.domain.Prediction;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/action_bar_red</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_ab_back_holo_dark_am</item>
-        <item name="android:actionOverflowButtonStyle">@android:style/Widget.Holo.ActionButton.Overflow</item>
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+        <!-- Main theme colors -->
+        <!-- App branding color for the app bar -->
+        <item name="android:colorPrimary">@color/primary</item>
+        <!-- Darker variant for the status bar and contextual app bars -->
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <!-- Theme UI controls like checkboxes and text fields -->
+        <item name="android:colorAccent">@color/accent</item>
+        <!-- Primary text color -->
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <!-- Secondary text color -->
+        <item name="android:textColorSecondary">@color/secondary_text</item>
+
+        <!-- Apply action bar style -->
+        <item name="android:actionBarStyle">@style/ActionBar</item>
     </style>
 
-    <style name="action_bar_red" parent="android:Widget.Holo.Light.ActionBar">
-        <item name="android:titleTextStyle">@style/action_bar_title_text</item>
-        <item name="android:background">@color/ttc_red</item>
+    <!-- Style for the action bar -->
+    <style name="ActionBar" parent="android:Widget.Material.Light.ActionBar.Solid">
+        <!-- Remove shadow below the action bar via elevation -->
+        <item name="android:elevation">0dp</item>
     </style>
 
-    <style name="action_bar_title_text" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="route_card_title">
-        <item name="android:fontFamily">sans-serif-condensed</item>
-        <item name="android:textSize">24sp</item>
-    </style>
-
-    <style name="route_card_content">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+    <!-- Style for a PagerSlidingTabStrip below the action bar -->
+    <style name="PagerSlidingTabStrip">
+        <!-- Set background color to be the same as the action bar -->
+        <item name="android:background">?android:colorPrimary</item>
+        <!-- Invert the text color just like the action bar -->
+        <item name="android:textColorPrimary">?android:textColorPrimaryInverse</item>
+        <!-- Give the tab strip a shadow via elevation -->
+        <item name="android:elevation">4dp</item>
     </style>
 
 </resources>

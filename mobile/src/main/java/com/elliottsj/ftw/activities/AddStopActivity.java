@@ -18,9 +18,9 @@ import android.widget.SimpleCursorAdapter;
 import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.provider.NextbusProvider;
 
-import net.sf.nextbus.publicxmlfeed.domain.Direction;
-import net.sf.nextbus.publicxmlfeed.domain.Route;
-import net.sf.nextbus.publicxmlfeed.domain.Stop;
+import com.elliottsj.nextbus.domain.Direction;
+import com.elliottsj.nextbus.domain.Route;
+import com.elliottsj.nextbus.domain.Stop;
 
 public class AddStopActivity extends Activity {
 

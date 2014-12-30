@@ -3,8 +3,8 @@ package com.elliottsj.ftw.provider.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import net.sf.nextbus.publicxmlfeed.domain.Direction;
-import net.sf.nextbus.publicxmlfeed.domain.Stop;
+import com.elliottsj.nextbus.domain.Direction;
+import com.elliottsj.nextbus.domain.Stop;
 
 @DatabaseTable(tableName = "saved_stops")
 public class SavedStop {

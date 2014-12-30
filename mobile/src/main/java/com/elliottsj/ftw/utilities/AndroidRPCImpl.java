@@ -1,11 +1,11 @@
 package com.elliottsj.ftw.utilities;
 
 import android.util.Log;
-import net.sf.nextbus.publicxmlfeed.impl.RPCImpl;
-import net.sf.nextbus.publicxmlfeed.impl.RPCRequest;
-import net.sf.nextbus.publicxmlfeed.service.ServiceConfigurationException;
-import net.sf.nextbus.publicxmlfeed.service.ServiceException;
-import net.sf.nextbus.publicxmlfeed.service.TransientServiceException;
+import com.elliottsj.nextbus.impl.RPCImpl;
+import com.elliottsj.nextbus.impl.RPCRequest;
+import com.elliottsj.nextbus.service.ServiceConfigurationException;
+import com.elliottsj.nextbus.service.ServiceException;
+import com.elliottsj.nextbus.service.TransientServiceException;
 
 import java.io.*;
 import java.net.HttpURLConnection;

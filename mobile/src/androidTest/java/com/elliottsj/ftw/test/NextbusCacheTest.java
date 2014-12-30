@@ -8,16 +8,15 @@ import android.test.RenamingDelegatingContext;
 import android.test.mock.MockContentResolver;
 import android.test.mock.MockContext;
 
-import com.elliottsj.ftw.nextbus.data_store.NextbusDataStore;
 import com.elliottsj.ftw.provider.NextbusProvider;
 
-import net.sf.nextbus.publicxmlfeed.domain.Agency;
-import net.sf.nextbus.publicxmlfeed.domain.Direction;
-import net.sf.nextbus.publicxmlfeed.domain.Geolocation;
-import net.sf.nextbus.publicxmlfeed.domain.Path;
-import net.sf.nextbus.publicxmlfeed.domain.Route;
-import net.sf.nextbus.publicxmlfeed.domain.RouteConfiguration;
-import net.sf.nextbus.publicxmlfeed.domain.Stop;
+import com.elliottsj.nextbus.domain.Agency;
+import com.elliottsj.nextbus.domain.Direction;
+import com.elliottsj.nextbus.domain.Geolocation;
+import com.elliottsj.nextbus.domain.Path;
+import com.elliottsj.nextbus.domain.Route;
+import com.elliottsj.nextbus.domain.RouteConfiguration;
+import com.elliottsj.nextbus.domain.Stop;
 
 import java.util.ArrayList;
 import java.util.HashSet;

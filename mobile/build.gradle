@@ -16,18 +16,13 @@ android {
 
     defaultConfig {
         applicationId "com.elliottsj.ftw"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
 
     buildTypes {
-//        debug {
-//            minifyEnabled true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//        }
-
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -41,17 +36,20 @@ dependencies {
     compile 'org.scala-lang:scala-library:2.11.4'
     compile 'org.scaloid:scaloid_2.11:3.6.1-10'
     compile 'com.android.support:multidex:1.0.0'
-    compile 'com.android.support:support-v4:21.0.2'
-    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v13:20.0.0'
     compile 'com.android.support:cardview-v7:21.0.2'
     compile 'com.android.support:recyclerview-v7:21.0.2'
-    compile 'com.google.android.gms:play-services:6.1.71'
+    compile 'com.google.android.gms:play-services:6.5.87'
     compile 'org.apache.commons:commons-lang3:3.2.1'
     compile 'com.google.guava:guava:18.0'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.jpardogo.materialtabstrip:library:1.0.7@aar'
+    compile 'com.mcxiaoke.volley:library:1.0.9@aar'
     compile 'com.elliottsj:nextbusapi:+'
+    compile 'com.elliottsj:gtfs-protobuf-scala_2.11:+'
     compile 'com.getpebble:pebblekit:2.6.0'
 }
 

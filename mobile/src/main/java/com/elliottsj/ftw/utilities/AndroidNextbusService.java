@@ -1,6 +1,6 @@
 package com.elliottsj.ftw.utilities;
 
-import net.sf.nextbus.publicxmlfeed.impl.NextbusService;
+import com.elliottsj.nextbus.impl.NextbusService;
 
 /**
  *

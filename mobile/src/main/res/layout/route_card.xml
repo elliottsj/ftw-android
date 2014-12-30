@@ -15,8 +15,9 @@
             android:layout_width="match_parent">
 
             <TextView android:id="@android:id/title"
-                      android:text="@string/sample_route"
-                      style="@style/route_card_title"/>
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                      android:text="@string/sample_route"/>
 
             <ImageButton
                 android:id="@android:id/button1"
@@ -26,7 +27,8 @@
         </RelativeLayout>
 
         <RelativeLayout android:layout_below="@id/titleFrame"
-                        style="@style/route_card_content">
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
 
             <TextView
                 android:id="@+id/prediction"

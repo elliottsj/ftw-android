@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">FTW</string>
+    <string name="app_name">Faster</string>
 
     <!-- ContentProvider/SyncAdapter strings -->
     <string name="authority">com.elliottsj.ftw.provider</string>

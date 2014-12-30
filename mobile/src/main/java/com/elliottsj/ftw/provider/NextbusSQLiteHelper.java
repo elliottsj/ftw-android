@@ -12,12 +12,12 @@ import com.j256.ormlite.dao.ObjectCache;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import net.sf.nextbus.publicxmlfeed.domain.Agency;
-import net.sf.nextbus.publicxmlfeed.domain.Direction;
-import net.sf.nextbus.publicxmlfeed.domain.DirectionStop;
-import net.sf.nextbus.publicxmlfeed.domain.Geolocation;
-import net.sf.nextbus.publicxmlfeed.domain.Route;
-import net.sf.nextbus.publicxmlfeed.domain.Stop;
+import com.elliottsj.nextbus.domain.Agency;
+import com.elliottsj.nextbus.domain.Direction;
+import com.elliottsj.nextbus.domain.DirectionStop;
+import com.elliottsj.nextbus.domain.Geolocation;
+import com.elliottsj.nextbus.domain.Route;
+import com.elliottsj.nextbus.domain.Stop;
 
 import java.sql.SQLException;
 

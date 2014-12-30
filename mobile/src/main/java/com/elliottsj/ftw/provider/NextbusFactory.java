@@ -2,7 +2,7 @@ package com.elliottsj.ftw.provider;
 
 import android.database.Cursor;
 
-import net.sf.nextbus.publicxmlfeed.domain.Agency;
+import com.elliottsj.nextbus.domain.Agency;
 
 public class NextbusFactory {
 

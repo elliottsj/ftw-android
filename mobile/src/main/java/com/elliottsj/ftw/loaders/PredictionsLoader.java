@@ -4,9 +4,8 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 
 import com.elliottsj.ftw.provider.NextbusQueryHelper;
-
-import net.sf.nextbus.publicxmlfeed.domain.Prediction;
-import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
+import com.elliottsj.nextbus.domain.Prediction;
+import com.elliottsj.nextbus.domain.PredictionGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;

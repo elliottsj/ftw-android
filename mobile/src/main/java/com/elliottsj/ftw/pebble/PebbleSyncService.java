@@ -15,8 +15,8 @@ import com.elliottsj.ftw.utilities.Util;
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
-import net.sf.nextbus.publicxmlfeed.domain.Prediction;
-import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
+import com.elliottsj.nextbus.domain.Prediction;
+import com.elliottsj.nextbus.domain.PredictionGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;

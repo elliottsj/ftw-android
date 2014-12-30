@@ -9,13 +9,13 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.QueryBuilder;
 
-import net.sf.nextbus.publicxmlfeed.domain.Agency;
-import net.sf.nextbus.publicxmlfeed.domain.Direction;
-import net.sf.nextbus.publicxmlfeed.domain.DirectionStop;
-import net.sf.nextbus.publicxmlfeed.domain.PredictionGroup;
-import net.sf.nextbus.publicxmlfeed.domain.Route;
-import net.sf.nextbus.publicxmlfeed.domain.Stop;
-import net.sf.nextbus.publicxmlfeed.impl.NextbusService;
+import com.elliottsj.nextbus.domain.Agency;
+import com.elliottsj.nextbus.domain.Direction;
+import com.elliottsj.nextbus.domain.DirectionStop;
+import com.elliottsj.nextbus.domain.PredictionGroup;
+import com.elliottsj.nextbus.domain.Route;
+import com.elliottsj.nextbus.domain.Stop;
+import com.elliottsj.nextbus.impl.NextbusService;
 
 import java.sql.SQLException;
 import java.util.HashMap;

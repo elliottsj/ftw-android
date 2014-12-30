@@ -16,8 +16,7 @@ import android.view.ViewGroup;
 import com.elliottsj.ftw.R;
 import com.elliottsj.ftw.loaders.PredictionsLoader;
 import com.elliottsj.ftw.provider.NextbusProvider;
-
-import net.sf.nextbus.publicxmlfeed.domain.Prediction;
+import com.elliottsj.nextbus.domain.Prediction;
 
 import java.util.List;
 import java.util.Map;
