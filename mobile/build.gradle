@@ -35,7 +35,6 @@ dependencies {
     wearApp project(':wear')
     compile 'org.scala-lang:scala-library:2.11.4'
     compile 'org.scaloid:scaloid_2.11:3.6.1-10'
-    compile 'com.android.support:multidex:1.0.0'
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v13:20.0.0'
