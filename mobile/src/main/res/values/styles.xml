@@ -18,10 +18,46 @@
         <item name="android:actionBarStyle">@style/ActionBar</item>
     </style>
 
-    <!-- Style for the action bar -->
+    <!-- Action bar -->
     <style name="ActionBar" parent="android:Widget.Material.Light.ActionBar.Solid">
         <!-- Remove shadow below the action bar via elevation -->
         <item name="android:elevation">0dp</item>
+    </style>
+
+    <!-- Drawer panel -->
+    <style name="DrawerPanel">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <!-- List in the drawer -->
+    <style name="DrawerList">
+        <item name="android:divider">@null</item>
+    </style>
+
+    <!-- Individual drawer items -->
+    <style name="DrawerItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:paddingStart">36dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <!-- Drawer item with an icon -->
+    <style name="DrawerItem.WithIcon">
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:background">?android:selectableItemBackground</item>
+    </style>
+
+    <!-- 'Add' drawer item -->
+    <style name="DrawerItem.WithIcon.Add">
+        <item name="android:drawableStart">@drawable/ic_add_inset_36dp</item>
+    </style>
+
+    <style name="DrawerItem.WithIcon.About">
+        <item name="android:drawableStart">@drawable/ic_info_inset_36dp</item>
     </style>
 
     <!-- Style for a PagerSlidingTabStrip below the action bar -->
@@ -32,6 +68,11 @@
         <item name="android:textColorPrimary">?android:textColorPrimaryInverse</item>
         <!-- Give the tab strip a shadow via elevation -->
         <item name="android:elevation">4dp</item>
+    </style>
+
+    <!-- Style for a ViewPager -->
+    <style name="ViewPager">
+        <!--<item name="android:background">@android:color/white</item>-->
     </style>
 
 </resources>

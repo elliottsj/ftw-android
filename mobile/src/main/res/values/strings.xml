@@ -8,6 +8,11 @@
     <string name="account_type">com.elliottsj.ftw</string>
     <string name="account_name">account</string>
 
+    <!-- Navigation drawer -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="add_transit_agency">Add transit agency</string>
+
     <!-- Placeholder strings -->
     <string name="sample_stop">College St At Beverly St</string>
     <string name="sample_direction">West towards High Park</string>
@@ -27,6 +32,7 @@
 
     <!-- Strings related to AddStopActivity -->
     <string name="title_activity_add_stop">Add stop</string>
+
 
 
 </resources>

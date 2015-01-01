@@ -32,7 +32,7 @@
             android:value="AIzaSyBMYeFpZyFFEgyTo93KuZBoiPA5kwjRtcM" />
 
         <activity
-            android:name=".activities.StopListActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
@@ -40,13 +40,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.elliottsj.ftw.activities.MapActivity"
-            android:parentActivityName=".activities.StopListActivity" />
-        <activity
-            android:name="com.elliottsj.ftw.activities.AddStopActivity"
-            android:label="@string/title_activity_add_stop"
-            android:parentActivityName=".activities.StopListActivity" />
 
         <receiver
             android:name=".pebble.PebbleDataReceiver"

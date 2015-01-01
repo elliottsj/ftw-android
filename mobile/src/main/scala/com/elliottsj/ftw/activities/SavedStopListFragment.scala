@@ -11,6 +11,7 @@ class SavedStopListFragment extends Fragment with Logger {
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
+
     //setHasOptionsMenu(true)
   }
 
