@@ -19,6 +19,7 @@
          with the content view. -->
     <RelativeLayout
         style="@style/DrawerPanel"
+        android:id="@+id/drawer_panel"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start">
