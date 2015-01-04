@@ -30,6 +30,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url 'http://dl.bintray.com/elliottsj/maven'
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     wearApp project(':wear')
@@ -47,8 +53,8 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.jpardogo.materialtabstrip:library:1.0.7@aar'
     compile 'com.mcxiaoke.volley:library:1.0.9@aar'
-    compile 'com.elliottsj:nextbusapi:+'
-    compile 'com.elliottsj:gtfs-protobuf-scala_2.11:+'
+    compile 'com.elliottsj:nextbusapi:1.1.2'
+    compile 'com.elliottsj:protobus-scala_2.11:0.0.12'
     compile 'com.getpebble:pebblekit:2.6.0'
 }
 
