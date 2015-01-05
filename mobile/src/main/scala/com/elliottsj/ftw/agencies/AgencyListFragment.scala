@@ -1,7 +1,6 @@
 package com.elliottsj.ftw.agencies
 
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView.Adapter
 import android.support.v7.widget.{LinearLayoutManager, RecyclerView}
 import android.view.{LayoutInflater, View, ViewGroup}
 import com.android.volley.Response.{ErrorListener, Listener}

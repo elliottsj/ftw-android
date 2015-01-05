@@ -23,8 +23,13 @@ class AgencyAdapter(context: Context, agencies: Array[Agency]) extends RecyclerV
   override def getItemCount: Int = agencies.length
 
   override def onBindViewHolder(holder: AgencyAdapter.ViewHolder, position: Int): Unit = {
-    val agencyTitle: String = agencies(position).getNextbusFields.agencyTitle
-    val textView: TextView = holder.itemView.findViewById(android.R.id.text1).asInstanceOf[TextView]
-    textView.setText(agencyTitle)
+    // Map NextBus fields onto the TextViews
+    for (nb <- agencies(position).nextbusFields) Map(
+      R.id.agency_title -> nb.agencyTitle,
+      R.id.agency_short_title -> nb.agencyShortTitle.getOrElse(""),
+      R.id.region_title -> nb.agencyRegionTitle
+    ).map { case (viewId, text) =>
+      holder.itemView.findViewById(viewId).asInstanceOf[TextView].setText(text)
+    }
   }
 }
