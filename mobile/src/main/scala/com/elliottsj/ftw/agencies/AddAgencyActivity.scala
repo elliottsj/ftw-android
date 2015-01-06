@@ -27,5 +27,4 @@ class AddAgencyActivity extends SActivity with Logger {
       .commit()
   }
 
-
 }

@@ -8,21 +8,28 @@ import com.elliottsj.ftw.R
 import com.elliottsj.protobus.Agency
 
 object AgencyAdapter {
-  class ViewHolder(agencyCard: CardView) extends RecyclerView.ViewHolder(agencyCard)
+  case class ViewHolder(var agency: Agency, agencyCard: CardView) extends RecyclerView.ViewHolder(agencyCard)
 }
 
-class AgencyAdapter(context: Context, agencies: Array[Agency]) extends RecyclerView.Adapter[AgencyAdapter.ViewHolder] {
+class AgencyAdapter(context: Context, agencies: Array[Agency], onAgencyClick: Agency => Unit) extends RecyclerView.Adapter[AgencyAdapter.ViewHolder] {
   override def onCreateViewHolder(parent: ViewGroup, viewType: Int): AgencyAdapter.ViewHolder = {
-    val v: CardView = LayoutInflater.from(context).inflate(R.layout.agency_card, parent, false).asInstanceOf[CardView]
-
-    // TODO: set view's size, margins, etc. if necessary
-
-    new AgencyAdapter.ViewHolder(v)
+    val cardView: CardView = LayoutInflater.from(context).inflate(R.layout.agency_card, parent, false).asInstanceOf[CardView]
+    val holder = new AgencyAdapter.ViewHolder(agency = null, agencyCard = cardView)
+    cardView.setOnClickListener(new View.OnClickListener {
+      override def onClick(v: View): Unit = Option(holder.agency) match {
+        case Some(a) => onAgencyClick(a)
+        case _ => throw new RuntimeException("Clicked on agency card without associated agency")
+      }
+    })
+    holder
   }
 
   override def getItemCount: Int = agencies.length
 
   override def onBindViewHolder(holder: AgencyAdapter.ViewHolder, position: Int): Unit = {
+    // Assign an agency reference to the holder
+    holder.agency = agencies(position)
+
     // Map NextBus fields onto the TextViews
     for (nb <- agencies(position).nextbusFields) Map(
       R.id.agency_title -> nb.agencyTitle,

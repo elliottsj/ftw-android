@@ -3,6 +3,7 @@ package com.elliottsj.ftw.agencies
 import android.os.Bundle
 import android.support.v7.widget.{LinearLayoutManager, RecyclerView}
 import android.view.{LayoutInflater, View, ViewGroup}
+import android.widget.Toast
 import com.android.volley.Response.{ErrorListener, Listener}
 import com.android.volley.toolbox.Volley
 import com.android.volley.{Request, RequestQueue, VolleyError}
@@ -33,7 +34,7 @@ class AgencyListFragment extends ProgressFragment with TagUtil with Logger with 
 
     mRecyclerView = mContentView.findViewById(android.R.id.list).asInstanceOf[RecyclerView]
     mRecyclerView.setLayoutManager(mLayoutManager)
-
+    
     super.onCreateView(inflater, container, savedInstanceState)
   }
 
@@ -50,8 +51,12 @@ class AgencyListFragment extends ProgressFragment with TagUtil with Logger with 
     // Load agencies
     loadAgencies() onSuccess { case agencies => runOnUiThread {
       setContentShown(true)
-      mRecyclerView.setAdapter(new AgencyAdapter(getActivity, agencies))
+      mRecyclerView.setAdapter(new AgencyAdapter(getActivity, agencies, onAgencyClick))
     }}
+  }
+
+  def onAgencyClick(agency: Agency): Unit = {
+    Toast.makeText(getActivity, "Clicked agency: " + agency.getNextbusFields.agencyTitle, Toast.LENGTH_SHORT).show()
   }
 
   def loadAgencies(): Future[Array[Agency]] = {
