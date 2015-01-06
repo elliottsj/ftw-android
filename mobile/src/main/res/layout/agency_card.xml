@@ -6,26 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="8dp"
-    android:padding="8dp"
     card_view:cardElevation="2dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/agency_short_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            tools:text="Toronto TTC" />
+        android:layout_height="match_parent"
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/agency_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/agency_short_title"
-            tools:text="Toronto Transit Commission" />
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:textColor="?android:textColorPrimary"
+            tools:text="Toronto TTC" />
 
         <TextView
             android:id="@+id/region_title"

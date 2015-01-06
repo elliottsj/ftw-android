@@ -2,13 +2,13 @@ package com.elliottsj.ftw.agencies
 
 import android.content.Context
 import android.support.v7.widget.{CardView, RecyclerView}
-import android.view.{LayoutInflater, ViewGroup}
+import android.view.{View, LayoutInflater, ViewGroup}
 import android.widget.TextView
 import com.elliottsj.ftw.R
 import com.elliottsj.protobus.Agency
 
 object AgencyAdapter {
-  class ViewHolder(itemView: CardView) extends RecyclerView.ViewHolder(itemView)
+  class ViewHolder(agencyCard: CardView) extends RecyclerView.ViewHolder(agencyCard)
 }
 
 class AgencyAdapter(context: Context, agencies: Array[Agency]) extends RecyclerView.Adapter[AgencyAdapter.ViewHolder] {
@@ -26,7 +26,6 @@ class AgencyAdapter(context: Context, agencies: Array[Agency]) extends RecyclerV
     // Map NextBus fields onto the TextViews
     for (nb <- agencies(position).nextbusFields) Map(
       R.id.agency_title -> nb.agencyTitle,
-      R.id.agency_short_title -> nb.agencyShortTitle.getOrElse(""),
       R.id.region_title -> nb.agencyRegionTitle
     ).map { case (viewId, text) =>
       holder.itemView.findViewById(viewId).asInstanceOf[TextView].setText(text)
