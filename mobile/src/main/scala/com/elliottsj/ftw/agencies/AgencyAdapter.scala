@@ -15,7 +15,7 @@ class AgencyAdapter(context: Context, agencies: Array[Agency], onAgencyClick: Ag
   override def onCreateViewHolder(parent: ViewGroup, viewType: Int): AgencyAdapter.ViewHolder = {
     val cardView: CardView = LayoutInflater.from(context).inflate(R.layout.agency_card, parent, false).asInstanceOf[CardView]
     val holder = new AgencyAdapter.ViewHolder(agency = null, agencyCard = cardView)
-    cardView.setOnClickListener(new View.OnClickListener {
+    cardView.findViewById(android.R.id.content).setOnClickListener(new View.OnClickListener {
       override def onClick(v: View): Unit = Option(holder.agency) match {
         case Some(a) => onAgencyClick(a)
         case _ => throw new RuntimeException("Clicked on agency card without associated agency")
@@ -32,7 +32,7 @@ class AgencyAdapter(context: Context, agencies: Array[Agency], onAgencyClick: Ag
 
     // Map NextBus fields onto the TextViews
     for (nb <- agencies(position).nextbusFields) Map(
-      R.id.agency_title -> nb.agencyTitle,
+      android.R.id.title -> nb.agencyTitle,
       R.id.region_title -> nb.agencyRegionTitle
     ).map { case (viewId, text) =>
       holder.itemView.findViewById(viewId).asInstanceOf[TextView].setText(text)

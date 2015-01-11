@@ -11,12 +11,16 @@ import com.devspark.progressfragment.ProgressFragment
 import com.elliottsj.ftw.R
 import com.elliottsj.ftw.network.ByteRequest
 import com.elliottsj.ftw.util.AsyncTaskContext
+import com.elliottsj.ftw.preferences.Preferences
 import com.elliottsj.protobus.{Agency, FeedMessage}
 import org.scaloid.common.{Logger, TagUtil, runOnUiThread}
 
 import scala.concurrent.{Future, Promise}
 
-class AgencyListFragment extends ProgressFragment with TagUtil with Logger with AsyncTaskContext {
+class AgencyListFragment extends ProgressFragment
+                         with TagUtil
+                         with Logger
+                         with AsyncTaskContext {
 
   private var mContentView: View = _
   private var mRootView: ViewGroup = _
@@ -56,6 +60,7 @@ class AgencyListFragment extends ProgressFragment with TagUtil with Logger with 
   }
 
   def onAgencyClick(agency: Agency): Unit = {
+    Preferences(getActivity).saveAgency(agency)
     Toast.makeText(getActivity, "Clicked agency: " + agency.getNextbusFields.agencyTitle, Toast.LENGTH_SHORT).show()
   }
 

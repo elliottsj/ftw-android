@@ -45,18 +45,18 @@
             android:parentActivityName=".activities.MainActivity"
             android:label="@string/add_transit_agency" />
 
-        <receiver
-            android:name=".pebble.PebbleDataReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.getpebble.action.app.RECEIVE" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+            <!--android:name=".pebble.PebbleDataReceiver"-->
+            <!--android:exported="true">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.getpebble.action.app.RECEIVE" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
-        <service
-            android:name=".pebble.PebbleSyncService"
-            android:exported="false" >
-        </service>
+        <!--<service-->
+            <!--android:name=".pebble.PebbleSyncService"-->
+            <!--android:exported="false" >-->
+        <!--</service>-->
     </application>
 
 </manifest>

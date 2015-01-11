@@ -15,6 +15,9 @@ class AddAgencyActivity extends SActivity with Logger {
     setContentView(R.layout.activity_add_agency)
 
     // TODO: check network connection
+
+
+
   }
 
   override def onResume(): Unit = {

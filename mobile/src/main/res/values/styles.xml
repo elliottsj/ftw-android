@@ -75,4 +75,17 @@
         <!--<item name="android:background">@android:color/white</item>-->
     </style>
 
+    <!-- Style for an agency card -->
+    <style name="AgencyCard">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <!-- Style for agency card title -->
+    <style name="AgencyCardTitle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
 </resources>
