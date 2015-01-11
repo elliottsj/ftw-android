@@ -3,27 +3,17 @@ package com.elliottsj.ftw.agencies
 import android.os.Bundle
 import android.support.v7.widget.{LinearLayoutManager, RecyclerView}
 import android.view.{LayoutInflater, View, ViewGroup}
-import android.widget.Toast
-import com.android.volley.Response.{ErrorListener, Listener}
-import com.android.volley.toolbox.Volley
-import com.android.volley.{Request, RequestQueue, VolleyError}
 import com.devspark.progressfragment.ProgressFragment
 import com.elliottsj.ftw.R
-import com.elliottsj.ftw.network.ByteRequest
-import com.elliottsj.ftw.util.AsyncTaskContext
 import com.elliottsj.ftw.preferences.Preferences
-import com.elliottsj.protobus.{Agency, FeedMessage}
+import com.elliottsj.ftw.protobus.Protobus
+import com.elliottsj.ftw.util.AsyncTaskContext
+import com.elliottsj.protobus.Agency
 import org.scaloid.common.{Logger, TagUtil, runOnUiThread}
 
-import scala.concurrent.{Future, Promise}
-
-class AgencyListFragment extends ProgressFragment
-                         with TagUtil
-                         with Logger
-                         with AsyncTaskContext {
+class AgencyListFragment extends ProgressFragment with TagUtil with Logger with AsyncTaskContext {
 
   private var mContentView: View = _
-  private var mRootView: ViewGroup = _
   private var mRecyclerView: RecyclerView = _
   private var mLayoutManager: RecyclerView.LayoutManager = _
 
@@ -53,40 +43,16 @@ class AgencyListFragment extends ProgressFragment
     setContentShown(false)
 
     // Load agencies
-    loadAgencies() onSuccess { case agencies => runOnUiThread {
+    Protobus(getActivity).getAgencies onSuccess { case agencies => runOnUiThread {
       setContentShown(true)
       mRecyclerView.setAdapter(new AgencyAdapter(getActivity, agencies, onAgencyClick))
     }}
   }
 
   def onAgencyClick(agency: Agency): Unit = {
+    // Add the selected agency to preferences and exit the activity
     Preferences(getActivity).saveAgency(agency)
-    Toast.makeText(getActivity, "Clicked agency: " + agency.getNextbusFields.agencyTitle, Toast.LENGTH_SHORT).show()
-  }
-
-  def loadAgencies(): Future[Array[Agency]] = {
-    val p = Promise[Array[Agency]]()
-
-    // Instantiate the RequestQueue
-    val queue: RequestQueue = Volley.newRequestQueue(getActivity)
-    val url: String = "http://protobus.fasterthanwalking.com/agencies"
-
-    // Request a string response from the provided URL.
-    val byteRequest: ByteRequest = new ByteRequest(Request.Method.GET, url, new Listener[Array[Byte]] {
-      override def onResponse(response: Array[Byte]): Unit = {
-        val message = FeedMessage.parseFrom(response)
-        info("Received " + message.entity.size + " agencies")
-
-        val agencies = message.entity.map { e => e.getAgency }
-        p success agencies.toArray
-      }
-    }, new ErrorListener {
-      override def onErrorResponse(err: VolleyError): Unit = error(err.toString)
-    })
-    // Add the request to the RequestQueue.
-    queue.add(byteRequest)
-
-    p.future
+    getActivity.finish()
   }
 
 }

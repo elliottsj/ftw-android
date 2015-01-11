@@ -1,0 +1,37 @@
+package com.elliottsj.ftw.protobus
+
+import android.content.Context
+import com.android.volley.Response.{ErrorListener, Listener}
+import com.android.volley.toolbox.Volley
+import com.android.volley.{Request, RequestQueue, VolleyError}
+import com.elliottsj.ftw.network.ByteRequest
+import com.elliottsj.ftw.util.AsyncTaskContext
+import com.elliottsj.protobus.{Agency, FeedMessage}
+
+import scala.concurrent.{Future, Promise}
+
+class Protobus(context: Context) extends AsyncTaskContext {
+  final val API_HOST = "http://protobus.fasterthanwalking.com"
+
+  // Instantiate the RequestQueue
+  val queue: RequestQueue = Volley.newRequestQueue(context)
+
+  private def get(path: String): Future[FeedMessage] = {
+    val p = Promise[FeedMessage]()
+
+    // Add a byte request to the RequestQueue
+    queue.add(new ByteRequest(Request.Method.GET, API_HOST + path, new Listener[Array[Byte]] {
+      override def onResponse(response: Array[Byte]): Unit = p success FeedMessage.parseFrom(response)
+    }, new ErrorListener {
+      override def onErrorResponse(err: VolleyError): Unit = throw err
+    }))
+
+    p.future
+  }
+
+  def getAgencies: Future[Array[Agency]] = for(message <- get("/agencies")) yield message.entities.map(_.getAgency).toArray
+}
+
+object Protobus {
+  def apply(context: Context) = new Protobus(context)
+}

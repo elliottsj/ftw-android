@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.elliottsj.protobus.Agency
 
+import scala.slick.ast.{TableNode, TableExpansion}
 import scala.slick.driver.SQLiteDriver.simple._
 import scala.slick.jdbc.meta.MTable
 
@@ -56,7 +57,10 @@ class Preferences(context: Context) {
    * @return
    */
   private def createIfNotExists[T <: Table[_]](table: TableQuery[T]) = db.withSession { implicit session =>
-    if (MTable.getTables(table.toString).list.isEmpty) table.ddl.create
+    // Ugly hack to get table name
+    val tableName = table.toNode.asInstanceOf[TableExpansion].table.asInstanceOf[TableNode].tableName
+
+    if (MTable.getTables(tableName).list.isEmpty) table.ddl.create
     table
   }
 
