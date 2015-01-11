@@ -57,7 +57,7 @@ dependencies {
     compile 'com.github.johnkil.android-progressfragment:progressfragment-native:1.4.0'
     compile 'com.mcxiaoke.volley:library:1.0.9@aar'
     compile 'com.elliottsj:nextbusapi:1.1.2'
-    compile 'com.elliottsj:protobus-scala_2.11:0.0.19'
+    compile 'com.elliottsj:protobus-scala_2.11:0.0.20'
     compile 'com.getpebble:pebblekit:2.6.0'
 }
 
