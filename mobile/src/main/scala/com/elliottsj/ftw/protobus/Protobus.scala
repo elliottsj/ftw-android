@@ -6,10 +6,15 @@ import com.android.volley.toolbox.Volley
 import com.android.volley.{Request, RequestQueue, VolleyError}
 import com.elliottsj.ftw.network.ByteRequest
 import com.elliottsj.ftw.util.AsyncTaskContext
-import com.elliottsj.protobus.{Agency, FeedMessage}
+import com.elliottsj.protobus.{Stop, Agency, FeedMessage}
 
 import scala.concurrent.{Future, Promise}
 
+/**
+ * A lightweight wrapper for calling the Protobus HTTP API
+ *
+ * @param context a context from which to construct a request queue
+ */
 class Protobus(context: Context) extends AsyncTaskContext {
   final val API_HOST = "http://protobus.fasterthanwalking.com"
 
@@ -29,7 +34,13 @@ class Protobus(context: Context) extends AsyncTaskContext {
     p.future
   }
 
-  def getAgencies: Future[Array[Agency]] = for(message <- get("/agencies")) yield message.entities.map(_.getAgency).toArray
+  def getAgencies: Future[Array[Agency]] =
+    for(message <- get("/agencies")) yield
+      message.entities.map(_.getAgency).toArray
+
+  def getStops(agency: Agency): Future[Array[Stop]] =
+    for(message <- get(s"/agencies/${agency.getNextbusFields.agencyTag}")) yield
+      message.entities.map(_.getStop).toArray
 }
 
 object Protobus {
