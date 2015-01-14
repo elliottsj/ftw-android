@@ -23,7 +23,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            // 10.0.3.2 is the host IP in a Genymotion VM. Use 10.0.2.2 for the standard android emulator.
+            resValue "string", "api_host", "http://10.0.3.2:9000"
+        }
         release {
+            resValue "string", "api_host", "https://protobus.fasterthanwalking.com"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
