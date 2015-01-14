@@ -1,21 +1,30 @@
 package com.elliottsj.ftw.activities
 
+import java.util
+
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.view.{MenuItem, View}
+import android.view.{MenuItem, View, ViewGroup}
 import android.widget._
 import com.elliottsj.ftw.R
 import com.elliottsj.ftw.agencies.AddAgencyActivity
+import com.elliottsj.ftw.preferences.Preferences
 import com.elliottsj.ftw.stops.StopTabsFragment
-import org.scaloid.common._
+import com.elliottsj.protobus.Agency
+import org.scaloid.common.{Preferences => _, _}
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 class MainActivity extends SActivity with Logger {
 
   private var mDrawerLayout: DrawerLayout = _
   private var mDrawerPanel: RelativeLayout = _
   private var mDrawerList: ListView = _
+  private var mDrawerAdapter: ArrayAdapter[Agency] = _
   private var mDrawerToggle: ActionBarDrawerToggle = _
   private var mAddAgencyButton: TextView = _
 
@@ -31,8 +40,20 @@ class MainActivity extends SActivity with Logger {
     mDrawerList = find[ListView](android.R.id.list)
     mAddAgencyButton = find[TextView](R.id.add_agency)
 
-    mDrawerList.setAdapter(new ArrayAdapter(this, R.layout.drawer_item, Array("TTC", "MBTA")))
-    // SArrayAdapter(R.layout.drawer_item, /* TODO: get agency data */ Array("TTC", "MBTA"))
+    // Create an array adapter for the drawer and initialize with an empty list
+    mDrawerAdapter = new ArrayAdapter[Agency](this, R.layout.drawer_item, new util.ArrayList[Agency]()) {
+      /**
+       * Set the TextView to contain the agency short title if it exists,
+       * otherwise the full title.
+       */
+      override def getView(position: Int, convertView: View, parent: ViewGroup): View = {
+        val nb = getItem(position).getNextbusFields
+        val view = super.getView(position, convertView, parent)
+        view.asInstanceOf[TextView].setText(nb.agencyShortTitle getOrElse nb.agencyTitle)
+        view
+      }
+    }
+    mDrawerList.setAdapter(mDrawerAdapter)
     mDrawerList.onItemClick(onDrawerItemClick _)
 
     // ActionBarDrawerToggle ties together the the proper interactions
@@ -50,6 +71,14 @@ class MainActivity extends SActivity with Logger {
     mDrawerToggle.syncState()
   }
 
+
+  override def onResume(): Unit = {
+    super.onResume()
+    mDrawerAdapter.clear()
+    val agencies: util.Collection[Agency] = Preferences(this).getAgencies.asJavaCollection
+    mDrawerAdapter.addAll(agencies)
+  }
+
   override def onConfigurationChanged(newConfig: Configuration): Unit = {
     super.onConfigurationChanged(newConfig)
     // Pass any configuration change to the drawer toggles
@@ -63,9 +92,12 @@ class MainActivity extends SActivity with Logger {
   }
 
   def onDrawerItemClick(parent: AdapterView[_], view: View, position: Int, id: Long): Unit = {
-    getFragmentManager.beginTransaction().replace(R.id.content_frame, position match {
-      case 0 => new StopTabsFragment()
-      case 1 => new StopTabsFragment()
+    getFragmentManager.beginTransaction().replace(R.id.content_frame, {
+      val f = new StopTabsFragment()
+      val args = new Bundle()
+      args.putSerializable(StopTabsFragment.ARG_AGENCY, mDrawerAdapter.getItem(position))
+      f.setArguments(args)
+      f
     }).commit()
 
     mDrawerList.setItemChecked(position, true)

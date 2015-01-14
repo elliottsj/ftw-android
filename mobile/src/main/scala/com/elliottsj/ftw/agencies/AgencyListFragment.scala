@@ -1,8 +1,12 @@
 package com.elliottsj.ftw.agencies
 
+import java.sql.SQLException
+
+import android.database.sqlite.{SQLiteConstraintException, SQLiteException}
 import android.os.Bundle
 import android.support.v7.widget.{LinearLayoutManager, RecyclerView}
 import android.view.{LayoutInflater, View, ViewGroup}
+import android.widget.Toast
 import com.devspark.progressfragment.ProgressFragment
 import com.elliottsj.ftw.R
 import com.elliottsj.ftw.preferences.Preferences
@@ -10,6 +14,8 @@ import com.elliottsj.ftw.protobus.Protobus
 import com.elliottsj.ftw.util.AsyncTaskContext
 import com.elliottsj.protobus.Agency
 import org.scaloid.common.{Logger, TagUtil, runOnUiThread}
+
+import scala.util.{Try, Failure, Success}
 
 class AgencyListFragment extends ProgressFragment with TagUtil with Logger with AsyncTaskContext {
 
@@ -43,16 +49,29 @@ class AgencyListFragment extends ProgressFragment with TagUtil with Logger with 
     setContentShown(false)
 
     // Load agencies
-    Protobus(getActivity).getAgencies onSuccess { case agencies => runOnUiThread {
-      setContentShown(true)
-      mRecyclerView.setAdapter(new AgencyAdapter(getActivity, agencies, onAgencyClick))
-    }}
+    Protobus(getActivity).getAgencies onComplete {
+      case Success(agencies) => runOnUiThread {
+        setContentShown(true)
+        mRecyclerView.setAdapter(new AgencyAdapter(getActivity, agencies, onAgencyClick))
+      }
+      case Failure(err) =>
+        error("Failed to fetch Protobus agencies", err)
+    }
   }
 
   def onAgencyClick(agency: Agency): Unit = {
-    // Add the selected agency to preferences and exit the activity
-    Preferences(getActivity).saveAgency(agency)
-    getActivity.finish()
+    // Add the selected agency to preferences
+    Try(Preferences(getActivity).saveAgency(agency)) match {
+      case Success(_) =>
+        // Successfully added the agency; finish the activity
+        getActivity.finish()
+      case Failure(err) =>
+        // Failed to add the agency; display the error
+        Toast.makeText(getActivity, err.getCause match {
+          case cause: SQLiteConstraintException => "Selected agency is already saved"
+          case cause => s"Cannot add agency: ${cause.getMessage}"
+        }, Toast.LENGTH_SHORT).show()
+    }
   }
 
 }

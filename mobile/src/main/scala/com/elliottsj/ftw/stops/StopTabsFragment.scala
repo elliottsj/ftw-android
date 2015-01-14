@@ -1,12 +1,16 @@
 package com.elliottsj.ftw.stops
 
-import android.app.{Fragment, FragmentManager}
+import android.app.{Activity, Fragment, FragmentManager}
 import android.os.Bundle
-import android.support.v13.app.FragmentPagerAdapter
+import android.support.v13.app.{FragmentStatePagerAdapter, FragmentPagerAdapter}
 import android.support.v4.view.ViewPager
-import android.view._
+import android.view.{View, ViewGroup, LayoutInflater}
 import com.astuetz.PagerSlidingTabStrip
 import com.elliottsj.ftw.R
+
+object StopTabsFragment {
+  final val ARG_AGENCY = "com.elliottsj.ftw.AGENCY"
+}
 
 class StopTabsFragment extends Fragment {
 
@@ -24,7 +28,7 @@ class StopTabsFragment extends Fragment {
     rootView
   }
 
-  class StopsTabsAdapter(fm: FragmentManager) extends FragmentPagerAdapter(fm) {
+  class StopsTabsAdapter(fm: FragmentManager) extends FragmentStatePagerAdapter(fm) {
     val TITLES = Seq("Nearby", "Saved")
     override def getCount: Int = TITLES.length
     override def getPageTitle(position: Int): CharSequence = TITLES(position)
