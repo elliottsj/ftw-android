@@ -17,18 +17,25 @@
         android:background="?android:selectableItemBackground">
 
         <TextView
-            style="@style/AgencyCardTitle"
+            style="@style/StopCardTitle"
             android:id="@android:id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Toronto TTC" />
+            tools:text="High Park Loop" />
 
         <TextView
-            android:id="@+id/region_title"
+            android:id="@+id/route_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@android:id/title"
-            tools:text="Ontario" />
+            tools:text="506-Carlton" />
+
+        <TextView
+            android:id="@+id/route_prediction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/route_title"
+            tools:text="5 minutes" />
 
     </RelativeLayout>
 

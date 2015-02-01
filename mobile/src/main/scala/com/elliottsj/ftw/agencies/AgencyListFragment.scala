@@ -1,8 +1,6 @@
 package com.elliottsj.ftw.agencies
 
-import java.sql.SQLException
-
-import android.database.sqlite.{SQLiteConstraintException, SQLiteException}
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.support.v7.widget.{LinearLayoutManager, RecyclerView}
 import android.view.{LayoutInflater, View, ViewGroup}
@@ -15,7 +13,7 @@ import com.elliottsj.ftw.util.AsyncTaskContext
 import com.elliottsj.protobus.Agency
 import org.scaloid.common.{Logger, TagUtil, runOnUiThread}
 
-import scala.util.{Try, Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 class AgencyListFragment extends ProgressFragment with TagUtil with Logger with AsyncTaskContext {
 
@@ -59,6 +57,11 @@ class AgencyListFragment extends ProgressFragment with TagUtil with Logger with 
     }
   }
 
+  /**
+   * Handle when the user clicks on a transit agency
+   *
+   * @param agency the clicked agency
+   */
   def onAgencyClick(agency: Agency): Unit = {
     // Add the selected agency to preferences
     Try(Preferences(getActivity).saveAgency(agency)) match {

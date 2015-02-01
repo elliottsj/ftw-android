@@ -16,8 +16,6 @@ import com.elliottsj.protobus.Agency
 import org.scaloid.common.{Preferences => _, _}
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 
 class MainActivity extends SActivity with Logger {
 
@@ -75,8 +73,7 @@ class MainActivity extends SActivity with Logger {
   override def onResume(): Unit = {
     super.onResume()
     mDrawerAdapter.clear()
-    val agencies: util.Collection[Agency] = Preferences(this).getAgencies.asJavaCollection
-    mDrawerAdapter.addAll(agencies)
+    mDrawerAdapter.addAll(Preferences(this).getAgencies.asJavaCollection)
   }
 
   override def onConfigurationChanged(newConfig: Configuration): Unit = {

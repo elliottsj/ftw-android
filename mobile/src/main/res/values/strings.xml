@@ -20,7 +20,9 @@
     <string name="sample_route">506 Carlton</string>
     <string name="sample_prediction">2 minutes</string>
 
-    <!-- Strings related to StopsActivity -->
+    <!-- Strings related to StopTabsFragment -->
+    <string name="remove_agency">Remove agency</string>
+
     <string name="refresh">Refresh</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>

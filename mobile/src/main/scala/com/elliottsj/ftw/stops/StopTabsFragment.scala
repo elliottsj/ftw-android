@@ -4,7 +4,7 @@ import android.app.{Activity, Fragment, FragmentManager}
 import android.os.Bundle
 import android.support.v13.app.{FragmentStatePagerAdapter, FragmentPagerAdapter}
 import android.support.v4.view.ViewPager
-import android.view.{View, ViewGroup, LayoutInflater}
+import android.view._
 import com.astuetz.PagerSlidingTabStrip
 import com.elliottsj.ftw.R
 
@@ -15,6 +15,9 @@ object StopTabsFragment {
 class StopTabsFragment extends Fragment {
 
   override def onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View = {
+    // Enable the options menu
+    setHasOptionsMenu(true)
+
     val rootView: View = inflater.inflate(R.layout.fragment_stop_tabs, container, false)
 
     // Get the ViewPager and set its PagerAdapter so that it can display items
@@ -26,6 +29,10 @@ class StopTabsFragment extends Fragment {
     tabs.setViewPager(viewPager)
 
     rootView
+  }
+
+  override def onCreateOptionsMenu(menu: Menu, inflater: MenuInflater): Unit = {
+    inflater.inflate(R.menu.stops, menu)
   }
 
   class StopsTabsAdapter(fm: FragmentManager) extends FragmentStatePagerAdapter(fm) {
