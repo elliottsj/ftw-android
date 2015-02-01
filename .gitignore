@@ -29,3 +29,6 @@ proguard/
 *.ipr
 *.iws
 .idea/
+
+# Private keys
+*.keystore
